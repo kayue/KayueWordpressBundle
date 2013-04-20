@@ -2,7 +2,10 @@
 
 namespace Kayue\WordpressBundle\DependencyInjection\Security\Factory;
 
+use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractFactory;
@@ -10,14 +13,12 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractF
 class WordpressFactory extends AbstractFactory
 {
     protected $options = array(
-        'name' => 'REMEMBERME',
+        'name' => 'wordpress_logged_in_12345',
         'lifetime' => 31536000,
         'path' => '/',
         'domain' => null,
         'secure' => false,
         'httponly' => true,
-        'always_remember_me' => false,
-        'remember_me_parameter' => '_remember_me',
     );
 
     /**
@@ -25,10 +26,10 @@ class WordpressFactory extends AbstractFactory
      *
      * @param ContainerBuilder $container
      * @param string $id             The unique id of the firewall
-     * @param array $config         The options array for this listener
+     * @param array $config          The options array for this listener
      * @param string $userProviderId The id of the user provider
      *
-     * @return string never null, the id of the authentication provider
+     * @return string
      */
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
@@ -43,15 +44,25 @@ class WordpressFactory extends AbstractFactory
         return $authProviderId;
     }
 
+    /**
+     * @param ContainerBuilder $container
+     * @param string $id             The unique id of the firewall
+     * @param array $config          The options array for this listener
+     * @param string $userProviderId The id of the user provider
+     *
+     * @return string
+     */
     protected function createListener($container, $id, $config, $userProviderId)
     {
         // Create the WordPress cookie service
         $templateId = 'kayue_wordpress.security.cookie.service';
         $cookieServiceId = $templateId . '.' .$id;
-        $rememberMeServices = $container->setDefinition($cookieServiceId, new DefinitionDecorator($templateId));
-        $rememberMeServices->replaceArgument(2, new Reference($userProviderId));
+
+        /** @var $cookieService Definition */
+        $cookieService = $container->setDefinition($cookieServiceId, new DefinitionDecorator($templateId));
+        $cookieService->replaceArgument(2, new Reference($userProviderId));
         // TODO: set $options['name'] to WordPress logged in cookie.
-        $rememberMeServices->replaceArgument(3, array_intersect_key($config, $this->options));
+        $cookieService->replaceArgument(3, array_intersect_key($config, $this->options));
 
         // Bind logout handler
         if ($container->hasDefinition('security.logout_listener.'.$id)) {

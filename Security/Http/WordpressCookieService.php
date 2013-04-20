@@ -143,7 +143,7 @@ class WordpressCookieService extends AbstractRememberMeServices
 
     /**
      * This is called after a user has been logged in successfully, and has
-     * requested remember-me capabilities. The implementation usually sets a
+     * requested WordPress capabilities. The implementation usually sets a
      * cookie and possibly stores a persistent record of it.
      *
      * @param Request $request
@@ -169,6 +169,22 @@ class WordpressCookieService extends AbstractRememberMeServices
                 $this->options['httponly']
             )
         );
+    }
+
+
+    /**
+     * Deletes the WordPress cookie
+     *
+     * @param Request $request
+     */
+    protected function cancelCookie(Request $request)
+    {
+        if (null !== $this->logger) {
+            $this->logger->debug(sprintf('Clearing WordPress cookie "%s"', $this->options['name']));
+        }
+
+        // TODO: Clear WordPress backend cookie as well
+        $request->attributes->set(self::COOKIE_ATTR_NAME, new Cookie($this->options['name'], null, 1, $this->options['path'], $this->options['domain']));
     }
 
     /**
