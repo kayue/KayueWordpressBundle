@@ -2,8 +2,7 @@
 
 namespace Kayue\WordpressBundle\Security\Firewall;
 
-use Kayue\WordpressBundle\Security\Authentication\Token\WordpressToken;
-use Kayue\WordpressBundle\Security\Http\WordpressRememberMeService;
+use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +17,7 @@ use Symfony\Component\Security\Http\SecurityEvents;
 class WordpressListener implements ListenerInterface
 {
     private $securityContext;
-    private $rememberMeServices;
+    private $cookieService;
     private $authenticationManager;
     private $logger;
     private $dispatcher;
@@ -27,15 +26,15 @@ class WordpressListener implements ListenerInterface
      * Constructor
      *
      * @param SecurityContextInterface $securityContext
-     * @param WordpressRememberMeService $rememberMeServices
+     * @param WordpressCookieService $cookieService
      * @param AuthenticationManagerInterface $authenticationManager
      * @param LoggerInterface $logger
      * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(SecurityContextInterface $securityContext, WordpressRememberMeService $rememberMeServices, AuthenticationManagerInterface $authenticationManager, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
+    public function __construct(SecurityContextInterface $securityContext, WordpressCookieService $cookieService, AuthenticationManagerInterface $authenticationManager, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
     {
         $this->securityContext = $securityContext;
-        $this->rememberMeServices = $rememberMeServices;
+        $this->cookieService = $cookieService;
         $this->authenticationManager = $authenticationManager;
         $this->logger = $logger;
         $this->dispatcher = $dispatcher;
@@ -53,12 +52,11 @@ class WordpressListener implements ListenerInterface
         }
 
         $request = $event->getRequest();
-        if (null === $token = $this->rememberMeServices->getTokenFromRequest($request)) {
+        if (null === $token = $this->cookieService->getTokenFromRequest($request)) {
             return;
         }
 
         try {
-            /** @var $token WordpressToken */
             $token = $this->authenticationManager->authenticate($token);
             $this->securityContext->setToken($token);
 
@@ -68,18 +66,18 @@ class WordpressListener implements ListenerInterface
             }
 
             if (null !== $this->logger) {
-                $this->logger->debug('SecurityContext populated with remember-me token.');
+                $this->logger->debug('SecurityContext populated with WordPress token.');
             }
         } catch (AuthenticationException $failed) {
             if (null !== $this->logger) {
                 $this->logger->warning(
-                    'SecurityContext not populated with remember-me token as the'
+                    'SecurityContext not populated with WordPress token as the'
                         .' AuthenticationManager rejected the AuthenticationToken returned'
                         .' by the RememberMeServices: '.$failed->getMessage()
                 );
             }
 
-            $this->rememberMeServices->loginFail($request);
+            $this->cookieService->loginFail($request);
         }
     }
 }

@@ -44,7 +44,7 @@ class WordpressFactory extends AbstractFactory
 
     protected function createListener($container, $id, $config, $userProviderId)
     {
-        $templateId = 'kayue_wordpress.security.authentication.rememberme';
+        $templateId = 'kayue_wordpress.security.cookie.service';
         $rememberMeServicesId = $templateId . '.' .$id;
 
         $rememberMeServices = $container->setDefinition($rememberMeServicesId, new DefinitionDecorator($templateId));

@@ -3,10 +3,6 @@ parameters:
     kayue_wordpress.security.authentication.listener.class: Kayue\WordpressBundle\Security\Firewall\WordpressListener
 
 services:
-#    kayue_wordpress.example:
-#        class: %kayue_wordpress.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
-
     kayue_wordpress.security.authentication.provider:
         class: %kayue_wordpress.security.authentication.provider.class%
         public: false
@@ -15,15 +11,15 @@ services:
         class: %kayue_wordpress.security.authentication.listener.class%
         arguments:
             - @security.context
-            - @kayue_wordpress.security.authentication.rememberme
+            - @kayue_wordpress.security.cookie.service
             - @security.authentication.manager
             - @logger
             - @event_dispatcher
         tags:
             - {name: monolog.logger, channel: security}
 
-    kayue_wordpress.security.authentication.rememberme:
-        class: Kayue\WordpressBundle\Security\Http\WordpressRememberMeService
+    kayue_wordpress.security.cookie.service:
+        class: Kayue\WordpressBundle\Security\Http\WordpressCookieService
         arguments:
             - %kayue_wordpress.logged_in_key%
             - %kayue_wordpress.logged_in_salt%

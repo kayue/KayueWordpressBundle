@@ -14,7 +14,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\RememberMe\AbstractRememberMeServices;
 
-class WordpressRememberMeService extends AbstractRememberMeServices
+class WordpressCookieService extends AbstractRememberMeServices
 {
     const COOKIE_DELIMITER = '|';
     private $loggedInKey;
@@ -41,7 +41,7 @@ class WordpressRememberMeService extends AbstractRememberMeServices
     public function getTokenFromRequest(Request $request)
     {
         if (null === $cookie = $request->cookies->get($this->options['name'])) {
-             return;
+             return null;
         }
 
         if (null !== $this->logger) {
