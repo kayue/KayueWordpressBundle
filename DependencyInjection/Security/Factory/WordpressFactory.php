@@ -35,7 +35,8 @@ class WordpressFactory extends AbstractFactory
         $templateId = 'kayue_wordpress.security.authentication.provider';
         $authProviderId = $templateId . '.' . $id;
 
-        $container->setDefinition($authProviderId, new DefinitionDecorator($templateId))
+        $container
+            ->setDefinition($authProviderId, new DefinitionDecorator($templateId))
             ->addArgument(new Reference('security.user_checker'))
         ;
 
@@ -44,17 +45,25 @@ class WordpressFactory extends AbstractFactory
 
     protected function createListener($container, $id, $config, $userProviderId)
     {
+        // Create the WordPress cookie service
         $templateId = 'kayue_wordpress.security.cookie.service';
-        $rememberMeServicesId = $templateId . '.' .$id;
-
-        $rememberMeServices = $container->setDefinition($rememberMeServicesId, new DefinitionDecorator($templateId));
+        $cookieServiceId = $templateId . '.' .$id;
+        $rememberMeServices = $container->setDefinition($cookieServiceId, new DefinitionDecorator($templateId));
         $rememberMeServices->replaceArgument(2, new Reference($userProviderId));
         // TODO: set $options['name'] to WordPress logged in cookie.
         $rememberMeServices->replaceArgument(3, array_intersect_key($config, $this->options));
 
+        // Bind logout handler
+        if ($container->hasDefinition('security.logout_listener.'.$id)) {
+            $container
+                ->getDefinition('security.logout_listener.'.$id)
+                ->addMethodCall('addHandler', array(new Reference($cookieServiceId)))
+            ;
+        }
+
         $listenerId = $this->getListenerId();
         $listener = $container->setDefinition($listenerId, new DefinitionDecorator('kayue_wordpress.security.authentication.listener'));
-        $listener->replaceArgument(1, new Reference($rememberMeServicesId));
+        $listener->replaceArgument(1, new Reference($cookieServiceId));
 
         return $listenerId;
     }
