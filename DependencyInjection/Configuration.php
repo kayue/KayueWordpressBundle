@@ -20,9 +20,26 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('kayue_wordpress');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode->children()
+            ->scalarNode('logged_in_key')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('logged_in_salt')->isRequired()->cannotBeEmpty()->end()
+            /* save for later
+            ->scalarNode('cookie_path')->defaultValue(null)->end()
+            ->scalarNode('cookie_domain')->defaultValue(null)->end()
+            ->scalarNode('table_prefix')->defaultValue('wp_')->end()
+            ->scalarNode('main_site')->defaultValue(null)->end()
+            ->arrayNode('sites')
+                ->prototype('array')
+                    ->children()
+                        ->scalarNode('pattern')->end()
+                        ->scalarNode('hostname_pattern')->defaultValue('')->end()
+                        ->scalarNode('entity_manager')->defaultValue(null)->end()
+                        ->arrayNode('requirements')->prototype('scalar')->defaultValue(array())->end()
+                    ->end()
+                ->end()
+            ->end()
+            */
+        ->end();
 
         return $treeBuilder;
     }

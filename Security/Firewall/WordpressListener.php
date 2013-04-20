@@ -10,11 +10,6 @@ use Psr\Log\LoggerInterface;
 
 class WordpressListener extends AbstractAuthenticationListener
 {
-    public function __construct(LoggerInterface $logger = null)
-    {
-        $this->logger = $logger;
-    }
-
     /**
      * Performs authentication.
      *

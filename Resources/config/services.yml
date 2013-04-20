@@ -1,7 +1,24 @@
 parameters:
-#    kayue_wordpress.example.class: Kayue\WordpressBundle\Example
+    kayue_wordpress.security.authentication.provider.class: Kayue\WordpressBundle\Security\Authentication\Provider\WordpressProvider
+    kayue_wordpress.security.authentication.listener.class: Kayue\WordpressBundle\Security\Firewall\WordpressListener
 
 services:
 #    kayue_wordpress.example:
 #        class: %kayue_wordpress.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+
+    kayue_wordpress.security.authentication.provider:
+        class: %kayue_wordpress.security.authentication.provider.class%
+        public: false
+        arguments:
+            - %kayue_wordpress.logged_in_key%
+            - %kayue_wordpress.logged_in_salt%
+            - null
+            - null
+
+    kayue_wordpress.security.authentication.listener:
+        class: %kayue_wordpress.security.authentication.listener.class%
+        parent: security.authentication.listener.abstract
+        abstract: true
+        tag:
+            - { name: monolog.logger, channel: security }
