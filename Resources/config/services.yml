@@ -10,15 +10,23 @@ services:
     kayue_wordpress.security.authentication.provider:
         class: %kayue_wordpress.security.authentication.provider.class%
         public: false
+
+    kayue_wordpress.security.authentication.listener:
+        class: %kayue_wordpress.security.authentication.listener.class%
+        arguments:
+            - @security.context
+            - @kayue_wordpress.security.authentication.rememberme
+            - @security.authentication.manager
+            - @logger
+            - @event_dispatcher
+        tags:
+            - {name: monolog.logger, channel: security}
+
+    kayue_wordpress.security.authentication.rememberme:
+        class: Kayue\WordpressBundle\Security\Http\WordpressRememberMeService
         arguments:
             - %kayue_wordpress.logged_in_key%
             - %kayue_wordpress.logged_in_salt%
             - null
             - null
-
-    kayue_wordpress.security.authentication.listener:
-        class: %kayue_wordpress.security.authentication.listener.class%
-        parent: security.authentication.listener.abstract
-        abstract: true
-        tag:
-            - { name: monolog.logger, channel: security }
+            - @logger

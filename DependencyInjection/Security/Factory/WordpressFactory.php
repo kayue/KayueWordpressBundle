@@ -9,6 +9,17 @@ use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\AbstractF
 
 class WordpressFactory extends AbstractFactory
 {
+    protected $options = array(
+        'name' => 'REMEMBERME',
+        'lifetime' => 31536000,
+        'path' => '/',
+        'domain' => null,
+        'secure' => false,
+        'httponly' => true,
+        'always_remember_me' => false,
+        'remember_me_parameter' => '_remember_me',
+    );
+
     /**
      * Return the id of a service which implements the AuthenticationProviderInterface.
      *
@@ -21,15 +32,31 @@ class WordpressFactory extends AbstractFactory
      */
     protected function createAuthProvider(ContainerBuilder $container, $id, $config, $userProviderId)
     {
-        $authProviderId = 'kayue_wordpress.auth.'.$id;
+        $templateId = 'kayue_wordpress.security.authentication.provider';
+        $authProviderId = $templateId . '.' . $id;
 
-        $container
-            ->setDefinition($authProviderId, new DefinitionDecorator('kayue_wordpress.security.authentication.provider'))
-            ->replaceArgument(2, new Reference($userProviderId))
-            ->replaceArgument(3, new Reference('security.user_checker'))
+        $container->setDefinition($authProviderId, new DefinitionDecorator($templateId))
+            ->addArgument(new Reference('security.user_checker'))
         ;
 
         return $authProviderId;
+    }
+
+    protected function createListener($container, $id, $config, $userProviderId)
+    {
+        $templateId = 'kayue_wordpress.security.authentication.rememberme';
+        $rememberMeServicesId = $templateId . '.' .$id;
+
+        $rememberMeServices = $container->setDefinition($rememberMeServicesId, new DefinitionDecorator($templateId));
+        $rememberMeServices->replaceArgument(2, new Reference($userProviderId));
+        // TODO: set $options['name'] to WordPress logged in cookie.
+        $rememberMeServices->replaceArgument(3, array_intersect_key($config, $this->options));
+
+        $listenerId = $this->getListenerId();
+        $listener = $container->setDefinition($listenerId, new DefinitionDecorator('kayue_wordpress.security.authentication.listener'));
+        $listener->replaceArgument(1, new Reference($rememberMeServicesId));
+
+        return $listenerId;
     }
 
     /**
@@ -39,7 +66,7 @@ class WordpressFactory extends AbstractFactory
      */
     protected function getListenerId()
     {
-        return 'kayue_wordpress.security.authentication.listener';
+        return 'kayue_wordpress.authentication.listener';
     }
 
     public function getPosition()
