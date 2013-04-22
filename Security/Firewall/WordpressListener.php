@@ -7,11 +7,15 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 use Symfony\Component\Security\Http\SecurityEvents;
@@ -51,6 +55,10 @@ class WordpressListener implements ListenerInterface
      */
     public function handle(GetResponseEvent $event)
     {
+        if (null !== $this->dispatcher && HttpKernelInterface::MASTER_REQUEST === $event->getRequestType()) {
+            $this->dispatcher->addListener(KernelEvents::RESPONSE, array($this, 'onKernelResponse'));
+        }
+
         // WordPress firewall will clear all previous token.
         $this->securityContext->setToken(null);
 
@@ -69,7 +77,7 @@ class WordpressListener implements ListenerInterface
 
     protected function attemptAuthentication(Request $request)
     {
-        if (null === $token = $this->cookieService->getTokenFromRequest($request)) {
+        if (null === $token = $this->cookieService->autoLogin($request)) {
             return null;
         }
 
@@ -97,5 +105,36 @@ class WordpressListener implements ListenerInterface
         }
 
         $this->securityContext->setToken(null);
+    }
+
+    /**
+     * Writes or remove the WordPress cookie.
+     *
+     * @param FilterResponseEvent $event A FilterResponseEvent instance
+     */
+    public function onKernelResponse(FilterResponseEvent $event)
+    {
+        if (HttpKernelInterface::MASTER_REQUEST !== $event->getRequestType()) {
+            return;
+        }
+
+        $token = $this->securityContext->getToken();
+        $request = $event->getRequest();
+
+        // TODO: Change UserInterface to WordpressUserInterface
+        if (null === $token || false === $token->getUser() instanceof UserInterface) {
+            if (null !== $this->logger) {
+                $this->logger->debug('Remove WordPress cookie');
+            }
+
+            $this->cookieService->logout($request, $event->getResponse(), $token);
+        } else {
+            if (null !== $this->logger) {
+                $this->logger->debug('Write WordPress cookie');
+            }
+
+            // TODO: Don't write cookie again if already exist
+            $this->cookieService->loginSuccess($request, $event->getResponse(), $token);
+        }
     }
 }

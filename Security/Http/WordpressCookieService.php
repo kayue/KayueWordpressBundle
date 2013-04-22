@@ -12,9 +12,11 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
+use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 use Symfony\Component\Security\Http\RememberMe\AbstractRememberMeServices;
+use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
 
-class WordpressCookieService extends AbstractRememberMeServices
+class WordpressCookieService implements LogoutHandlerInterface
 {
     const COOKIE_DELIMITER = '|';
     private $loggedInKey;
@@ -38,7 +40,7 @@ class WordpressCookieService extends AbstractRememberMeServices
      * @return null           Return null if failed to retrieve token.
      * @return WordpressToken Return WordpressToken if success.
      */
-    public function getTokenFromRequest(Request $request)
+    public function autoLogin(Request $request)
     {
         if (null === $cookie = $request->cookies->get($this->options['name'])) {
              return null;
@@ -150,8 +152,9 @@ class WordpressCookieService extends AbstractRememberMeServices
      * @param Response $response
      * @param TokenInterface $token
      */
-    protected function onLoginSuccess(Request $request, Response $response, TokenInterface $token)
+    public function loginSuccess(Request $request, Response $response, TokenInterface $token)
     {
+        /*
         $user       = $token->getUser();
         $username   = $user->getUsername();
         $password   = $user->getPassword();
@@ -169,8 +172,20 @@ class WordpressCookieService extends AbstractRememberMeServices
                 $this->options['httponly']
             )
         );
+        */
     }
 
+    /**
+     * Implementation for LogoutHandlerInterface. Deletes the cookie.
+     *
+     * @param Request        $request
+     * @param Response       $response
+     * @param TokenInterface $token
+     */
+    public function logout(Request $request, Response $response, TokenInterface $token)
+    {
+        $this->cancelCookie($request);
+    }
 
     /**
      * Deletes the WordPress cookie
@@ -184,7 +199,7 @@ class WordpressCookieService extends AbstractRememberMeServices
         }
 
         // TODO: Clear WordPress backend cookie as well
-        $request->attributes->set(self::COOKIE_ATTR_NAME, new Cookie($this->options['name'], null, 1, $this->options['path'], $this->options['domain']));
+        // $request->attributes->set(self::COOKIE_ATTR_NAME, new Cookie($this->options['name'], null, 1, $this->options['path'], $this->options['domain']));
     }
 
     /**
