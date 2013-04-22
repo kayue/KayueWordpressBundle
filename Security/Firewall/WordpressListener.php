@@ -6,8 +6,10 @@ use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -41,43 +43,59 @@ class WordpressListener implements ListenerInterface
     }
 
     /**
-     * Handles remember-me cookie based authentication.
+     * Handles WordPress's cookie based authentication.
+     *
+     * Since we assume WordPress is the only authentication system in the firewall, it will clear all previous token.
      *
      * @param GetResponseEvent $event A GetResponseEvent instance
      */
     public function handle(GetResponseEvent $event)
     {
-        if (null !== $this->securityContext->getToken()) {
-            return;
-        }
+        // WordPress firewall will clear all previous token.
+        $this->securityContext->setToken(null);
 
         $request = $event->getRequest();
-        if (null === $token = $this->cookieService->getTokenFromRequest($request)) {
-            return;
-        }
 
         try {
-            $token = $this->authenticationManager->authenticate($token);
-            $this->securityContext->setToken($token);
-
-            if (null !== $this->dispatcher) {
-                $loginEvent = new InteractiveLoginEvent($request, $token);
-                $this->dispatcher->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
+            if (null === $returnValue = $this->attemptAuthentication($request)) {
+                return;
             }
 
-            if (null !== $this->logger) {
-                $this->logger->debug('SecurityContext populated with WordPress token.');
-            }
-        } catch (AuthenticationException $failed) {
-            if (null !== $this->logger) {
-                $this->logger->warning(
-                    'SecurityContext not populated with WordPress token as the'
-                        .' AuthenticationManager rejected the AuthenticationToken returned'
-                        .' by the RememberMeServices: '.$failed->getMessage()
-                );
-            }
-
-            $this->cookieService->loginFail($request);
+            $this->onSuccess($event, $request, $returnValue);
+        } catch (AuthenticationException $e) {
+            $this->onFailure($event, $request, $e);
         }
+    }
+
+    protected function attemptAuthentication(Request $request)
+    {
+        if (null === $token = $this->cookieService->getTokenFromRequest($request)) {
+            return null;
+        }
+
+        return $this->authenticationManager->authenticate($token);
+    }
+
+    private function onSuccess(GetResponseEvent $event, Request $request, TokenInterface $token)
+    {
+        if (null !== $this->logger) {
+            $this->logger->info(sprintf('WordPress user "%s" has been authenticated successfully', $token->getUsername()));
+        }
+
+        $this->securityContext->setToken($token);
+
+        if (null !== $this->dispatcher) {
+            $loginEvent = new InteractiveLoginEvent($request, $token);
+            $this->dispatcher->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
+        }
+    }
+
+    private function onFailure($event, $request, $e)
+    {
+        if (null !== $this->logger) {
+            $this->logger->info(sprintf('WordPress authentication failed: %s', $e->getMessage()));
+        }
+
+        $this->securityContext->setToken(null);
     }
 }

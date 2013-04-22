@@ -91,7 +91,7 @@ class WordpressFactory extends AbstractFactory
 
     public function getPosition()
     {
-        return 'remember_me';
+        return 'pre_auth';
     }
 
     public function getKey()
