@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Security\Firewall;
 
+use Kayue\WordpressBundle\Model\UserInterface as WordpressUserInterface;
 use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -15,7 +16,6 @@ use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterfac
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 use Symfony\Component\Security\Http\SecurityEvents;
@@ -122,8 +122,7 @@ class WordpressListener implements ListenerInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        // TODO: Change UserInterface to WordpressUserInterface
-        if (null === $token || false === $token->getUser() instanceof UserInterface) {
+        if (null === $token || false === $token->getUser() instanceof WordpressUserInterface) {
             if (null !== $this->logger) {
                 $this->logger->debug('Remove WordPress cookie');
             }
