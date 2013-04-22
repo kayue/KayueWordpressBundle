@@ -173,15 +173,17 @@ class WordpressCookieService implements LogoutHandlerInterface
         $expiration = time() + $this->options['lifetime'];
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
-        $request->attributes->set(self::COOKIE_ATTR_NAME,
-            new Cookie(
-                $this->options['name'],
-                $this->encodeCookie(array($username, $expiration, $hmac)),
-                time() + $this->options['lifetime'],
-                $this->options['path'],
-                $this->options['domain']
-            )
-        );
+        if(false === $request->cookies->has($this->options['name'])) {
+            $response->headers->setCookie(
+                new Cookie(
+                    $this->options['name'],
+                    $this->encodeCookie(array($username, $expiration, $hmac)),
+                    time() + $this->options['lifetime'],
+                    $this->options['path'],
+                    $this->options['domain']
+                )
+            );
+        }
     }
 
     /**

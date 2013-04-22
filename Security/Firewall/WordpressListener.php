@@ -134,7 +134,6 @@ class WordpressListener implements ListenerInterface
                 $this->logger->debug('Write WordPress cookie');
             }
 
-            // TODO: Don't write cookie again if already exist
             $this->cookieService->loginSuccess($request, $response, $token);
         }
 
