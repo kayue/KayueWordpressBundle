@@ -14,11 +14,24 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 use Symfony\Component\Security\Http\RememberMe\AbstractRememberMeServices;
-use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
 
 class WordpressCookieService implements LogoutHandlerInterface
 {
+    /**
+     * This attribute name can be used by the implementation if it needs to set
+     * a cookie on the Request when there is no actual Response, yet.
+     *
+     * @var string
+     */
+    const COOKIE_ATTR_NAME = '_wordpress_logged_in_cookie';
+
+    /**
+     * Cookie delimiter.
+     *
+     * @var string
+     */
     const COOKIE_DELIMITER = '|';
+
     private $loggedInKey;
     private $loggedInSalt;
     private $userProvider;
@@ -154,25 +167,21 @@ class WordpressCookieService implements LogoutHandlerInterface
      */
     public function loginSuccess(Request $request, Response $response, TokenInterface $token)
     {
-        /*
         $user       = $token->getUser();
         $username   = $user->getUsername();
         $password   = $user->getPassword();
         $expiration = time() + $this->options['lifetime'];
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
-        $response->headers->setCookie(
+        $request->attributes->set(self::COOKIE_ATTR_NAME,
             new Cookie(
                 $this->options['name'],
                 $this->encodeCookie(array($username, $expiration, $hmac)),
                 time() + $this->options['lifetime'],
                 $this->options['path'],
-                $this->options['domain'],
-                $this->options['secure'],
-                $this->options['httponly']
+                $this->options['domain']
             )
         );
-        */
     }
 
     /**
@@ -199,7 +208,9 @@ class WordpressCookieService implements LogoutHandlerInterface
         }
 
         // TODO: Clear WordPress backend cookie as well
-        // $request->attributes->set(self::COOKIE_ATTR_NAME, new Cookie($this->options['name'], null, 1, $this->options['path'], $this->options['domain']));
+        $request->attributes->set(self::COOKIE_ATTR_NAME,
+            new Cookie($this->options['name'], null, 1, $this->options['path'], $this->options['domain'])
+        );
     }
 
     /**

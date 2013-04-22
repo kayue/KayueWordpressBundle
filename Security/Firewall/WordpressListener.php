@@ -120,6 +120,7 @@ class WordpressListener implements ListenerInterface
 
         $token = $this->securityContext->getToken();
         $request = $event->getRequest();
+        $response = $event->getResponse();
 
         // TODO: Change UserInterface to WordpressUserInterface
         if (null === $token || false === $token->getUser() instanceof UserInterface) {
@@ -127,14 +128,19 @@ class WordpressListener implements ListenerInterface
                 $this->logger->debug('Remove WordPress cookie');
             }
 
-            $this->cookieService->logout($request, $event->getResponse(), $token);
+            $this->cookieService->logout($request, $response, $token);
         } else {
             if (null !== $this->logger) {
                 $this->logger->debug('Write WordPress cookie');
             }
 
             // TODO: Don't write cookie again if already exist
-            $this->cookieService->loginSuccess($request, $event->getResponse(), $token);
+            $this->cookieService->loginSuccess($request, $response, $token);
+        }
+
+        // Add WordPress cookie to respond.
+        if ($request->attributes->has(WordpressCookieService::COOKIE_ATTR_NAME)) {
+            $response->headers->setCookie($request->attributes->get(WordpressCookieService::COOKIE_ATTR_NAME));
         }
     }
 }
