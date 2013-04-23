@@ -26,3 +26,6 @@ services:
             - null
             - null
             - @logger
+
+    kayue_wordpress.security.encoder.phpass:
+        class: Kayue\WordpressBundle\Security\Encoder\PhpassPasswordEncoder
