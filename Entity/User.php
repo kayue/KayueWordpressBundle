@@ -8,9 +8,9 @@ use Kayue\WordpressBundle\Model\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Hypebeast\WordpressBundle\Entity\User
+ * Kayue\WordpressBundle\Entity\User
  *
- * @ORM\Table(name="users")
+ * @ORM\Table(name="wp_users")
  * @ORM\Entity
  * @UniqueEntity({"fields": "email", "message": "Sorry, that email address is already used.", "groups": {"register", "edit"}})
  * @UniqueEntity({"fields": "username", "message": "Sorry, that username is already used.", "groups": {"register", "edit"}})
@@ -23,7 +23,7 @@ class User implements UserInterface
     /**
      * @var bigint $id
      *
-     * @ORM\Column(name="ID", type="wordpressid", length=20)
+     * @ORM\Column(name="ID", type="integer", length=20)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
@@ -100,9 +100,9 @@ class User implements UserInterface
     private $displayName;
 
     /**
-     * @var Hypebeast\WordpressBundle\Entity\UserMeta
+     * @var Kayue\WordpressBundle\Entity\UserMeta
      *
-     * @ORM\OneToMany(targetEntity="Hypebeast\WordpressBundle\Entity\UserMeta", mappedBy="user", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\UserMeta", mappedBy="user", cascade={"persist"})
      */
     private $metas;
 
@@ -312,9 +312,9 @@ class User implements UserInterface
     /**
      * Add meta
      *
-     * @param Hypebeast\WordpressBundle\Entity\UserMeta $meta
+     * @param Kayue\WordpressBundle\Entity\UserMeta $meta
      */
-    public function addMeta(\Hypebeast\WordpressBundle\Entity\UserMeta $meta)
+    public function addMeta(\Kayue\WordpressBundle\Entity\UserMeta $meta)
     {
         $this->metas[] = $meta;
 
