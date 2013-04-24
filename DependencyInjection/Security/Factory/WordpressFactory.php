@@ -64,6 +64,20 @@ class WordpressFactory extends AbstractFactory
         // TODO: set $options['name'] to WordPress logged in cookie.
         $cookieService->replaceArgument(3, array_intersect_key($config, $this->options));
 
+        // Add CookieClearingLogoutHandler to logout
+        if ($container->hasDefinition('security.logout_listener.'.$id)) {
+            $cookieHandlerId = 'kayue_wordpress.security.logout.handler.cookie_clearing.'.$id;
+            $cookieHandler = $container->setDefinition($cookieHandlerId, new DefinitionDecorator('security.logout.handler.cookie_clearing'));
+            $cookieHandler->addArgument(array(
+                $this->options['name'] => array('path' => $this->options['path'], 'domain' => $this->options['domain'])
+            ));
+
+            $container
+                ->getDefinition('security.logout_listener.'.$id)
+                ->addMethodCall('addHandler', array(new Reference($cookieHandlerId)))
+            ;
+        }
+
         $listenerId = $this->getListenerId();
         $listener = $container->setDefinition($listenerId, new DefinitionDecorator('kayue_wordpress.security.authentication.listener'));
         $listener->replaceArgument(1, new Reference($cookieServiceId));
