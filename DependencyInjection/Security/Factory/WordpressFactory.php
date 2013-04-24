@@ -21,6 +21,14 @@ class WordpressFactory extends AbstractFactory
         'httponly' => true,
     );
 
+    public function create(ContainerBuilder $container, $id, $config, $userProviderId, $defaultEntryPointId)
+    {
+        $this->options = array_intersect_key($config, $this->options);
+
+        return parent::create($container, $id, $config, $userProviderId, $defaultEntryPointId);
+    }
+
+
     /**
      * Return the id of a service which implements the AuthenticationProviderInterface.
      *
@@ -62,7 +70,7 @@ class WordpressFactory extends AbstractFactory
         $cookieService = $container->setDefinition($cookieServiceId, new DefinitionDecorator($templateId));
         $cookieService->replaceArgument(2, new Reference($userProviderId));
         // TODO: set $options['name'] to WordPress logged in cookie.
-        $cookieService->replaceArgument(3, array_intersect_key($config, $this->options));
+        $cookieService->replaceArgument(3, $this->options);
 
         // Add CookieClearingLogoutHandler to logout
         if ($container->hasDefinition('security.logout_listener.'.$id)) {
