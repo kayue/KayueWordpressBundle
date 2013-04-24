@@ -24,7 +24,7 @@ services:
             - %kayue_wordpress.logged_in_key%
             - %kayue_wordpress.logged_in_salt%
             - null
-            - null
+            - []
             - @logger
 
     kayue_wordpress.security.encoder.phpass:

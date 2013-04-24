@@ -127,7 +127,7 @@ class WordpressListener implements ListenerInterface
                 $this->logger->debug('Remove WordPress cookie');
             }
 
-            $this->cookieService->logout($request, $response, $token);
+            $this->cookieService->cancelCookie($request);
         } else {
             if (null !== $this->logger) {
                 $this->logger->debug('Write WordPress cookie');

@@ -12,10 +12,9 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 use Symfony\Component\Security\Http\RememberMe\AbstractRememberMeServices;
 
-class WordpressCookieService implements LogoutHandlerInterface
+class WordpressCookieService
 {
     /**
      * This attribute name can be used by the implementation if it needs to set
@@ -187,23 +186,11 @@ class WordpressCookieService implements LogoutHandlerInterface
     }
 
     /**
-     * Implementation for LogoutHandlerInterface. Deletes the cookie.
-     *
-     * @param Request        $request
-     * @param Response       $response
-     * @param TokenInterface $token
-     */
-    public function logout(Request $request, Response $response, TokenInterface $token)
-    {
-        $this->cancelCookie($request);
-    }
-
-    /**
      * Deletes the WordPress cookie
      *
      * @param Request $request
      */
-    protected function cancelCookie(Request $request)
+    public function cancelCookie(Request $request)
     {
         if (null !== $this->logger) {
             $this->logger->debug(sprintf('Clearing WordPress cookie "%s"', $this->options['name']));
