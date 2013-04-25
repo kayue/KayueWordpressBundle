@@ -82,7 +82,7 @@ class User implements UserInterface, \Serializable
      *
      * @ORM\Column(name="user_activation_key", type="string", length=60)
      */
-    private $activationKey;
+    private $activationKey = '';
 
     /**
      * @var integer $status
