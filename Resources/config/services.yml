@@ -18,6 +18,14 @@ services:
         tags:
             - {name: monolog.logger, channel: security}
 
+    kayue_wordpress.security.logout.handler.cookie_clearing:
+        class:  Kayue\WordpressBundle\Security\Http\Logout\WordpressCookieClearingLogoutHandler
+        parent: security.logout.handler.cookie_clearing
+        arguments:
+            - %kayue_wordpress.site_url%
+            - %kayue_wordpress.cookie_path%
+            - %kayue_wordpress.cookie_domain%
+
     kayue_wordpress.security.cookie.service:
         class: Kayue\WordpressBundle\Security\Http\WordpressCookieService
         arguments:

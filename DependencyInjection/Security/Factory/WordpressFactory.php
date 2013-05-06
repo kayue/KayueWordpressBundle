@@ -75,10 +75,7 @@ class WordpressFactory extends AbstractFactory
         // Add CookieClearingLogoutHandler to logout
         if ($container->hasDefinition('security.logout_listener.'.$id)) {
             $cookieHandlerId = 'kayue_wordpress.security.logout.handler.cookie_clearing.'.$id;
-            $cookieHandler = $container->setDefinition($cookieHandlerId, new DefinitionDecorator('security.logout.handler.cookie_clearing'));
-            $cookieHandler->addArgument(array(
-                $this->options['name'] => array('path' => $this->options['path'], 'domain' => $this->options['domain'])
-            ));
+            $container->setDefinition($cookieHandlerId, new DefinitionDecorator('kayue_wordpress.security.logout.handler.cookie_clearing'));
 
             $container
                 ->getDefinition('security.logout_listener.'.$id)
