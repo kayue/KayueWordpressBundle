@@ -53,7 +53,7 @@ class WordpressCookieService
      */
     public function autoLogin(Request $request)
     {
-        if (null === $cookie = $request->cookies->get($this->options['name'])) {
+        if (null === $cookie = $request->cookies->get($this->configuration->getLoggedInCookieName())) {
              return null;
         }
 
@@ -171,14 +171,14 @@ class WordpressCookieService
         $expiration = time() + $this->options['lifetime'];
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
-        if(false === $request->cookies->has($this->options['name'])) {
+        if(false === $request->cookies->has($this->configuration->getLoggedInCookieName())) {
             $response->headers->setCookie(
                 new Cookie(
-                    $this->options['name'],
+                    $this->configuration->getLoggedInCookieName(),
                     $this->encodeCookie(array($username, $expiration, $hmac)),
                     time() + $this->options['lifetime'],
-                    $this->options['path'],
-                    $this->options['domain']
+                    $this->configuration->getCookiePath(),
+                    $this->configuration->getCookieDomain()
                 )
             );
         }
@@ -192,12 +192,18 @@ class WordpressCookieService
     public function cancelCookie(Request $request)
     {
         if (null !== $this->logger) {
-            $this->logger->debug(sprintf('Clearing WordPress cookie "%s"', $this->options['name']));
+            $this->logger->debug(sprintf('Clearing WordPress cookie "%s"', $this->configuration->getLoggedInCookieName()));
         }
 
         // TODO: Clear WordPress backend cookie as well
         $request->attributes->set(self::COOKIE_ATTR_NAME,
-            new Cookie($this->options['name'], null, 1, $this->options['path'], $this->options['domain'])
+            new Cookie(
+                $this->configuration->getLoggedInCookieName(),
+                null,
+                1,
+                $this->configuration->getCookiePath(),
+                $this->configuration->getCookieDomain()
+            )
         );
     }
 
