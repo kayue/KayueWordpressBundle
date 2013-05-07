@@ -4,8 +4,17 @@ Set `logged_in_key` and `logged_in_salt`, can be found in wp-config.php.
 
 ```
 kayue_wordpress:
-    logged_in_key:  'isuhc5vD{1&fukZ[&k_#&K-Q.+-ipuS2BcWUn%lt?pg(.elS-b++j2>grL,;8EW/'
-    logged_in_salt: '.oYy]!|SU/5= [.C5;0+,#t,u1+`_#l%d3)+Z!~~NBV0a81eAGD4k[ pxhnAhiy0'
+    # Site URL must match *EXACTLY* with WordPress's setting. Can be found
+    # on the Settings > General screen, there are field named "WordPress Address"
+    site_url:       'http://localhost/wordpress'
+
+    # Logged in key and salt. Can be found in the wp-config.php file.
+    logged_in_key:  ':j$_=(:l@8Fku^U;MQ~#VOJXOZcVB_@u+t-NNYqmTH4na|)5Bhs1|tF1IA|>tz*E'
+    logged_in_salt: ')A^CQ<R:1|^dK/Q;.QfP;U!=J=(_i6^s0f#2EIbGIgFN{,3U9H$q|o/sJfWF`NRM'
+
+    # WordPress cookie path / domain settings. (Optional)
+    cookie_path:    '/'
+    cookie_domain:  null
 ```
 
 #### security.yml
@@ -30,9 +39,7 @@ security:
         secured_area:
             pattern:    ^/demo/secured/
 
-            kayue_wordpress:
-                name:   wordpress_logged_in_cc55b6db1c92ef7ec624e6e0c2005814
-                domain: .hb.com
+            kayue_wordpress: ~
 
             form_login:
                  check_path: /demo/secured/login_check
