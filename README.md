@@ -1,8 +1,16 @@
+# KayueWordpressBundle
+
+Improved version of the original [WordpressBundle](https://github.com/kayue/WordpressBundle). The biggest different is this new KayueWordpressBundle won't load the entire WordPress core, thus all the WordPress template funtions won't be available in your Symfony app. This is also the goal of the bundle; do everything in Symfony's way.
+
+I started that bundle two years ago and the original repository grew somewhat chaotically, so I decided to start fresh with new repositories.
+
+## Set Up
+
 #### config.yml
 
-Set `logged_in_key` and `logged_in_salt`, can be found in wp-config.php.
+Set `site_url`, `logged_in_key` and `logged_in_salt` to `config.yml`
 
-```
+```yaml
 kayue_wordpress:
     # Site URL must match *EXACTLY* with WordPress's setting. Can be found
     # on the Settings > General screen, there are field named "WordPress Address"
@@ -21,13 +29,16 @@ kayue_wordpress:
 
 Configure encoder, user provider, and firewall.
 
-```yml
+```yaml
 security:
+    
     encoders:
+        # Add the WordPress password encoder
         Kayue\WordpressBundle\Entity\User:
             id: kayue_wordpress.security.encoder.phpass
 
     providers:
+        # Add the WordPress user provider
         wordpress:
             entity: { class: Kayue\WordpressBundle\Entity\User, property: username }
 
@@ -35,20 +46,24 @@ security:
         login:
             pattern:  ^/demo/secured/login$
             security: false
-
         secured_area:
             pattern:    ^/demo/secured/
-
+            # Add the WordPress firewall. Allow you to read WordPress's login state in Symfony app.
             kayue_wordpress: ~
-
+            # Optional. Symfony's default form login works for WordPress user too.
             form_login:
                  check_path: /demo/secured/login_check
                  login_path: /demo/secured/login
                  default_target_path: /demo/secured/hello/world
-
+            # Optional. Use this to logout.
             logout:
                 path:   /demo/secured/logout
                 target: /demo/secured/login
-
-            ...
+            # ...
 ```
+
+## Todo
+
+* Complete WordPress entities
+* OptionManager
+* Multi-site support
