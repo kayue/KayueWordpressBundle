@@ -2,16 +2,17 @@
 
 namespace Kayue\WordpressBundle\Security\Http\Logout;
 
+use Kayue\WordpressBundle\Wordpress\ConfigurationManager;
 use Symfony\Component\Security\Http\Logout\CookieClearingLogoutHandler;
 
 class WordpressCookieClearingLogoutHandler extends CookieClearingLogoutHandler
 {
-    public function __construct($siteUrl, $path, $domain)
+    public function __construct(ConfigurationManager $configuration)
     {
         parent::__construct(array(
-            'wordpress_logged_in_'.md5($siteUrl) => array(
-                'path'   => $path,
-                'domain' => $domain,
+            $configuration->getLoggedInCookieName() => array(
+                'path'   => $configuration->getCookiePath(),
+                'domain' => $configuration->getCookieDomain(),
             )
         ));
     }

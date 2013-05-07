@@ -68,9 +68,10 @@ class WordpressFactory extends AbstractFactory
 
         /** @var $cookieService Definition */
         $cookieService = $container->setDefinition($cookieServiceId, new DefinitionDecorator($templateId));
-        $cookieService->replaceArgument(2, new Reference($userProviderId));
-        // TODO: set $options['name'] to WordPress logged in cookie.
-        $cookieService->replaceArgument(3, $this->options);
+        $cookieService->addArgument(new Reference('kayue_wordpress.configuration.manager'));
+        $cookieService->addArgument(new Reference($userProviderId));
+        $cookieService->addArgument($this->options);
+        $cookieService->addArgument(new Reference('logger'));
 
         // Add CookieClearingLogoutHandler to logout
         if ($container->hasDefinition('security.logout_listener.'.$id)) {

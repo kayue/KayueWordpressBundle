@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle\Security\Http;
 
 use Kayue\WordpressBundle\Security\Authentication\Token\WordpressToken;
+use Kayue\WordpressBundle\Wordpress\ConfigurationManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,16 +32,14 @@ class WordpressCookieService
      */
     const COOKIE_DELIMITER = '|';
 
-    private $loggedInKey;
-    private $loggedInSalt;
+    protected $configuration;
     private $userProvider;
     protected $options;
     protected $logger;
 
-    public function __construct($loggedInKey, $loggedInSalt, UserProviderInterface $userProvider, array $options = array(), LoggerInterface $logger = null)
+    public function __construct(ConfigurationManager $configuration, UserProviderInterface $userProvider, array $options = array(), LoggerInterface $logger = null)
     {
-        $this->loggedInKey = $loggedInKey;
-        $this->loggedInSalt = $loggedInSalt;
+        $this->configuration = $configuration;
         $this->userProvider = $userProvider;
         $this->options = $options;
         $this->logger = $logger;
@@ -146,7 +145,7 @@ class WordpressCookieService
         $passwordFrag = substr($password, 8, 4);
 
         // from wp_salt()
-        $salt = $this->loggedInKey.$this->loggedInSalt;
+        $salt = $this->configuration->getLoggedInKey() . $this->configuration->getLoggedInSalt();
 
         // from wp_hash()
         $key = hash_hmac('md5', $username.$passwordFrag.'|'.$expires, $salt);
