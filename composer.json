@@ -14,8 +14,8 @@
     },
     "autoload": {
         "psr-0": {
-            "Kayue\\KayueWordpressBundle": ""
+            "Kayue\\WordpressBundle": ""
         }
     },
-    "target-dir": "Kayue/KayueWordpressBundle"
+    "target-dir": "Kayue/WordpressBundle"
 }
