@@ -61,7 +61,7 @@ class WordpressCookieServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = $this->getService();
         $request = new Request();
-        $request->cookies->set($this->getConfigurationManager()->getLoggedInCookieName(), 'admin|1|invalid');
+        $request->cookies->set($this->getConfigurationManager()->getLoggedInCookieName(), 'admin|1|hmac');
 
         $this->assertNull($service->autoLogin($request));
     }
