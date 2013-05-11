@@ -2,7 +2,9 @@
 
 namespace Kayue\WordpressBundle\Entity;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Proxy\Proxy;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -14,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 class UserMeta
 {
     /**
-     * @var bigint $id
+     * @var int $id
      *
      * @ORM\Column(name="umeta_id", type="bigint", length=20)
      * @ORM\Id
@@ -31,14 +33,14 @@ class UserMeta
     private $key;
 
     /**
-     * @var text $value
+     * @var string $value
      *
      * @ORM\Column(name="meta_value", type="wordpressmeta", nullable=true)
      */
     private $value;
 
     /**
-     * @var Kayue\WordpressBundle\Entity\User
+     * @var \Kayue\WordpressBundle\Entity\User
      *
      * @ORM\ManyToOne(targetEntity="Kayue\WordpressBundle\Entity\User", inversedBy="metas")
      * @ORM\JoinColumns({
@@ -50,7 +52,7 @@ class UserMeta
     /**
      * Get id
      *
-     * @return bigint
+     * @return int
      */
     public function getId()
     {
@@ -80,7 +82,7 @@ class UserMeta
     /**
      * Set value
      *
-     * @param text $value
+     * @param string $value
      */
     public function setValue($value)
     {
@@ -90,7 +92,7 @@ class UserMeta
     /**
      * Get value
      *
-     * @return text
+     * @return string
      */
     public function getValue()
     {
@@ -100,9 +102,9 @@ class UserMeta
     /**
      * Set user
      *
-     * @param Kayue\WordpressBundle\Entity\User $user
+     * @param \Kayue\WordpressBundle\Entity\User $user
      */
-    public function setUser(\Kayue\WordpressBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
@@ -110,15 +112,16 @@ class UserMeta
     /**
      * Get user
      *
-     * @return Kayue\WordpressBundle\Entity\User | null
+     * @return \Kayue\WordpressBundle\Entity\User
+     * @return null
      */
     public function getUser()
     {
-        if ($this->user instanceof \Doctrine\ORM\Proxy\Proxy) {
+        if ($this->user instanceof Proxy) {
             try {
-                // prevent lazy loading the user entity becuase it might not exist
+                // prevent lazy loading the user entity because it might not exist
                 $this->user->__load();
-            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+            } catch (EntityNotFoundException $e) {
                 // return null if user does not exist
                 $this->user = null;
             }

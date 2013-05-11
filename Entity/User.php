@@ -21,7 +21,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class User implements UserInterface, \Serializable
 {
     /**
-     * @var bigint $id
+     * @var int $id
      *
      * @ORM\Column(name="ID", type="integer", length=20)
      * @ORM\Id
@@ -71,7 +71,7 @@ class User implements UserInterface, \Serializable
     private $url = '';
 
     /**
-     * @var datetime $registeredDate
+     * @var \DateTime $registeredDate
      *
      * @ORM\Column(name="user_registered", type="datetime")
      */
@@ -100,7 +100,7 @@ class User implements UserInterface, \Serializable
     private $displayName;
 
     /**
-     * @var Kayue\WordpressBundle\Entity\UserMeta
+     * @var \Kayue\WordpressBundle\Entity\UserMeta
      *
      * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\UserMeta", mappedBy="user", cascade={"persist"})
      */
@@ -122,7 +122,7 @@ class User implements UserInterface, \Serializable
     /**
      * Get ID
      *
-     * @return bigint
+     * @return int
      */
     public function getId()
     {
@@ -232,7 +232,7 @@ class User implements UserInterface, \Serializable
     /**
      * Set registeredDate
      *
-     * @param datetime $userregisteredDate
+     * @param \DateTime $userregisteredDate
      */
     public function setRegisteredDate($registeredDate)
     {
@@ -242,7 +242,7 @@ class User implements UserInterface, \Serializable
     /**
      * Get registeredDate
      *
-     * @return datetime
+     * @return \DateTime
      */
     public function getRegisteredDate()
     {
@@ -312,7 +312,7 @@ class User implements UserInterface, \Serializable
     /**
      * Add meta
      *
-     * @param Kayue\WordpressBundle\Entity\UserMeta $meta
+     * @param \Kayue\WordpressBundle\Entity\UserMeta $meta
      */
     public function addMeta(\Kayue\WordpressBundle\Entity\UserMeta $meta)
     {
@@ -324,7 +324,7 @@ class User implements UserInterface, \Serializable
     /**
      * Get metas
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getMetas()
     {
@@ -334,11 +334,11 @@ class User implements UserInterface, \Serializable
     /**
      * Get metas by meta key
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getMetasByKey($key)
     {
-        return $this->getMetas()->filter(function($meta) use ($key) {
+        return $this->getMetas()->filter(function(UserMeta $meta) use ($key) {
             return $meta->getKey() === $key;
         });
     }
@@ -357,7 +357,7 @@ class User implements UserInterface, \Serializable
      * and populated in any number of different ways when the user object
      * is created.
      *
-     * @return Role[] The user roles
+     * @return \Symfony\Component\Security\Core\Role\Role[] The user roles
      */
     public function getRoles()
     {
@@ -421,7 +421,7 @@ class User implements UserInterface, \Serializable
      */
     public function equals(UserInterface $user)
     {
-        return ($this->getId() === $user->getId()) && ($this->getUsername() === $user->getUsername());
+        return $this->getUsername() === $user->getUsername();
     }
 
     /**
