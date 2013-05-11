@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Constraints;
 use Kayue\WordpressBundle\Model\UserInterface;
@@ -100,7 +101,7 @@ class User implements UserInterface, \Serializable
     private $displayName;
 
     /**
-     * @var \Kayue\WordpressBundle\Entity\UserMeta
+     * @var UserMeta
      *
      * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\UserMeta", mappedBy="user", cascade={"persist"})
      */
@@ -108,7 +109,7 @@ class User implements UserInterface, \Serializable
 
     public function __construct()
     {
-        $this->metas    = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->metas = new ArrayCollection();
     }
 
     /**
@@ -132,7 +133,7 @@ class User implements UserInterface, \Serializable
     /**
      * Set username
      *
-     * @param string $userLogin
+     * @param $username
      */
     public function setUsername($username)
     {
@@ -192,7 +193,7 @@ class User implements UserInterface, \Serializable
     /**
      * Set email
      *
-     * @param string $userEmail
+     * @param $email
      */
     public function setEmail($email)
     {
@@ -232,7 +233,7 @@ class User implements UserInterface, \Serializable
     /**
      * Set registeredDate
      *
-     * @param \DateTime $userregisteredDate
+     * @param $registeredDate
      */
     public function setRegisteredDate($registeredDate)
     {
@@ -312,9 +313,9 @@ class User implements UserInterface, \Serializable
     /**
      * Add meta
      *
-     * @param \Kayue\WordpressBundle\Entity\UserMeta $meta
+     * @param UserMeta $meta
      */
-    public function addMeta(\Kayue\WordpressBundle\Entity\UserMeta $meta)
+    public function addMeta(UserMeta $meta)
     {
         $this->metas[] = $meta;
 
@@ -333,6 +334,8 @@ class User implements UserInterface, \Serializable
 
     /**
      * Get metas by meta key
+     *
+     * @param $key
      *
      * @return \Doctrine\Common\Collections\Collection
      */
