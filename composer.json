@@ -1,0 +1,21 @@
+{
+    "name": "kayue/kayue-wordpress-bundle",
+    "type": "symfony-bundle",
+    "description": "Support for authenticating WordPress users in Symfony2.",
+    "keywords":    [
+        "authentication", "firewall", "wordpress", "symfony", "symfony2", "security"
+    ],
+    "homepage": "http://github.com/kayue/KayueWordpressBundle",
+    "license": "MIT",
+
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/symfony": ">=2.1"
+    },
+    "autoload": {
+        "psr-0": {
+            "Kayue\\KayueWordpressBundle": ""
+        }
+    },
+    "target-dir": "Kayue/KayueWordpressBundle"
+}
