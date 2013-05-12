@@ -4,6 +4,8 @@ Improved version of the original [WordpressBundle](https://github.com/kayue/Word
 
 I started that bundle two years ago and the original repository grew somewhat chaotically, so I decided to start fresh with new repositories.
 
+[![Build Status](https://travis-ci.org/kayue/KayueWordpressBundle.png?branch=master)](https://travis-ci.org/kayue/KayueWordpressBundle)
+
 #### Features
 
 * WordPress authentication (v1.0.0)
