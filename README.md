@@ -17,10 +17,8 @@ I started that bundle two years ago and the original repository grew somewhat ch
 Add the bundle to `composer.json`
 
 ```json
-// composer.json
 {
     "require": {
-        // ...
         "kayue/kayue-wordpress-bundle": "v1"
     }
 }
