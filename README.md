@@ -6,8 +6,9 @@ I started that bundle two years ago and the original repository grew somewhat ch
 
 #### Features
 
-* WordPress authentication.
-* Table prefix.
+* WordPress authentication (v1.0.0)
+* Table prefix (v1.0.1)
+* WordPress entities (v1.0.2)
 
 ## Installation
 
@@ -108,8 +109,44 @@ security:
             # ...
 ```
 
+## Usage
+
+An example to obtain post content, author, comments and categories:
+
+```
+<?php
+// path/to/controller.php
+
+public function postAction($slug)
+{
+    $repo = $this->getDoctrine()->getRepository('KayueWordpressBundle:Post');
+    $post = $repo->findOneBy(array(
+        'slug'   => 'hello-world',
+        'type'   => 'post',
+        'status' => 'publish',
+    ));
+
+    echo $post->getTitle() , "\n";
+    echo $post->getUser()->getDisplayName() , "\n";
+    echo $post->getContent() , "\n";
+
+    foreach($post->getComments() as $comment) {
+        echo $comment->getContent() . "\n";
+    }
+
+    foreach($post->getTaxonomies()->filter(function(Taxonomy $tax) {
+        // Only return categories, not tags or anything else.
+        return 'category' === $tax->getName();
+    }) as $tax) {
+        echo $tax->getTerm()->getName() . "\n";
+    }
+
+    // ...
+}
+```
+
 ## Todo
 
-* Complete WordPress entities
+* Add some Twig helper
 * OptionManager
 * Multi-site support
