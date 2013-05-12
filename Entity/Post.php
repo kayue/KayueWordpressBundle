@@ -2,7 +2,10 @@
 
 namespace Kayue\WordpressBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Proxy\Proxy;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -227,10 +230,10 @@ class Post
 
     public function __construct()
     {
-        $this->metas      = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->comments   = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->taxonomies = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->children   = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->metas      = new ArrayCollection();
+        $this->comments   = new ArrayCollection();
+        $this->taxonomies = new ArrayCollection();
+        $this->children   = new ArrayCollection();
     }
 
     /**
@@ -319,8 +322,6 @@ class Post
      * Cut string to n symbols and add delim but do not break words.
      *
      * @param string string we are operating with
-     * @param integer character count to cut to
-     * @param string|NULL delimiter. Default: '...'
      * @return string processed string
      **/
     public function trimContent($content)
@@ -646,9 +647,9 @@ class Post
     /**
      * Set parent
      *
-     * @param \Kayue\WordpressBundle\Entity\Post $child
+     * @param Post $child
      */
-    public function addChild(\Kayue\WordpressBundle\Entity\Post $child)
+    public function addChild(Post $child)
     {
         $child->setParent($this);
         $this->children[] = $child;
@@ -737,7 +738,7 @@ class Post
     /**
      * Set commentCount
      *
-     * @param bigint $commentCount
+     * @param int $commentCount
      */
     public function setCommentCount($commentCount)
     {
@@ -757,9 +758,9 @@ class Post
     /**
      * Add metas
      *
-     * @param PostMeta $metas
+     * @param PostMeta $meta
      */
-    public function addMeta(\Kayue\WordpressBundle\Entity\PostMeta $meta)
+    public function addMeta(PostMeta $meta)
     {
         $meta->setPost($this);
         $this->metas[] = $meta;
@@ -778,11 +779,13 @@ class Post
     /**
      * Get metas by meta key
      *
+     * @param $key
+     *
      * @return \Doctrine\Common\Collections\Collection
      */
     public function getMetasByKey($key)
     {
-        return $this->getMetas()->filter(function($meta) use ($key) {
+        return $this->getMetas()->filter(function(PostMeta $meta) use ($key) {
             return $meta->getKey() === $key;
         });
     }
@@ -792,7 +795,7 @@ class Post
      *
      * @param Comment $comment
      */
-    public function addComment(\Kayue\WordpressBundle\Entity\Comment $comment)
+    public function addComment(Comment $comment)
     {
         $comment->setPost($this);
         $this->comments[] = $comment;
@@ -814,7 +817,7 @@ class Post
      *
      * @param User $user
      */
-    public function setUser(\Kayue\WordpressBundle\Entity\User $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
     }
@@ -827,11 +830,11 @@ class Post
      */
     public function getUser()
     {
-        if ($this->user instanceof \Doctrine\ORM\Proxy\Proxy) {
+        if ($this->user instanceof Proxy) {
             try {
                 // prevent lazy loading the user entity becuase it might not exist
                 $this->user->__load();
-            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+            } catch (EntityNotFoundException $e) {
                 // return null if user does not exist
                 $this->user = null;
             }
@@ -845,7 +848,7 @@ class Post
      *
      * @param Taxonomy $taxonomy
      */
-    public function addTaxonomy(\Kayue\WordpressBundle\Entity\Taxonomy $taxonomy)
+    public function addTaxonomy(Taxonomy $taxonomy)
     {
         $this->taxonomies[] = $taxonomy;
     }
