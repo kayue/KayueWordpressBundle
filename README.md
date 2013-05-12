@@ -48,6 +48,22 @@ public function registerBundles()
 
 ## Configuration
 
+#### Doctrine
+
+This bundle requrie database connection. Make sure you have Doctrine configurated properly.
+
+```yaml
+// app/config/parameters.yml
+
+parameters:
+    database_driver:   pdo_mysql
+    database_host:     127.0.0.1
+    database_port:     ~
+    database_name:     my_wordpress_db
+    database_user:     root
+    database_password: pass
+```
+
 #### config.yml
 
 Set `site_url`, `logged_in_key` and `logged_in_salt` in your `config.yml`:
@@ -111,7 +127,7 @@ security:
 
 An example to obtain post content, author, comments and categories:
 
-```
+```php
 <?php
 // path/to/controller.php
 
