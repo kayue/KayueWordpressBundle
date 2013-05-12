@@ -9,7 +9,7 @@ namespace Kayue\WordpressBundle\Types;
 use Doctrine\DBAL\Types\TextType;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 
-class WordPressMetaType extends TextType
+class WordpressMetaType extends TextType
 {
     const NAME = 'wordpressmeta';
 

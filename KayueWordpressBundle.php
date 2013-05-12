@@ -4,9 +4,10 @@ namespace Kayue\WordpressBundle;
 
 use Doctrine\DBAL\Types\Type;
 use Kayue\WordpressBundle\DependencyInjection\Security\Factory\WordpressFactory;
+use Kayue\WordpressBundle\Types\WordpressIdType;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Kayue\WordpressBundle\Types\WordPressMetaType;
+use Kayue\WordpressBundle\Types\WordpressMetaType;
 
 class KayueWordpressBundle extends Bundle
 {
@@ -15,8 +16,12 @@ class KayueWordpressBundle extends Bundle
     {
         parent::boot();
 
-        if (!Type::hasType(WordPressMetaType::NAME)) {
-            Type::addType(WordPressMetaType::NAME, 'Kayue\WordpressBundle\Types\WordPressMetaType');
+        if (!Type::hasType(WordpressMetaType::NAME)) {
+            Type::addType(WordpressMetaType::NAME, 'Kayue\WordpressBundle\Types\WordpressMetaType');
+        }
+
+        if (!Type::hasType(WordpressIdType::NAME)) {
+            Type::addType(WordpressIdType::NAME, 'Kayue\WordpressBundle\Types\WordpressIdType');
         }
     }
 
