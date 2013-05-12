@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 /**
  * Kayue\WordpressBundle\Entity\UserMeta
  *
- * @ORM\Table(name="wp_usermeta")
+ * @ORM\Table(name="usermeta")
  * @ORM\Entity
  */
 class UserMeta

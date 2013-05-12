@@ -23,6 +23,9 @@ kayue_wordpress:
     # WordPress cookie path / domain settings. (Optional)
     cookie_path:    '/'
     cookie_domain:  null
+
+    # Table prefix. (Optional, default value is "wp_")
+    table_prefix:   'wp_'
 ```
 
 #### security.yml

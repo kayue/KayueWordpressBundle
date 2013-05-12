@@ -11,7 +11,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Kayue\WordpressBundle\Entity\User
  *
- * @ORM\Table(name="wp_users")
+ * @ORM\Table(name="users")
  * @ORM\Entity
  * @UniqueEntity({"fields": "email", "message": "Sorry, that email address is already used.", "groups": {"register", "edit"}})
  * @UniqueEntity({"fields": "username", "message": "Sorry, that username is already used.", "groups": {"register", "edit"}})

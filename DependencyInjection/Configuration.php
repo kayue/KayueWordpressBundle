@@ -26,23 +26,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('logged_in_salt')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('cookie_path')->defaultValue('/')->end()
             ->scalarNode('cookie_domain')->defaultValue(null)->end()
-
-            /* save for later
-            ->scalarNode('cookie_path')->defaultValue(null)->end()
-            ->scalarNode('cookie_domain')->defaultValue(null)->end()
             ->scalarNode('table_prefix')->defaultValue('wp_')->end()
-            ->scalarNode('main_site')->defaultValue(null)->end()
-            ->arrayNode('sites')
-                ->prototype('array')
-                    ->children()
-                        ->scalarNode('pattern')->end()
-                        ->scalarNode('hostname_pattern')->defaultValue('')->end()
-                        ->scalarNode('entity_manager')->defaultValue(null)->end()
-                        ->arrayNode('requirements')->prototype('scalar')->defaultValue(array())->end()
-                    ->end()
-                ->end()
-            ->end()
-            */
         ->end();
 
         return $treeBuilder;
