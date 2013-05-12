@@ -1,15 +1,15 @@
-## KayueWordpressBundle
+# KayueWordpressBundle
 
 Improved version of the original [WordpressBundle](https://github.com/kayue/WordpressBundle). The biggest different is this new KayueWordpressBundle won't load the entire WordPress core, thus all the WordPress template funtions won't be available in your Symfony app. This is also the goal of the bundle; do everything in Symfony's way.
 
 I started that bundle two years ago and the original repository grew somewhat chaotically, so I decided to start fresh with new repositories.
 
-### Features
+#### Features
 
 * WordPress authentication.
 * Table prefix.
 
-### Installation
+## Installation
 
 #### Composer
 
@@ -47,7 +47,7 @@ public function registerBundles()
 }
 ```
 
-### Configuration
+## Configuration
 
 #### config.yml
 
@@ -108,7 +108,7 @@ security:
             # ...
 ```
 
-### Todo
+## Todo
 
 * Complete WordPress entities
 * OptionManager
