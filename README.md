@@ -1,14 +1,57 @@
-# KayueWordpressBundle
+## KayueWordpressBundle
 
 Improved version of the original [WordpressBundle](https://github.com/kayue/WordpressBundle). The biggest different is this new KayueWordpressBundle won't load the entire WordPress core, thus all the WordPress template funtions won't be available in your Symfony app. This is also the goal of the bundle; do everything in Symfony's way.
 
 I started that bundle two years ago and the original repository grew somewhat chaotically, so I decided to start fresh with new repositories.
 
-## Set Up
+### Features
+
+* WordPress authentication.
+* Table prefix.
+
+### Installation
+
+#### Composer
+
+Add the bundle to `composer.json`
+
+```json
+// composer.json
+{
+    "require": {
+        // ...
+        "kayue/kayue-wordpress-bundle": "v1"
+    }
+}
+```
+
+Update Composer dependency:
+
+```
+composer update kayue/kayue-wordpress-bundle
+```
+
+#### Register the bundle
+
+```php
+<?php
+// app/AppKernel.php
+
+public function registerBundles()
+{
+    $bundles = array(
+        // ...
+        new Kayue\WordpressBundle\KayueWordpressBundle(),
+    );
+    // ...
+}
+```
+
+### Configuration
 
 #### config.yml
 
-Set `site_url`, `logged_in_key` and `logged_in_salt` to `config.yml`
+Set `site_url`, `logged_in_key` and `logged_in_salt` in your `config.yml`:
 
 ```yaml
 kayue_wordpress:
@@ -30,7 +73,7 @@ kayue_wordpress:
 
 #### security.yml
 
-Configure encoder, user provider, and firewall.
+Configure encoder, user provider, and enable the WordPress firewall in your `security.yml`.
 
 ```yaml
 security:
@@ -65,7 +108,7 @@ security:
             # ...
 ```
 
-## Todo
+### Todo
 
 * Complete WordPress entities
 * OptionManager
