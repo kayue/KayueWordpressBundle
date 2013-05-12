@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Wordpress;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 use Symfony\Component\Routing\Matcher\UrlMatcher;
@@ -20,7 +21,7 @@ class SiteManager
         'type', 'resource', 'prefix', 'pattern', 'options', 'defaults', 'requirements', 'hostname_pattern', 'entity_manager'
     );
 
-    function __construct($sites, Request $request, $logger = null)
+    function __construct($sites, Request $request, LoggerInterface $logger = null)
     {
         $this->sites   = $sites;
         $this->request = $request;
@@ -46,7 +47,7 @@ class SiteManager
             return $matched['_route'];
         } catch (ResourceNotFoundException $e) {
             if(null !== $this->logger) {
-                $this->logger->crit("Current route (" . $pathInfo . ")
+                $this->logger->critical("Current route (" . $pathInfo . ")
                     in host " . $context->getHost() . "
                     not found in WordPress's sites.");
             }
