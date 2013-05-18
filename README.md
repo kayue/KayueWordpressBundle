@@ -80,12 +80,19 @@ kayue_wordpress:
     logged_in_key:  ':j$_=(:l@8Fku^U;MQ~#VOJXOZcVB_@u+t-NNYqmTH4na|)5Bhs1|tF1IA|>tz*E'
     logged_in_salt: ')A^CQ<R:1|^dK/Q;.QfP;U!=J=(_i6^s0f#2EIbGIgFN{,3U9H$q|o/sJfWF`NRM'
 
-    # WordPress cookie path / domain settings. (Optional)
+    # Optional: WordPress cookie path / domain settings.
     cookie_path:    '/'
     cookie_domain:  null
 
-    # Table prefix. (Optional, default value is "wp_")
+    # Optional: Custom table prefix, default is "wp_".
     table_prefix:   'wp_'
+
+    # Optional: Enable multi-site.
+    sties:
+        foo:            # site name, could be anything you want
+            blog_id: 1  # blog id
+        bar:
+            blog_id: 2
 ```
 
 #### security.yml
