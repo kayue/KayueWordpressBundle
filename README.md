@@ -9,8 +9,9 @@ I started that bundle two years ago and the original repository grew somewhat ch
 #### Features
 
 * WordPress authentication (v1.0.0)
-* Table prefix (v1.0.1)
+* Custom table prefix (v1.0.1)
 * WordPress entities (v1.0.2)
+* [Multisite](http://codex.wordpress.org/Create_A_Network) support
 
 ## Installation
 
@@ -87,10 +88,10 @@ kayue_wordpress:
     # Optional: Custom table prefix, default is "wp_".
     table_prefix:   'wp_'
 
-    # Optional: Enable multi-site.
-    sties:
-        foo:            # site name, could be anything you want
-            blog_id: 1  # blog id
+    # Optional: Enable multisite feature.
+    sites:
+        foo:            # Site name. Used in naming the entity manager. Could be anything you want.
+            blog_id: 1  # Blog ID.
         bar:
             blog_id: 2
 ```
@@ -168,8 +169,36 @@ public function postAction($slug)
 }
 ```
 
+
+### Multisite Example
+
+Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation. 
+
+To enable this feature in this bundle, first you have configurate all the sites in `config.yml` (see the configuration section above). The bundle will create a new entity manager for each site named `kayue_wordpress.orm.foo_entity_manager`, then you will be able to use it in your controller.
+
+```php
+<?php
+
+public function multisiteAction()
+{
+    $fooEm = $this->get('kayue_wordpress.orm.foo_entity_manager');
+    $barEm = $this->get('kayue_wordpress.orm.bar_entity_manager');
+
+    // select latest post in site foo
+    $posts = $fooEm->getRepository('KayueWordpressBundle:Post')->findBy(array(
+        'status' => 'publish',
+        'type'   => 'post',
+    ), array('date' => 'DESC'), 10);
+
+    // do something with bar's comments
+    $comments = $barEm->getRepository('KayueWordpressBundle:Comment')->findAll();
+    
+    // ...
+}
+```
+
 ## Todo
 
 * Add some Twig helper
 * OptionManager
-* Multi-site support
+
