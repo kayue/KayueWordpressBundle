@@ -17,10 +17,6 @@ class SiteManager
     protected $logger;
     protected $routeCollection;
 
-    private static $availableKeys = array(
-        'type', 'resource', 'prefix', 'pattern', 'options', 'defaults', 'requirements', 'hostname_pattern', 'entity_manager'
-    );
-
     function __construct($sites, Request $request, LoggerInterface $logger = null)
     {
         $this->sites   = $sites;
@@ -68,7 +64,6 @@ class SiteManager
             $routeCollection = new RouteCollection();
 
             foreach ($this->sites as $name => $config) {
-                $config = $this->normalizeRouteConfig($config);
                 $this->parseRoute($routeCollection, $name, $config);
             }
 
@@ -76,29 +71,6 @@ class SiteManager
         }
 
         return $this->routeCollection;
-    }
-
-    /**
-     * Normalize route configuration.
-     *
-     * @param array $config A resource config
-     *
-     * @return array
-     *
-     * @throws \InvalidArgumentException if one of the provided config keys is not supported
-     */
-    private function normalizeRouteConfig(array $config)
-    {
-        foreach ($config as $key => $value) {
-            if (!in_array($key, self::$availableKeys)) {
-                throw new \InvalidArgumentException(sprintf(
-                    'WordPress routing loader does not support given key: "%s". Expected one of the (%s).',
-                    $key, implode(', ', self::$availableKeys)
-                ));
-            }
-        }
-
-        return $config;
     }
 
     /**
@@ -110,17 +82,17 @@ class SiteManager
      */
     protected function parseRoute(RouteCollection $collection, $name, $config)
     {
+        $path = isset($config['path']) ? $config['path'] : '/{path}';
         $defaults = isset($config['defaults']) ? $config['defaults'] : array();
         $requirements = isset($config['requirements']) ? $config['requirements'] : array();
         $options = isset($config['options']) ? $config['options'] : array();
-        $hostnamePattern = isset($config['hostname_pattern']) ? $config['hostname_pattern'] : null;
-        $pattern = isset($config['pattern']) ? $config['pattern'] : "/{path}";
+        $host = isset($config['host']) ? $config['host'] : '';
 
         if (!isset($config['pattern'])) {
             $requirements = array_merge($requirements, array("path" => '.*'));
         }
 
-        $route = new Route($pattern, $defaults, $requirements, $options, $hostnamePattern);
+        $route = new Route($path, $defaults, $requirements, $options, $host);
 
         $collection->add($name, $route);
     }

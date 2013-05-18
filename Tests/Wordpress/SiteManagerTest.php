@@ -66,21 +66,21 @@ class SiteManagerTest extends \PHPUnit_Framework_TestCase
     {
         return array(
             'default' => array(
-                'hostname_pattern' => 'example.com',
-                'entity_manager'   => 'default',
+                'blog_id' => 1,
+                'host' => 'example.com',
             ),
             'hostname' => array(
-                'hostname_pattern' => 'en.example.com',
-                'entity_manager'   => 'default',
+                'blog_id' => 2,
+                'host' => 'en.example.com',
             ),
             'placeholder' => array(
-                'hostname_pattern' => '{locale}.example.com',
-                'entity_manager'   => 'default',
+                'blog_id' => 3,
+                'host' => '{locale}.example.com',
             ),
             'requirements' => array(
-                'hostname_pattern' => 'example.com.{locale}',
+                'blog_id' => 4,
+                'host' => 'example.com.{locale}',
                 'requirements'     => array('locale' => 'en|fr'),
-                'entity_manager'   => 'default',
             ),
         );
     }

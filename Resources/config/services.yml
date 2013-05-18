@@ -63,3 +63,11 @@ services:
         factory_class:  %kayue_wordpress.orm.entity_manager.class%
         factory_method: create
         abstract:       true
+
+    kayue_wordpress.site.manager:
+        class: Kayue\WordpressBundle\Wordpress\SiteManager
+        scope: request
+        arguments:
+            - %kayue_wordpress.sites%
+            - @request
+            - @logger
