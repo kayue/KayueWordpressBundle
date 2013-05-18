@@ -30,7 +30,8 @@ class TablePrefixSubscriber implements EventSubscriber
         }
 
         // set table prefix
-        $prefix = $this->getEntityTablePrefix($classMetadata->name, $args->getEntityManager());
+        $prefix = $this->getPrefix($classMetadata->name, $args->getEntityManager());
+
         $classMetadata->setPrimaryTable(array(
             'name' => $prefix . $classMetadata->getTableName()
         ));
@@ -51,18 +52,18 @@ class TablePrefixSubscriber implements EventSubscriber
      * @param  EntityManager $em
      * @return string
      */
-    public function getEntityTablePrefix($entityName, $em)
+    private function getPrefix($entityName, $em)
     {
         $prefix = $this->prefix;
 
-        // user and usermeta table won't have blog ID appened
-        if ($entityName === 'Kayue\WordpressBundle\Entity\User' || $entityName === 'Hypebeast\WordpressBundle\Entity\UserMeta') {
+        // users and usermeta table won't have blog ID appended.
+        if ($entityName === 'Kayue\WordpressBundle\Entity\User' ||
+            $entityName === 'Kayue\WordpressBundle\Entity\UserMeta') {
             return $this->prefix;
         }
 
-        $classMetadataFactory = $em->getMetadataFactory();
-        if (method_exists($classMetadataFactory, 'getBlogId')) {
-            $blogId  = $classMetadataFactory->getBlogId();
+        if (method_exists($em, 'getBlogId')) {
+            $blogId  = $em->getBlogId();
 
             // append blog ID to prefix
             if ($blogId > 1) {
