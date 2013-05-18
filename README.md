@@ -88,12 +88,22 @@ kayue_wordpress:
     # Optional: Custom table prefix, default is "wp_".
     table_prefix:   'wp_'
 
-    # Optional: Enable multisite feature.
+    # Optional: Enable multisite feature by configuring routes. Earlier routes always win.
     sites:
-        foo:            # Site name. Used in naming the entity manager. Could be anything you want.
-            blog_id: 1  # Blog ID.
+        # Match a route based on the path with any host.
+        foo:                # Site name. Could be anything you want.
+            blog_id: 2      # Blog ID. Used in table prefix.
+            path: /blog/foo
+        # Match a route based on the Host.
         bar:
-            blog_id: 2
+            blog_id: 3
+            host: example.com.{locale}
+            requirements:
+                locale: fr|jp
+        # If no path is provided, a wildcard will apply. This makes all route always
+        # fall back to this site (default).
+        default:
+            blog_id: 1
 ```
 
 #### security.yml
