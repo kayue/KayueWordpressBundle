@@ -82,14 +82,14 @@ class SiteManager
      */
     protected function parseRoute(RouteCollection $collection, $name, $config)
     {
-        $path = isset($config['path']) ? $config['path'] : '/{path}';
+        $path = isset($config['path']) ? $config['path'] : '{anything_placeholder}';
         $defaults = isset($config['defaults']) ? $config['defaults'] : array();
         $requirements = isset($config['requirements']) ? $config['requirements'] : array();
         $options = isset($config['options']) ? $config['options'] : array();
         $host = isset($config['host']) ? $config['host'] : '';
 
-        if (!isset($config['pattern'])) {
-            $requirements = array_merge($requirements, array("path" => '.*'));
+        if ($path === '{anything_placeholder}') {
+            $requirements = array_merge($requirements, array("anything_placeholder" => '.*'));
         }
 
         $route = new Route($path, $defaults, $requirements, $options, $host);
