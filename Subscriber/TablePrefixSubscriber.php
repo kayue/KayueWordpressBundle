@@ -31,7 +31,9 @@ class TablePrefixSubscriber implements EventSubscriber
 
         // set table prefix
         $prefix = $this->getEntityTablePrefix($classMetadata->name, $args->getEntityManager());
-        $classMetadata->setTableName($prefix . $classMetadata->getTableName());
+        $classMetadata->setPrimaryTable(array(
+            'name' => $prefix . $classMetadata->getTableName()
+        ));
 
         // set table prefix to associated entity
         // TODO: make sure prefix won't apply to user table
