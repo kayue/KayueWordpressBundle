@@ -3,12 +3,13 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Model\Blog as BaseBlog;
 
 /**
  * @ORM\Table(name="blogs")
  * @ORM\Entity
  */
-class Blog
+class Blog extends BaseBlog
 {
     /**
      * @var int $id

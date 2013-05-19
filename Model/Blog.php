@@ -17,21 +17,27 @@ class Blog implements BlogInterface
     protected $entityManager;
 
     /**
-     * @param integer $id
-     * @param WordpressEntityManager $entityManager
+     * @param int $id
      */
-    public function __construct($id, WordpressEntityManager $entityManager)
+    public function setId($id)
     {
         $this->id = $id;
-        $this->entityManager = $entityManager;
     }
 
     /**
-     * @return integer
+     * @return int
      */
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * @param WordpressEntityManager $manager
+     */
+    public function setEntityManager(WordpressEntityManager $manager)
+    {
+        $this->entityManager = $manager;
     }
 
     /**

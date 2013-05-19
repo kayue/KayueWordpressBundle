@@ -5,7 +5,6 @@ namespace Kayue\WordpressBundle\Model;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\DBAL\DBALException;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Container;
 
 class BlogManager implements BlogManagerInterface
@@ -22,7 +21,6 @@ class BlogManager implements BlogManagerInterface
 
     /**
      * @param Container $container
-     * @param LoggerInterface $logger
      */
     function __construct(Container $container)
     {
@@ -30,7 +28,8 @@ class BlogManager implements BlogManagerInterface
     }
 
     /**
-     * @param integer $name
+     * @param integer $id
+     * @throws \Doctrine\ORM\ORMException
      * @return Blog
      */
     public function findBlogById($id)
@@ -44,13 +43,17 @@ class BlogManager implements BlogManagerInterface
             // use brand a new cache each entity manager to prevent faulty cache
             $em->getMetadataFactory()->setCacheDriver(new ArrayCache());
 
-            if(null === $em->getRepository('KayueWordpressBundle:Blog')->findOneById($id)) {
+            if(null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
                 throw new \Doctrine\ORM\ORMException(sprintf('Blog %d was not found.', $id));
             }
 
             $em->setBlogId($id);
 
-            $this->blogs[$id] = new Blog($id, $em);
+            $blog = new Blog();
+            $blog->setId($id);
+            $blog->setEntityManager($em);
+
+            $this->blogs[$id] = $blog;
         }
 
         return $this->blogs[$id];
