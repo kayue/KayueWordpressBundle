@@ -162,6 +162,31 @@ public function postAction($slug)
 }
 ```
 
+### Multisite Example
+
+Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation.
+
+The following example shows you how to display the latest 10 posts in blog 2.
+
+```php
+<?php
+
+public function multisiteAction()
+{
+    $blogManager = $this->get('kayue_wordpress.blog.manager');
+
+    /** @var $em EntityManager */
+    $blog2em = $blogManager->findBlogById(2)->getEntityManager();
+
+    $posts = $blog2em->getRepository('KayueWordpressBundle:Post')->findBy(array(
+        'status' => 'publish',
+        'type'   => 'post',
+    ), array('date' => 'DESC'), 10);
+
+    // ...
+}
+```
+
 ## Todo
 
 * Add some Twig helper
