@@ -76,4 +76,3 @@ services:
         class: Kayue\WordpressBundle\Model\BlogManager
         arguments:
             - @service_container
-            - @logger
