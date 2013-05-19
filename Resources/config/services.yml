@@ -71,3 +71,9 @@ services:
             - %kayue_wordpress.sites%
             - @request
             - @logger
+
+    kayue_wordpress.blog.manager:
+        class: Kayue\WordpressBundle\Model\BlogManager
+        arguments:
+            - @service_container
+            - @logger
