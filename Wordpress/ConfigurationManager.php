@@ -10,7 +10,7 @@ class ConfigurationManager
     protected $loggedInKey;
     protected $loggedInSalt;
 
-    function __construct($siteUrl, $cookiePath = '/', $cookieDomain = null, $loggedInKey, $loggedInSalt)
+    public function __construct($siteUrl, $cookiePath = '/', $cookieDomain = null, $loggedInKey, $loggedInSalt)
     {
         $this->siteUrl = $siteUrl;
         $this->cookiePath = $cookiePath;

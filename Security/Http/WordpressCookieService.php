@@ -13,7 +13,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Http\RememberMe\AbstractRememberMeServices;
 
 class WordpressCookieService
 {
@@ -94,7 +93,7 @@ class WordpressCookieService
      * Validate the cookie and do any additional processing that is required.
      * This is called from autoLogin().
      *
-     * @param array $cookieParts
+     * @param array   $cookieParts
      * @param Request $request
      *
      * @throws \RuntimeException
@@ -159,8 +158,8 @@ class WordpressCookieService
      * requested WordPress capabilities. The implementation usually sets a
      * cookie and possibly stores a persistent record of it.
      *
-     * @param Request $request
-     * @param Response $response
+     * @param Request        $request
+     * @param Response       $response
      * @param TokenInterface $token
      */
     public function loginSuccess(Request $request, Response $response, TokenInterface $token)
@@ -171,7 +170,7 @@ class WordpressCookieService
         $expiration = time() + $this->options['lifetime'];
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
-        if(false === $request->cookies->has($this->configuration->getLoggedInCookieName())) {
+        if (false === $request->cookies->has($this->configuration->getLoggedInCookieName())) {
             $response->headers->setCookie(
                 new Cookie(
                     $this->configuration->getLoggedInCookieName(),

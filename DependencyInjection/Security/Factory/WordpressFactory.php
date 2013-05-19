@@ -2,7 +2,6 @@
 
 namespace Kayue\WordpressBundle\DependencyInjection\Security\Factory;
 
-use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -28,14 +27,13 @@ class WordpressFactory extends AbstractFactory
         return parent::create($container, $id, $config, $userProviderId, $defaultEntryPointId);
     }
 
-
     /**
      * Return the id of a service which implements the AuthenticationProviderInterface.
      *
      * @param ContainerBuilder $container
-     * @param string $id             The unique id of the firewall
-     * @param array $config          The options array for this listener
-     * @param string $userProviderId The id of the user provider
+     * @param string           $id             The unique id of the firewall
+     * @param array            $config         The options array for this listener
+     * @param string           $userProviderId The id of the user provider
      *
      * @return string
      */
@@ -54,9 +52,9 @@ class WordpressFactory extends AbstractFactory
 
     /**
      * @param ContainerBuilder $container
-     * @param string $id             The unique id of the firewall
-     * @param array $config          The options array for this listener
-     * @param string $userProviderId The id of the user provider
+     * @param string           $id             The unique id of the firewall
+     * @param array            $config         The options array for this listener
+     * @param string           $userProviderId The id of the user provider
      *
      * @return string
      */

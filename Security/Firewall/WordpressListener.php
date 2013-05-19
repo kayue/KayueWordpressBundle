@@ -31,11 +31,11 @@ class WordpressListener implements ListenerInterface
     /**
      * Constructor
      *
-     * @param SecurityContextInterface $securityContext
-     * @param WordpressCookieService $cookieService
+     * @param SecurityContextInterface       $securityContext
+     * @param WordpressCookieService         $cookieService
      * @param AuthenticationManagerInterface $authenticationManager
-     * @param LoggerInterface $logger
-     * @param EventDispatcherInterface $dispatcher
+     * @param LoggerInterface                $logger
+     * @param EventDispatcherInterface       $dispatcher
      */
     public function __construct(SecurityContextInterface $securityContext, WordpressCookieService $cookieService, AuthenticationManagerInterface $authenticationManager, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
     {

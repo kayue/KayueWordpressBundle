@@ -15,7 +15,7 @@ class WordpressProvider implements AuthenticationProviderInterface
     /**
      * @param UserCheckerInterface $userChecker
      */
-    function __construct(UserCheckerInterface $userChecker = null)
+    public function __construct(UserCheckerInterface $userChecker = null)
     {
         $this->userChecker = $userChecker;
     }
