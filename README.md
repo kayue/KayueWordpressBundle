@@ -9,8 +9,9 @@ I started that bundle two years ago and the original repository grew somewhat ch
 #### Features
 
 * WordPress authentication (v1.0.0)
-* Table prefix (v1.0.1)
+* Custom table prefix (v1.0.1)
 * WordPress entities (v1.0.2)
+* [Multisite](http://codex.wordpress.org/Create_A_Network) support
 
 ## Installation
 
@@ -80,11 +81,11 @@ kayue_wordpress:
     logged_in_key:  ':j$_=(:l@8Fku^U;MQ~#VOJXOZcVB_@u+t-NNYqmTH4na|)5Bhs1|tF1IA|>tz*E'
     logged_in_salt: ')A^CQ<R:1|^dK/Q;.QfP;U!=J=(_i6^s0f#2EIbGIgFN{,3U9H$q|o/sJfWF`NRM'
 
-    # WordPress cookie path / domain settings. (Optional)
+    # Optional: WordPress cookie path / domain settings.
     cookie_path:    '/'
     cookie_domain:  null
 
-    # Table prefix. (Optional, default value is "wp_")
+    # Optional: Custom table prefix, default is "wp_".
     table_prefix:   'wp_'
 ```
 
@@ -161,8 +162,31 @@ public function postAction($slug)
 }
 ```
 
+### Multisite Example
+
+Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation.
+
+The following example shows you how to display the latest 10 posts in blog 2.
+
+```php
+<?php
+
+public function multisiteAction()
+{
+    $blogManager = $this->get('kayue_wordpress.blog.manager');
+    $entityManager = $blogManager->findBlogById(2)->getEntityManager();
+
+    $posts = $entityManager->getRepository('KayueWordpressBundle:Post')->findBy(array(
+        'status' => 'publish',
+        'type'   => 'post',
+    ), array('date' => 'DESC'), 10);
+
+    // ...
+}
+```
+
 ## Todo
 
 * Add some Twig helper
 * OptionManager
-* Multi-site support
+
