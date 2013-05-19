@@ -87,23 +87,6 @@ kayue_wordpress:
 
     # Optional: Custom table prefix, default is "wp_".
     table_prefix:   'wp_'
-
-    # Optional: Enable multisite feature by configuring routes. Earlier routes always win.
-    sites:
-        # Match a route based on the path with any host.
-        foo:                # Site name. Could be anything you want.
-            blog_id: 2      # Blog ID. Used in table prefix.
-            path: /blog/foo
-        # Match a route based on the Host.
-        bar:
-            blog_id: 3
-            host: example.com.{locale}
-            requirements:
-                locale: fr|jp
-        # If no path is provided, a wildcard will apply. This makes all route always
-        # fall back to this site (default).
-        default:
-            blog_id: 1
 ```
 
 #### security.yml
@@ -175,34 +158,6 @@ public function postAction($slug)
         echo $tax->getTerm()->getName() . "\n";
     }
 
-    // ...
-}
-```
-
-
-### Multisite Example
-
-Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation. 
-
-To enable this feature in this bundle, first you have configurate all the sites in `config.yml` (see the configuration section above). The bundle will create a new entity manager for each site named `kayue_wordpress.orm.foo_entity_manager`, then you will be able to use it in your controller.
-
-```php
-<?php
-
-public function multisiteAction()
-{
-    $fooEm = $this->get('kayue_wordpress.orm.foo_entity_manager');
-    $barEm = $this->get('kayue_wordpress.orm.bar_entity_manager');
-
-    // select latest post in site foo
-    $posts = $fooEm->getRepository('KayueWordpressBundle:Post')->findBy(array(
-        'status' => 'publish',
-        'type'   => 'post',
-    ), array('date' => 'DESC'), 10);
-
-    // do something with bar's comments
-    $comments = $barEm->getRepository('KayueWordpressBundle:Comment')->findAll();
-    
     // ...
 }
 ```

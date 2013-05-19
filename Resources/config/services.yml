@@ -6,8 +6,6 @@ parameters:
     kayue_wordpress.security.cookie.service.class: Kayue\WordpressBundle\Security\Http\WordpressCookieService
     kayue_wordpress.security.encoder.phpass.class: Kayue\WordpressBundle\Security\Encoder\PhpassPasswordEncoder
     kayue_wordpress.table_prefix.subscriber.class: Kayue\WordpressBundle\Subscriber\TablePrefixSubscriber
-    kayue_wordpress.doctrine.class: Kayue\WordpressBundle\Doctrine\ManagerRegistry
-    kayue_wordpress.orm.entity_manager.class: Kayue\WordpressBundle\Doctrine\WordpressEntityManager
 
 services:
     kayue_wordpress.configuration.manager:
@@ -52,25 +50,6 @@ services:
             - %kayue_wordpress.table_prefix%
         tags:
             - {name: doctrine.event_subscriber}
-
-    kayue_wordpress.doctrine:
-        class: %kayue_wordpress.doctrine.class%
-        arguments:
-            - @service_container
-
-    kayue_wordpress.orm.entity_manager.abstract:
-        class:          %kayue_wordpress.orm.entity_manager.class%
-        factory_class:  %kayue_wordpress.orm.entity_manager.class%
-        factory_method: create
-        abstract:       true
-
-    kayue_wordpress.site.manager:
-        class: Kayue\WordpressBundle\Wordpress\SiteManager
-        scope: request
-        arguments:
-            - %kayue_wordpress.sites%
-            - @request
-            - @logger
 
     kayue_wordpress.blog.manager:
         class: Kayue\WordpressBundle\Model\BlogManager
