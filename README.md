@@ -11,7 +11,7 @@ I started that bundle two years ago and the original repository grew somewhat ch
 * WordPress authentication (v1.0.0)
 * Custom table prefix (v1.0.1)
 * WordPress entities (v1.0.2)
-* [Multisite](http://codex.wordpress.org/Create_A_Network) support
+* [Multisite](http://codex.wordpress.org/Create_A_Network) support (v1.0.3)
 
 ## Installation
 
