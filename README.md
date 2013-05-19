@@ -174,11 +174,9 @@ The following example shows you how to display the latest 10 posts in blog 2.
 public function multisiteAction()
 {
     $blogManager = $this->get('kayue_wordpress.blog.manager');
+    $entityManager = $blogManager->findBlogById(2)->getEntityManager();
 
-    /** @var $em EntityManager */
-    $blog2em = $blogManager->findBlogById(2)->getEntityManager();
-
-    $posts = $blog2em->getRepository('KayueWordpressBundle:Post')->findBy(array(
+    $posts = $entityManager->getRepository('KayueWordpressBundle:Post')->findBy(array(
         'status' => 'publish',
         'type'   => 'post',
     ), array('date' => 'DESC'), 10);
