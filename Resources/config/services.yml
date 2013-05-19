@@ -50,3 +50,8 @@ services:
             - %kayue_wordpress.table_prefix%
         tags:
             - {name: doctrine.event_subscriber}
+
+    kayue_wordpress.blog.manager:
+        class: Kayue\WordpressBundle\Model\BlogManager
+        arguments:
+            - @service_container
