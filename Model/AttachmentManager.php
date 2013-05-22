@@ -36,6 +36,7 @@ class AttachmentManager implements AttachmentManagerInterface
      */
     public function findAttachmentsByPost(Post $post)
     {
+        // TODO: Convert posts to attachments
         return $this->repository->findBy(array(
             'parent' => $post,
             'type'   => 'attachment',
