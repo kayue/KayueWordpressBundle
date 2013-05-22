@@ -60,3 +60,8 @@ services:
         class: Kayue\WordpressBundle\Model\OptionManager
         arguments:
             - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.term.manager:
+        class: Kayue\WordpressBundle\Model\TermManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
