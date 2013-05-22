@@ -16,7 +16,7 @@ interface AttachmentManagerInterface
      * @param $id integer
      * @return AttachmentInterface[]
      */
-    public function findAttachmentById($id);
+    public function findOneAttachmentById($id);
 
     /**
      * @param Post $post

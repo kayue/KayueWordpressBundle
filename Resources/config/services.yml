@@ -65,3 +65,8 @@ services:
         class: Kayue\WordpressBundle\Model\TermManager
         arguments:
             - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.attachment.manager:
+        class: Kayue\WordpressBundle\Model\AttachmentManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
