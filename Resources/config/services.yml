@@ -55,3 +55,8 @@ services:
         class: Kayue\WordpressBundle\Model\BlogManager
         arguments:
             - @service_container
+
+    kayue_wordpress.option.manager:
+        class: Kayue\WordpressBundle\Model\OptionManager
+        arguments:
+            - @doctrine.orm.default_entity_manager

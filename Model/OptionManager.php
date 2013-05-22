@@ -5,6 +5,7 @@ namespace Kayue\WordpressBundle\Model;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Kayue\WordpressBundle\Entity\Option;
 
 class OptionManager implements OptionManagerInterface
 {
@@ -33,20 +34,45 @@ class OptionManager implements OptionManagerInterface
         $this->em         = $em;
         $this->repository = $em->getRepository('KayueWordpressBundle:Option');
         $this->cache      = new ArrayCache();
+
+        $this->cacheAutoloadOptions();
     }
 
-    public function findAllAutoloadOptions()
+    public function findOneOptionByName($name)
     {
-        // TODO: Cache it
-        return $this->repository->findBy(array(
-            'autoload' => 'yes'
-        ));
+        if(false === $option = $this->cache->fetch($name)) {
+            /** @var $option Option */
+            $option = $this->repository->findOneBy(array(
+                'name' => $name
+            ));
+
+            if($option !== null) {
+                $this->cacheOption($option);
+            }
+        } else {
+            echo 'cached';
+        }
+
+        return $option;
     }
 
-    public function findOptionByName($name)
+    private function cacheAutoloadOptions()
     {
-        return $this->repository->findBy(array(
-            'name' => $name
-        ));
+        $cacheKey = 'cached_autoload_options';
+
+        if(false === $options = $this->cache->fetch($cacheKey)) {
+            $options = $this->repository->findBy(array(
+                'autoload' => 'yes'
+            ));
+
+            foreach($options as $option) {
+                $this->cacheOption($option);
+            }
+        }
+    }
+
+    private function cacheOption(Option $option)
+    {
+        $this->cache->save($option->getName(), clone $option);
     }
 }
