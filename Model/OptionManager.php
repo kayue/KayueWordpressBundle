@@ -56,16 +56,12 @@ class OptionManager implements OptionManagerInterface
 
     private function cacheAutoloadOptions()
     {
-        $cacheKey = 'cached_autoload_options';
+        $options = $this->repository->findBy(array(
+            'autoload' => 'yes'
+        ));
 
-        if(false === $options = $this->cache->fetch($cacheKey)) {
-            $options = $this->repository->findBy(array(
-                'autoload' => 'yes'
-            ));
-
-            foreach($options as $option) {
-                $this->cacheOption($option);
-            }
+        foreach($options as $option) {
+            $this->cacheOption($option);
         }
     }
 
