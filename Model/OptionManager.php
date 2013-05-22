@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 
-class OptionManager extends OptionManagerInterface
+class OptionManager implements OptionManagerInterface
 {
     /**
      * @var EntityManager
