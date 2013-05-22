@@ -49,8 +49,6 @@ class OptionManager implements OptionManagerInterface
             if($option !== null) {
                 $this->cacheOption($option);
             }
-        } else {
-            echo 'cached';
         }
 
         return $option;
