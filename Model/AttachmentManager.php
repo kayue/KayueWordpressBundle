@@ -36,24 +36,76 @@ class AttachmentManager implements AttachmentManagerInterface
      */
     public function findAttachmentsByPost(Post $post)
     {
-        // TODO: Convert posts to attachments
-        return $this->repository->findBy(array(
+        $posts = $this->repository->findBy(array(
             'parent' => $post,
             'type'   => 'attachment',
         ));
+
+        $result = array();
+        foreach ($posts as $post) {
+            $rawMeta = $post->getMetasByKey('_wp_attachment_metadata')->first();
+
+            if ($rawMeta) {
+                $attachment = new Attachment($post);
+
+                $attachment->setUrl($rawMeta['file']);
+                $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
+            }
+
+            $result[] = $attachment;
+        }
+
+        return $result;
     }
 
     /**
      * @param $id integer
      *
-     * @return AttachmentInterface[]
+     * @return AttachmentInterface
      */
     public function findOneAttachmentById($id)
     {
-        return $this->repository->findOneBy(array(
+        $post = $this->repository->findOneBy(array(
             'id'     => $id,
             'type'   => 'attachment',
         ));
+
+        $rawMeta = $post->getMetasByKey('_wp_attachment_metadata')->first();
+
+        if ($rawMeta) {
+            $attachment = new Attachment($post);
+
+            $attachment->setUrl($rawMeta['file']);
+            $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
+            return $attachment;
+        }
+
+        return null;
+    }
+
+    public function getAttachmentOfSize(Attachment $attachment, $size = null)
+    {
+        $rawMeta = $attachment->getMetasByKey('_wp_attachment_metadata')->first();
+
+        if (!$rawMeta) return null;
+
+        $chosenSize = null;
+        $min = 999999;
+        foreach ($rawMeta['sizes'] as $meta) {
+            if ($meta['width'] >= $size[0] && $meta['height'] >= $size[1]) {
+                $dimensionDiff = $meta['width'] - $size[0] + $meta['height'] - $size[1];
+                if ($dimensionDiff < $min) {
+                    $chosenSize = $meta;
+                    $min = $dimensionDiff;
+                }
+            }
+        }
+
+        if ($chosenSize) {
+            return substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $chosenSize['file'];
+        } else {
+            return $attachment->getUrl();
+        }
     }
 
     /**
@@ -64,6 +116,16 @@ class AttachmentManager implements AttachmentManagerInterface
      */
     public function findFeaturedImageByPost(Post $post, $size = null)
     {
-        // TODO: Implement findFeaturedImageByPost() method.
+        $featuredImageId = $post->getMetasByKey('_thumbnail_id')->first();
+
+        if (!$featuredImageId) return null;
+
+        $attachment = $this->findOneAttachmentById($featuredImageId);
+
+        if (!$size) {
+            return $attachment->getThumbnailUrl();
+        }
+
+        return $this->getAttachmentOfSize($attachment, $size);
     }
 }
