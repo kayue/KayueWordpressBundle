@@ -2,6 +2,9 @@
 
 namespace Kayue\WordpressBundle\Model;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
+
 class PostManager implements PostManagerInterface
 {
     /**

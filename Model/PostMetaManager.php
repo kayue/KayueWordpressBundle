@@ -2,6 +2,8 @@
 
 namespace Kayue\WordpressBundle\Model;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\PostMeta;
 
@@ -11,6 +13,11 @@ class PostMetaManager implements PostMetaManagerInterface
      * @var EntityManager
      */
     protected $em;
+
+    /**
+     * @var EntityRepository
+     */
+    protected $repository;
 
     /**
      * Constructor.
