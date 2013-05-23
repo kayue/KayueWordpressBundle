@@ -54,6 +54,9 @@ class AttachmentManager implements AttachmentManagerInterface
 
             $result[] = $attachment;
         }
+        usort($result, function($a, $b) {
+            return $a->getMenuOrder() - $b->getMenuOrder();
+        });
 
         return $result;
     }
