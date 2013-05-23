@@ -94,3 +94,17 @@ services:
             blogManager: @kayue_wordpress.blog.manager
         tags:
             - { name: twig.extension }
+
+    kayue_wordpress.twig.option_manager:
+        class: Kayue\WordpressBundle\Twig\Extension\OptionManagerExtension
+        arguments:
+            optionManager: @kayue_wordpress.option.manager
+        tags:
+            - { name: twig.extension }
+
+    kayue_wordpress.twig.post_manager:
+        class: Kayue\WordpressBundle\Twig\Extension\PostManagerExtension
+        arguments:
+            optionManager: @kayue_wordpress.post.manager
+        tags:
+            - { name: twig.extension }
