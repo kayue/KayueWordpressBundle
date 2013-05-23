@@ -5,7 +5,7 @@ namespace Kayue\WordpressBundle\Model;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\PostMeta;
 
-class PostMetaManager implements PostManagerInterface
+class PostMetaManager implements PostMetaManagerInterface
 {
     /**
      * @var EntityManager
