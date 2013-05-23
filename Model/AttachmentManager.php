@@ -39,7 +39,7 @@ class AttachmentManager implements AttachmentManagerInterface
         $posts = $this->repository->findBy(array(
             'parent' => $post,
             'type'   => 'attachment',
-        ));
+        ), array('menuOrder'));
 
         $result = array();
         foreach ($posts as $post) {
@@ -54,9 +54,6 @@ class AttachmentManager implements AttachmentManagerInterface
 
             $result[] = $attachment;
         }
-        usort($result, function($a, $b) {
-            return $a->getMenuOrder() - $b->getMenuOrder();
-        });
 
         return $result;
     }
