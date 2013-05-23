@@ -80,3 +80,10 @@ services:
         class: Kayue\WordpressBundle\Model\PostMetaManager
         arguments:
             - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.twig.attachment_manager:
+        class: Kayue\WordpressBundle\Twig\Extension\AttachmentManagerExtension
+        arguments:
+            attachmentManager: @kayue_wordpress.attachment.manager
+        tags:
+            - { name: twig.extension }
