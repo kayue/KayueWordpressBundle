@@ -51,6 +51,8 @@ class WordpressExtension extends \Twig_Extension
             'wp_find_metas_by' => new \Twig_Function_Method($this, 'findMetasBy'),
             'wp_find_one_meta_by' => new \Twig_Function_Method($this, 'findOneMetaBy'),
             'wp_find_terms_by_post' => new \Twig_Function_Method($this, 'findTermsByPost'),
+            'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
+            'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost')
         );
     }
 
@@ -102,6 +104,20 @@ class WordpressExtension extends \Twig_Extension
     public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
     {
         return $this->termManager->findTermsByPost($id, $taxonomy);
+    }
+
+    public function findCategoriesByPost(Post $post)
+    {
+        $taxonomy = new Taxonomy();
+        $taxonomy->setName('category');
+        return $this->findTermsByPost($post, $taxonomy);
+    }
+
+    public function findTagsByPost(Post $post)
+    {
+        $taxonomy = new Taxonomy();
+        $taxonomy->setName('post_tag');
+        return $this->findTermsByPost($post, $taxonomy);
     }
 
 }
