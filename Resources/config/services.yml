@@ -87,3 +87,10 @@ services:
             attachmentManager: @kayue_wordpress.attachment.manager
         tags:
             - { name: twig.extension }
+
+    kayue_wordpress.twig.blog_manager:
+        class: Kayue\WordpressBundle\Twig\Extension\BlogManagerExtension
+        arguments:
+            blogManager: @kayue_wordpress.blog.manager
+        tags:
+            - { name: twig.extension }
