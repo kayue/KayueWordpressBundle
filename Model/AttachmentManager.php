@@ -39,7 +39,7 @@ class AttachmentManager implements AttachmentManagerInterface
         $posts = $this->repository->findBy(array(
             'parent' => $post,
             'type'   => 'attachment',
-        ));
+        ), array('menuOrder'));
 
         $result = array();
         foreach ($posts as $post) {
