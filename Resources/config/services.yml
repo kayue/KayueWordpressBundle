@@ -70,3 +70,20 @@ services:
         class: Kayue\WordpressBundle\Model\AttachmentManager
         arguments:
             - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.post.manager:
+        class: Kayue\WordpressBundle\Model\PostManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.post_meta.manager:
+        class: Kayue\WordpressBundle\Model\PostMetaManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.twig.wordpress:
+        class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
+        arguments:
+            entityManager: @doctrine.orm.default_entity_manager
+        tags:
+            - { name: twig.extension }
