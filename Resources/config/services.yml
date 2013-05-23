@@ -85,6 +85,5 @@ services:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
             entityManager: @doctrine.orm.default_entity_manager
-            container: @service_container
         tags:
             - { name: twig.extension }
