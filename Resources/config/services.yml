@@ -70,3 +70,8 @@ services:
         class: Kayue\WordpressBundle\Model\AttachmentManager
         arguments:
             - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.post.manager:
+        class: Kayue\WordpressBundle\Model\PostManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
