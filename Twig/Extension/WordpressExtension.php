@@ -43,7 +43,8 @@ class WordpressExtension extends \Twig_Extension
         return array(
             'wp_find_attachments_by_post' => new \Twig_Function_Method($this, 'findAttachmentsByPost'),
             'wp_find_one_attachment_by_id' => new \Twig_Function_Method($this, 'findOneAttachmentById'),
-            'wp_find_feature_image_by_post' => new \Twig_Function_Method($this, 'findFeatureImageByPost'),
+            'wp_find_featured_image_by_post' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
+            'wp_find_post_thumbnail' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
             'wp_find_one_option_by_name' => new \Twig_Function_Method($this, 'findOneOptionByName'),
             'wp_find_post_by_id' => new \Twig_Function_Method($this, 'findPostById'),
             'wp_find_post_by_slug' => new \Twig_Function_Method($this, 'findPostBySlug'),
@@ -66,9 +67,9 @@ class WordpressExtension extends \Twig_Extension
         return $this->attachmentManager->findOneAttachmentById($id);
     }
 
-    public function findFeatureImageByPost(Post $post, $size = null)
+    public function findFeaturedImageByPost(Post $post, $size = null)
     {
-        return $this->attachmentManager->findFeatureImageByPost($post, $size);
+        return $this->attachmentManager->findFeaturedImageByPost($post, $size);
     }
 
     public function findOneOptionByName($id)
