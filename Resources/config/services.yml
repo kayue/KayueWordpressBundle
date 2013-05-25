@@ -55,3 +55,36 @@ services:
         class: Kayue\WordpressBundle\Model\BlogManager
         arguments:
             - @service_container
+
+    kayue_wordpress.option.manager:
+        class: Kayue\WordpressBundle\Model\OptionManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.term.manager:
+        class: Kayue\WordpressBundle\Model\TermManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.attachment.manager:
+        class: Kayue\WordpressBundle\Model\AttachmentManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.post.manager:
+        class: Kayue\WordpressBundle\Model\PostManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.post_meta.manager:
+        class: Kayue\WordpressBundle\Model\PostMetaManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    kayue_wordpress.twig.wordpress:
+        class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
+        arguments:
+            - @kayue_wordpress.blog.manager
+        tags:
+            - { name: twig.extension }
+            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
