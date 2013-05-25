@@ -89,43 +89,6 @@ kayue_wordpress:
     table_prefix:   'wp_'
 ```
 
-#### security.yml
-
-Configure encoder, user provider, and enable the WordPress firewall in your `security.yml`.
-
-```yaml
-security:
-    
-    encoders:
-        # Add the WordPress password encoder
-        Kayue\WordpressBundle\Entity\User:
-            id: kayue_wordpress.security.encoder.phpass
-
-    providers:
-        # Add the WordPress user provider
-        wordpress:
-            entity: { class: Kayue\WordpressBundle\Entity\User, property: username }
-
-    firewalls:
-        login:
-            pattern:  ^/demo/secured/login$
-            security: false
-        secured_area:
-            pattern:    ^/demo/secured/
-            # Add the WordPress firewall. Allow you to read WordPress's login state in Symfony app.
-            kayue_wordpress: ~
-            # Optional. Symfony's default form login works for WordPress user too.
-            form_login:
-                 check_path: /demo/secured/login_check
-                 login_path: /demo/secured/login
-                 default_target_path: /demo/secured/hello/world
-            # Optional. Use this to logout.
-            logout:
-                path:   /demo/secured/logout
-                target: /demo/secured/login
-            # ...
-```
-
 ## Usage
 
 An example to obtain post content, author, comments and categories:
@@ -162,9 +125,28 @@ public function postAction($slug)
 }
 ```
 
-### Multisite Example
+### Twig Extension
 
-Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation.
+This bundle comes with the following Twig extensions.
+
+* `wp_switch_blog` - equivalent to WordPress's `switch_to_blog()` method.
+* `wp_find_attachments_by_post`
+* `wp_find_one_attachment_by_id`
+* `wp_find_featured_image_by_post` - equivalent to WordPress's `get_the_post_thumbnail` method.
+* `wp_find_post_thumbnail` - alias of `wp_find_featured_image_by_post`
+* `wp_find_one_option_by_name` - equivalent to WordPress's `get_option()` method.
+* `wp_find_one_post_by_id`
+* `wp_find_one_post_by_slug`
+* `wp_find_all_metas_by_post` - equivalent to WordPress's `get_post_meta()` method.
+* `wp_find_one_meta_by` - equivalent to WordPress's `get_post_meta()` method.
+* `wp_find_metas_by` - equivalent to WordPress's `get_post_meta()` method.
+* `wp_find_terms_by_post`
+* `wp_find_categories_by_post` - equivalent to WordPress's `get_categories()` method.
+* `wp_find_tags_by_post` - equivalent to WordPress's `get_tags()` method.
+
+### Multisite
+
+Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation. In this bundle, each blog (site) has its own entity manager. You need to use blog manager to retrive the blog and then the entity manager.
 
 The following example shows you how to display the latest 10 posts in blog 2.
 
@@ -174,6 +156,13 @@ The following example shows you how to display the latest 10 posts in blog 2.
 public function multisiteAction()
 {
     $blogManager = $this->get('kayue_wordpress.blog.manager');
+    
+    // Method 1: Switch current blog's id. Similar to WordPress's `switch_to_blog()` method.
+    // Changing the current blog ID will affect Twig extensions too.
+    $blogManager->setCurrentBlogId(2);
+    $entityManager = $blogManager->getCurrentBlog()->getEntityManager();
+    
+    // Method 2: Use the find by method. This won't change the current blog ID.
     $entityManager = $blogManager->findBlogById(2)->getEntityManager();
 
     $posts = $entityManager->getRepository('KayueWordpressBundle:Post')->findBy(array(
@@ -185,8 +174,41 @@ public function multisiteAction()
 }
 ```
 
-## Todo
+### WordPress Authentication 
 
-* Add some Twig helper
-* OptionManager
+This bundle allow you to create a WordPress login form in Symfony. All you have to do is to configure the WordPress firewall in your `security.yml`.
 
+The following example demonstrates how to turn AcmeDemoBundle's login form into a WordPress login form.
+
+```yaml
+security:
+    
+    encoders:
+        # Add the WordPress password encoder
+        Kayue\WordpressBundle\Entity\User:
+            id: kayue_wordpress.security.encoder.phpass
+
+    providers:
+        # Add the WordPress user provider
+        wordpress:
+            entity: { class: Kayue\WordpressBundle\Entity\User, property: username }
+
+    firewalls:
+        login:
+            pattern:  ^/demo/secured/login$
+            security: false
+        secured_area:
+            pattern:    ^/demo/secured/
+            # Add the WordPress firewall. Allow you to read WordPress's login state in Symfony app.
+            kayue_wordpress: ~
+            # Optional. Symfony's default form login works for WordPress user too.
+            form_login:
+                 check_path: /demo/secured/login_check
+                 login_path: /demo/secured/login
+                 default_target_path: /demo/secured/hello/world
+            # Optional. Use this to logout.
+            logout:
+                path:   /demo/secured/logout
+                target: /demo/secured/login
+            # ...
+```

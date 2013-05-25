@@ -4,7 +4,10 @@ namespace Kayue\WordpressBundle\Model;
 
 use Doctrine\Common\Cache\ArrayCache;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
+use Kayue\WordpressBundle\Event\SwitchBlogEvent;
+use Kayue\WordpressBundle\WordpressEvents;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class BlogManager implements BlogManagerInterface
 {
@@ -17,6 +20,11 @@ class BlogManager implements BlogManagerInterface
      * @var array
      */
     protected $blogs = array();
+
+    /**
+     * @var int
+     */
+    protected $currentBlogId = 1;
 
     /**
      * @param Container $container
@@ -56,5 +64,24 @@ class BlogManager implements BlogManagerInterface
         }
 
         return $this->blogs[$id];
+    }
+
+    public function getCurrentBlog()
+    {
+        return $this->findBlogById($this->getCurrentBlogId());
+    }
+
+    public function getCurrentBlogId()
+    {
+        return $this->currentBlogId;
+    }
+
+    public function setCurrentBlogId($currentBlogId)
+    {
+        $this->currentBlogId = $currentBlogId;
+
+        $event = new SwitchBlogEvent($this->getCurrentBlog());
+        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher->dispatch(WordpressEvents::SWITCH_BLOG, $event);
     }
 }
