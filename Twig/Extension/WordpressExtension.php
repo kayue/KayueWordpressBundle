@@ -104,7 +104,7 @@ class WordpressExtension extends \Twig_Extension
 
     public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
     {
-        return $this->termManager->findTermsByPost($id, $taxonomy);
+        return $this->termManager->findTermsByPost($post, $taxonomy);
     }
 
     public function findCategoriesByPost(Post $post)
