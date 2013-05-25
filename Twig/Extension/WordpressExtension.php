@@ -7,25 +7,55 @@ use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
 use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\Model\AttachmentManager;
+use Kayue\WordpressBundle\Model\BlogManager;
 use Kayue\WordpressBundle\Model\OptionManager;
 use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WordpressExtension extends \Twig_Extension
 {
+    /**
+     * @var EntityManager
+     */
     protected $em;
 
+    /**
+     * @var AttachmentManager
+     */
     protected $attachmentManager;
+
+    /**
+     * @var BlogManager
+     */
+    protected $blogManager;
+
+    /**
+     * @var OptionManager
+     */
     protected $optionManager;
+
+    /**
+     * @var PostManager
+     */
     protected $postManager;
+
+    /**
+     * @var PostMetaManager
+     */
     protected $postMetaManager;
+
+    /**
+     * @var TermManager
+     */
     protected $termManager;
 
-    public function __construct(EntityManager $em)
+    public function __construct(BlogManager $blogManager)
     {
-        $this->setEntityManager($em);
+        $this->blogManager = $blogManager;
+        $this->setEntityManager($blogManager->getCurrentBlog()->getEntityManager());
     }
 
     public function onSwitchBlog(SwitchBlogEvent $event)
@@ -51,6 +81,7 @@ class WordpressExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
+            'wp_switch_blog' => new \Twig_Function_Method($this, 'switchBlog'),
             'wp_find_attachments_by_post' => new \Twig_Function_Method($this, 'findAttachmentsByPost'),
             'wp_find_one_attachment_by_id' => new \Twig_Function_Method($this, 'findOneAttachmentById'),
             'wp_find_featured_image_by_post' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
@@ -65,6 +96,11 @@ class WordpressExtension extends \Twig_Extension
             'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
             'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost')
         );
+    }
+
+    public function switchBlog($id)
+    {
+        $this->blogManager->setCurrentBlogId($id);
     }
 
     public function findAttachmentsByPost(Post $post)

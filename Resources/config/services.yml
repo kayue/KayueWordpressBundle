@@ -84,7 +84,7 @@ services:
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
-            entityManager: @doctrine.orm.default_entity_manager
+            - @kayue_wordpress.blog.manager
         tags:
             - { name: twig.extension }
             - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
