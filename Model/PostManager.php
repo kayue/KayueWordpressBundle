@@ -28,16 +28,16 @@ class PostManager implements PostManagerInterface
         $this->repository = $em->getRepository('KayueWordpressBundle:Post');
     }
 
-    public function findPostById($id)
+    public function findOnePostById($id)
     {
-        return $this->repository->findBy(array(
+        return $this->repository->findOneBy(array(
             'id' => $id,
         ));
     }
 
-    public function findPostBySlug($slug)
+    public function findOnePostBySlug($slug)
     {
-        return $this->repository->findBy(array(
+        return $this->repository->findOneBy(array(
             'slug' => $slug,
         ));
     }

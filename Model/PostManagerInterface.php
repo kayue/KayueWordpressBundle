@@ -4,7 +4,7 @@ namespace Kayue\WordpressBundle\Model;
 
 interface PostManagerInterface
 {
-    public function findPostById($id);
+    public function findOnePostById($id);
 
-    public function findPostBySlug($slug);
+    public function findOnePostBySlug($slug);
 }

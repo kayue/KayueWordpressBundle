@@ -56,8 +56,8 @@ class WordpressExtension extends \Twig_Extension
             'wp_find_featured_image_by_post' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
             'wp_find_post_thumbnail' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
             'wp_find_one_option_by_name' => new \Twig_Function_Method($this, 'findOneOptionByName'),
-            'wp_find_post_by_id' => new \Twig_Function_Method($this, 'findPostById'),
-            'wp_find_post_by_slug' => new \Twig_Function_Method($this, 'findPostBySlug'),
+            'wp_find_one_post_by_id' => new \Twig_Function_Method($this, 'findOnePostById'),
+            'wp_find_one_post_by_slug' => new \Twig_Function_Method($this, 'findOnePostBySlug'),
             'wp_find_all_metas_by_post' => new \Twig_Function_Method($this, 'findAllMetasByPost'),
             'wp_find_metas_by' => new \Twig_Function_Method($this, 'findMetasBy'),
             'wp_find_one_meta_by' => new \Twig_Function_Method($this, 'findOneMetaBy'),
@@ -87,14 +87,14 @@ class WordpressExtension extends \Twig_Extension
         return $this->optionManager->findOneOptionByName($id);
     }
 
-    public function findPostById($id)
+    public function findOnePostById($id)
     {
-        return $this->postManager->findPostById($id);
+        return $this->postManager->findOnePostById($id);
     }
 
-    public function findPostBySlug($slug)
+    public function findOnePostBySlug($slug)
     {
-        return $this->postManager->findPostBySlug($slug);
+        return $this->postManager->findOnePostBySlug($slug);
     }
 
     public function findAllMetasByPost(Post $post)
