@@ -5,8 +5,8 @@ namespace Kayue\WordpressBundle\Twig\Extension;
 use Doctrine\ORM\EntityManager;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
+use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\Model\AttachmentManager;
-use Kayue\WordpressBundle\Model\BlogManager;
 use Kayue\WordpressBundle\Model\OptionManager;
 use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
@@ -24,6 +24,16 @@ class WordpressExtension extends \Twig_Extension
     protected $termManager;
 
     public function __construct(EntityManager $em)
+    {
+        $this->setEntityManager($em);
+    }
+
+    public function onSwitchBlog(SwitchBlogEvent $event)
+    {
+        $this->setEntityManager($event->getBlog()->getEntityManager());
+    }
+
+    public function setEntityManager(EntityManager $em)
     {
         $this->em = $em;
         $this->attachmentManager = new AttachmentManager($em);

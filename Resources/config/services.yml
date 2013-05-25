@@ -87,3 +87,4 @@ services:
             entityManager: @doctrine.orm.default_entity_manager
         tags:
             - { name: twig.extension }
+            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
