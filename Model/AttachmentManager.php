@@ -42,6 +42,7 @@ class AttachmentManager implements AttachmentManagerInterface
         ), array('menuOrder'));
 
         $result = array();
+        /** @var $post Post */
         foreach ($posts as $post) {
             $rawMeta = $post->getMetasByKey('_wp_attachment_metadata')->first();
 
@@ -50,9 +51,9 @@ class AttachmentManager implements AttachmentManagerInterface
 
                 $attachment->setUrl($rawMeta['file']);
                 $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
-            }
 
-            $result[] = $attachment;
+                $result[] = $attachment;
+            }
         }
 
         return $result;
