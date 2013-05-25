@@ -19,6 +19,11 @@ class BlogManager implements BlogManagerInterface
     protected $blogs = array();
 
     /**
+     * @var int
+     */
+    protected $currentBlogId = 1;
+
+    /**
      * @param Container $container
      */
     public function __construct(Container $container)
@@ -56,5 +61,20 @@ class BlogManager implements BlogManagerInterface
         }
 
         return $this->blogs[$id];
+    }
+
+    public function getCurrentBlog()
+    {
+        return $this->findBlogById($this->getCurrentBlogId());
+    }
+
+    public function getCurrentBlogId()
+    {
+        return $this->currentBlogId;
+    }
+
+    public function setCurrentBlogId($currentBlogId)
+    {
+        $this->currentBlogId = $currentBlogId;
     }
 }
