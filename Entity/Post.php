@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
+use Kayue\WordpressBundle\Model\PostInterface;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -15,7 +16,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Post
+class Post extends PostInterface
 {
     /**
      * @var int $id
