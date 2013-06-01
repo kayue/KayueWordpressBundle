@@ -2,9 +2,7 @@
 
 namespace Kayue\WordpressBundle\Entity;
 
-use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Proxy\Proxy;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -112,16 +110,15 @@ class UserMeta
     /**
      * Get user
      *
-     * @return \Kayue\WordpressBundle\Entity\User
-     * @return null
+     * @return \Kayue\WordpressBundle\Model\UserInterface|null
      */
     public function getUser()
     {
-        if ($this->user instanceof Proxy) {
+        if ($this->user instanceof \Doctrine\ORM\Proxy\Proxy) {
             try {
                 // prevent lazy loading the user entity because it might not exist
                 $this->user->__load();
-            } catch (EntityNotFoundException $e) {
+            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
                 // return null if user does not exist
                 $this->user = null;
             }

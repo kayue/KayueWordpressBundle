@@ -254,4 +254,24 @@ class Post extends PostInterface
         $this->modifiedDate     = new \DateTime('now');
         $this->modifiedDateGmt  = new \DateTime('now', new \DateTimeZone('GMT'));
     }
+
+    /**
+     * Get user
+     *
+     * @return \Kayue\WordpressBundle\Model\UserInterface|null
+     */
+    public function getUser()
+    {
+        if ($this->user instanceof \Doctrine\ORM\Proxy\Proxy) {
+            try {
+                // prevent lazy loading the user entity because it might not exist
+                $this->user->__load();
+            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+                // return null if user does not exist
+                $this->user = null;
+            }
+        }
+
+        return $this->user;
+    }
 }
