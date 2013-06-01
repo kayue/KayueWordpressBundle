@@ -27,22 +27,12 @@ class PostMetaManager implements PostMetaManagerInterface
     public function __construct(EntityManager $em)
     {
         $this->em = $em;
-        $this->repository = $em->getRepository('KayueWordpressBundle:Post');
+        $this->repository = $em->getRepository('KayueWordpressBundle:PostMeta');
     }
 
     public function addMeta(Post $post, PostMeta $meta)
     {
         $post->addMeta($meta);
-    }
-
-    public function saveMeta(PostMeta $meta)
-    {
-        // do nothing
-    }
-
-    public function deleteMeta(PostMeta $meta)
-    {
-        $em->delete($meta);
     }
 
     public function findAllMetasByPost(Post $post)

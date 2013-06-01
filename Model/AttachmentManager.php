@@ -5,6 +5,7 @@ namespace Kayue\WordpressBundle\Model;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Kayue\WordpressBundle\Entity\Post;
+use Kayue\WordpressBundle\Entity\PostMeta;
 
 class AttachmentManager implements AttachmentManagerInterface
 {
@@ -18,6 +19,8 @@ class AttachmentManager implements AttachmentManagerInterface
      */
     protected $repository;
 
+    protected $postMetaManager;
+
     /**
      * Constructor.
      *
@@ -27,6 +30,7 @@ class AttachmentManager implements AttachmentManagerInterface
     {
         $this->em         = $em;
         $this->repository = $em->getRepository('KayueWordpressBundle:Post');
+        $this->postMetaManager = new PostMetaManager($em);
     }
 
     /**
@@ -39,14 +43,19 @@ class AttachmentManager implements AttachmentManagerInterface
         $posts = $this->repository->findBy(array(
             'parent' => $post,
             'type'   => 'attachment',
-        ), array('menuOrder'));
+        ));
 
         $result = array();
         /** @var $post Post */
         foreach ($posts as $post) {
-            $rawMeta = $post->getMetasByKey('_wp_attachment_metadata')->first();
+            /** @var $meta PostMeta */
+            $meta = $this->postMetaManager->findOneMetaBy(array(
+                'post' => $post,
+                'key'  => '_wp_attachment_metadata'
+            ));
 
-            if ($rawMeta) {
+            if ($meta) {
+                $rawMeta = $meta->getValue();
                 $attachment = new Attachment($post);
 
                 $attachment->setUrl($rawMeta['file']);
@@ -71,9 +80,14 @@ class AttachmentManager implements AttachmentManagerInterface
             'type'   => 'attachment',
         ));
 
-        $rawMeta = $post->getMetasByKey('_wp_attachment_metadata')->first();
+        /** @var $meta PostMeta */
+        $meta = $this->postMetaManager->findOneMetaBy(array(
+            'post' => $post,
+            'key'  => '_wp_attachment_metadata'
+        ));
 
-        if ($rawMeta) {
+        if ($meta) {
+            $rawMeta = $meta->getValue();
             $attachment = new Attachment($post);
 
             $attachment->setUrl($rawMeta['file']);
@@ -86,9 +100,17 @@ class AttachmentManager implements AttachmentManagerInterface
 
     public function getAttachmentOfSize(Attachment $attachment, $size = null)
     {
-        $rawMeta = $attachment->getMetasByKey('_wp_attachment_metadata')->first();
+        /** @var $meta PostMeta */
+        $meta = $this->postMetaManager->findOneMetaBy(array(
+            'post' => $post,
+            'key'  => '_wp_attachment_metadata'
+        ));
 
-        if (!$rawMeta) return null;
+        if (!$meta) {
+            return null;
+        }
+
+        $rawMeta = $meta->getValue();
 
         $chosenSize = null;
         $min = 999999;
@@ -117,7 +139,10 @@ class AttachmentManager implements AttachmentManagerInterface
      */
     public function findFeaturedImageByPost(Post $post, $size = null)
     {
-        $featuredImageId = $post->getMetasByKey('_thumbnail_id')->first();
+        $featuredImageId = $this->postMetaManager->findOneMetaBy(array(
+            'post' => $post,
+            'key'  => '_thumbnail_id'
+        ));
 
         if (!$featuredImageId) return null;
 

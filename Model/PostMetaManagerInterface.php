@@ -9,10 +9,6 @@ interface PostMetaManagerInterface
 {
     public function addMeta(Post $post, PostMeta $meta);
 
-    public function saveMeta(PostMeta $meta);
-
-    public function deleteMeta(PostMeta $meta);
-
     public function findAllMetasByPost(Post $post);
 
     public function findMetasBy(array $criteria);
