@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Model\OptionInterface;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -11,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="options")
  * @ORM\Entity
  */
-class Option
+class Option extends OptionInterface
 {
     /**
      * @var int $id
@@ -20,7 +21,7 @@ class Option
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    protected $id;
 
     /**
      * @var string $name
@@ -28,14 +29,14 @@ class Option
      * @ORM\Column(name="option_name", type="string", length=64, nullable=false, unique=true)
      * @Constraints\NotBlank()
      */
-    private $name;
+    protected $name;
 
     /**
      * @var string $value
      *
      * @ORM\Column(name="option_value", type="wordpressmeta", nullable=false)
      */
-    private $value;
+    protected $value;
 
     /**
      * @var string $autoload
@@ -43,75 +44,5 @@ class Option
      * @ORM\Column(name="autoload", type="string", length=20, nullable=false)
      * @Constraints\NotBlank()
      */
-    private $autoload = 'yes';
-
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Set value
-     *
-     * @param string $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-    }
-
-    /**
-     * Get value
-     *
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * Set autoload
-     *
-     * @param string $autoload Yes or no
-     */
-    public function setAutoload($autoload)
-    {
-        $this->autoload = $autoload;
-    }
-
-    /**
-     * Get autoload
-     *
-     * @return string
-     */
-    public function getAutoload()
-    {
-        return $this->autoload;
-    }
+    protected $autoload = 'yes';
 }
