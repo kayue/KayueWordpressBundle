@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 class Post extends PostInterface
 {
     /**
-     * @var int $id
+     * {@inheritdoc}
      *
      * @ORM\Column(name="ID", type="wordpressid")
      * @ORM\Id
@@ -26,21 +26,21 @@ class Post extends PostInterface
     protected $id;
 
     /**
-     * @var \DateTime $date
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_date", type="datetime", nullable=false)
      */
     protected $date;
 
     /**
-     * @var \DateTime $dateGmt
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_date_gmt", type="datetime", nullable=false)
      */
     protected $dateGmt;
 
     /**
-     * @var string $content
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_content", type="text", nullable=false)
      * @Constraints\NotBlank()
@@ -48,7 +48,7 @@ class Post extends PostInterface
     protected $content;
 
     /**
-     * @var string $title
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_title", type="text", nullable=false)
      * @Constraints\NotBlank()
@@ -56,7 +56,7 @@ class Post extends PostInterface
     protected $title;
 
     /**
-     * @var string $excerpt
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_excerpt", type="text", nullable=false)
      * @Constraints\NotBlank()
@@ -64,82 +64,82 @@ class Post extends PostInterface
     protected $excerpt;
 
     /**
-     * @var int excerpt length
+     * {@inheritdoc}
      */
     protected $excerptLength = 100;
 
     /**
-     * @var string $status
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_status", type="string", length=20, nullable=false)
      */
     protected $status = "publish";
 
     /**
-     * @var string $commentStatus
+     * {@inheritdoc}
      *
      * @ORM\Column(name="comment_status", type="string", length=20, nullable=false)
      */
     protected $commentStatus = "open";
 
     /**
-     * @var string $pingStatus
+     * {@inheritdoc}
      *
      * @ORM\Column(name="ping_status", type="string", length=20, nullable=false)
      */
     protected $pingStatus = "open";
 
     /**
-     * @var string $password
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_password", type="string", length=20, nullable=false)
      */
     protected $password = "";
 
     /**
-     * @var string $slug
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_name", type="string", length=200, nullable=false)
      */
     protected $slug;
 
     /**
-     * @var string $toPing
+     * {@inheritdoc}
      *
      * @ORM\Column(name="to_ping", type="text", nullable=false)
      */
     protected $toPing = "";
 
     /**
-     * @var string $pinged
+     * {@inheritdoc}
      *
      * @ORM\Column(name="pinged", type="text", nullable=false)
      */
     protected $pinged = "";
 
     /**
-     * @var \DateTime $modifiedDate
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_modified", type="datetime", nullable=false)
      */
     protected $modifiedDate;
 
     /**
-     * @var \DateTime $modifiedDateGmt
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_modified_gmt", type="datetime", nullable=false)
      */
     protected $modifiedDateGmt;
 
     /**
-     * @var string $contentFiltered
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_content_filtered", type="text", nullable=false)
      */
     protected $contentFiltered = "";
 
     /**
-     * @var Post $parent
+     * {@inheritdoc}
      *
      * @ORM\ManyToOne(targetEntity="Post", inversedBy="children")
      * @ORM\JoinColumn(name="post_parent", referencedColumnName="ID")
@@ -147,63 +147,63 @@ class Post extends PostInterface
     protected $parent;
 
     /**
-     * @var Post $children
+     * {@inheritdoc}
      *
      * @ORM\OneToMany(targetEntity="Post", mappedBy="parent")
      */
     protected $children;
 
     /**
-     * @var string $guid
+     * {@inheritdoc}
      *
      * @ORM\Column(name="guid", type="string", length=255, nullable=false)
      */
     protected $guid = "";
 
     /**
-     * @var integer $menuOrder
+     * {@inheritdoc}
      *
      * @ORM\Column(name="menu_order", type="integer", length=11, nullable=false)
      */
     protected $menuOrder = 0;
 
     /**
-     * @var string $type
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_type", type="string", nullable=false)
      */
     protected $type = "post";
 
     /**
-     * @var string $mimeType
+     * {@inheritdoc}
      *
      * @ORM\Column(name="post_mime_type", type="string", length=100, nullable=false)
      */
     protected $mimeType = "";
 
     /**
-     * @var int $commentCount
+     * {@inheritdoc}
      *
      * @ORM\Column(name="comment_count", type="bigint", length=20, nullable=false)
      */
     protected $commentCount = 0;
 
     /**
-     * @var PostMeta
+     * {@inheritdoc}
      *
      * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\PostMeta", mappedBy="post", cascade={"persist"})
      */
     protected $metas;
 
     /**
-     * @var Comment
+     * {@inheritdoc}
      *
      * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\Comment", mappedBy="post", cascade={"persist"})
      */
     protected $comments;
 
     /**
-     * @var User
+     * {@inheritdoc}
      *
      * @ORM\ManyToOne(targetEntity="Kayue\WordpressBundle\Entity\User", inversedBy="posts")
      * @ORM\JoinColumns({
@@ -213,7 +213,7 @@ class Post extends PostInterface
     protected $user;
 
     /**
-     * @var Taxonomy
+     * {@inheritdoc}
      *
      * @ORM\ManyToMany(targetEntity="Kayue\WordpressBundle\Entity\Taxonomy", inversedBy="posts")
      * @ORM\JoinTable(name="term_relationships",
@@ -256,7 +256,7 @@ class Post extends PostInterface
     }
 
     /**
-     * Get user
+     * {@inheritdoc}
      *
      * @return \Kayue\WordpressBundle\Model\UserInterface|null
      */

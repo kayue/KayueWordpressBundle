@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 class Taxonomy extends TaxonomyInterface
 {
     /**
-     * @var int $id
+     * {@inheritdoc}
      *
      * @ORM\Column(name="term_taxonomy_id", type="wordpressid", length=20)
      * @ORM\Id
@@ -23,7 +23,7 @@ class Taxonomy extends TaxonomyInterface
     protected $id;
 
     /**
-     * @var string $name
+     * {@inheritdoc}
      *
      * @ORM\Column(name="taxonomy", type="string", length=32)
      * @Constraints\NotBlank()
@@ -31,28 +31,28 @@ class Taxonomy extends TaxonomyInterface
     protected $name;
 
     /**
-     * @var string $description
+     * {@inheritdoc}
      *
      * @ORM\Column(name="description", type="text")
      */
     protected $description = '';
 
     /**
-     * @var int $parent
+     * {@inheritdoc}
      *
      * @ORM\Column(name="parent", type="bigint", length=20)
      */
     protected $parent;
 
     /**
-     * @var int $count
+     * {@inheritdoc}
      *
      * @ORM\Column(name="count", type="bigint", length=20)
      */
     protected $count = 0;
 
     /**
-     * @var Term
+     * {@inheritdoc}
      *
      * @ORM\OneToOne(targetEntity="Kayue\WordpressBundle\Entity\Term", inversedBy="taxonomy")
      * @ORM\JoinColumns({
@@ -62,10 +62,10 @@ class Taxonomy extends TaxonomyInterface
     protected $term;
 
     /**
-     * @var Post
+     * {@inheritdoc}
      *
      * @ORM\ManyToMany(targetEntity="Post", mappedBy="taxonomies")
-     **/
+     */
     protected $posts;
 
     public function __construct()

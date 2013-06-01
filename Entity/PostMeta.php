@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 class PostMeta extends PostMetaInterface
 {
     /**
-     * @var int $id
+     * {@inheritdoc}
      *
      * @ORM\Column(name="meta_id", type="bigint", length=20)
      * @ORM\Id
@@ -24,7 +24,7 @@ class PostMeta extends PostMetaInterface
     protected $id;
 
     /**
-     * @var string $key
+     * {@inheritdoc}
      *
      * @ORM\Column(name="meta_key", type="string", length=255, nullable=true)
      * @Constraints\NotBlank()
@@ -32,14 +32,14 @@ class PostMeta extends PostMetaInterface
     protected $key;
 
     /**
-     * @var string $value
+     * {@inheritdoc}
      *
      * @ORM\Column(name="meta_value", type="wordpressmeta", nullable=true)
      */
     protected $value;
 
     /**
-     * @var Post
+     * {@inheritdoc}
      *
      * @ORM\ManyToOne(targetEntity="Post", inversedBy="metas")
      * @ORM\JoinColumns({

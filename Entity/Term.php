@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 class Term extends TermInterface
 {
     /**
-     * @var int $id
+     * {@inheritdoc}
      *
      * @ORM\Column(name="term_id", type="wordpressid", length=20)
      * @ORM\Id
@@ -22,7 +22,7 @@ class Term extends TermInterface
     protected $id;
 
     /**
-     * @var string $name
+     * {@inheritdoc}
      *
      * @ORM\Column(name="name", type="string", length=200)
      * @Constraints\NotBlank()
@@ -30,21 +30,21 @@ class Term extends TermInterface
     protected $name;
 
     /**
-     * @var string $slug
+     * {@inheritdoc}
      *
      * @ORM\Column(name="slug", type="string", length=200)
      */
     protected $slug;
 
     /**
-     * @var int $group
+     * {@inheritdoc}
      *
      * @ORM\Column(name="term_group", type="bigint", length=10)
      */
     protected $group = 0;
 
     /**
-     * @var Taxonomy
+     * {@inheritdoc}
      *
      * @ORM\OneToOne(targetEntity="Taxonomy", mappedBy="term")
      */
