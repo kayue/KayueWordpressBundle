@@ -2,8 +2,6 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-use Kayue\WordpressBundle\Entity\Post;
-
 class Attachment extends Post implements AttachmentInterface
 {
     protected $post;

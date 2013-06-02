@@ -2,9 +2,6 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-use Kayue\WordpressBundle\Entity\Post;
-use Kayue\WordpressBundle\Entity\PostMeta;
-
 interface PostMetaManagerInterface
 {
     public function addMeta(Post $post, PostMeta $meta);

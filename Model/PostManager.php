@@ -20,7 +20,7 @@ class PostManager implements PostManagerInterface
     /**
      * Constructor.
      *
-     * @param EntityManager     $em
+     * @param EntityManager $em
      */
     public function __construct(EntityManager $em)
     {

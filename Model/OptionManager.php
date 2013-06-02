@@ -5,7 +5,6 @@ namespace Kayue\WordpressBundle\Model;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Kayue\WordpressBundle\Entity\Option;
 
 class OptionManager implements OptionManagerInterface
 {

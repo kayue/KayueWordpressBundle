@@ -4,8 +4,6 @@ namespace Kayue\WordpressBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Kayue\WordpressBundle\Entity\Post;
-use Kayue\WordpressBundle\Entity\PostMeta;
 
 class AttachmentManager implements AttachmentManagerInterface
 {
@@ -102,7 +100,7 @@ class AttachmentManager implements AttachmentManagerInterface
     {
         /** @var $meta PostMeta */
         $meta = $this->postMetaManager->findOneMetaBy(array(
-            'post' => $post,
+            'post' => $attachment,
             'key'  => '_wp_attachment_metadata'
         ));
 
