@@ -3,7 +3,7 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Model\OptionInterface;
+use Kayue\WordpressBundle\Model\Option as ModelOption;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="options")
  * @ORM\Entity
  */
-class Option extends OptionInterface
+class Option extends ModelOption
 {
     /**
      * @var int $id

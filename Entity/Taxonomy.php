@@ -4,14 +4,14 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Model\TaxonomyInterface;
+use Kayue\WordpressBundle\Model\Taxonomy as ModelTaxonomy;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
  * @ORM\Table(name="term_taxonomy")
  * @ORM\Entity
  */
-class Taxonomy extends TaxonomyInterface
+class Taxonomy extends ModelTaxonomy
 {
     /**
      * {@inheritdoc}

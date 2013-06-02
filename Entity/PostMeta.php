@@ -3,7 +3,7 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Model\PostMetaInterface;
+use Kayue\WordpressBundle\Model\PostMeta as ModelPostMeta;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="postmeta")
  * @ORM\Entity
  */
-class PostMeta extends PostMetaInterface
+class PostMeta extends ModelPostMeta
 {
     /**
      * {@inheritdoc}

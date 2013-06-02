@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class PostInterface
+class Post
 {
     /**
      * @var int $id
@@ -90,12 +90,12 @@ class PostInterface
     protected $contentFiltered = "";
 
     /**
-     * @var PostInterface $parent
+     * @var Post $parent
      */
     protected $parent;
 
     /**
-     * @var PostInterface $children
+     * @var Post $children
      */
     protected $children = array();
 
@@ -125,12 +125,12 @@ class PostInterface
     protected $commentCount = 0;
 
     /**
-     * @var PostMetaInterface
+     * @var PostMeta
      */
     protected $metas;
 
     /**
-     * @var CommentInterface
+     * @var Comment
      */
     protected $comments;
 
@@ -140,7 +140,7 @@ class PostInterface
     protected $user;
 
     /**
-     * @var TaxonomyInterface
+     * @var Taxonomy
      */
     protected $taxonomies;
 
@@ -534,9 +534,9 @@ class PostInterface
     /**
      * Set parent
      *
-     * @param PostInterface $child
+     * @param Post $child
      */
-    public function addChild(PostInterface $child)
+    public function addChild(Post $child)
     {
         $child->setParent($this);
         $this->children[] = $child;
@@ -645,9 +645,9 @@ class PostInterface
     /**
      * Add metas
      *
-     * @param PostMetaInterface $meta
+     * @param PostMeta $meta
      */
-    public function addMeta(PostMetaInterface $meta)
+    public function addMeta(PostMeta $meta)
     {
         $meta->setPost($this);
         $this->metas[] = $meta;
@@ -666,9 +666,9 @@ class PostInterface
     /**
      * Add comment
      *
-     * @param CommentInterface $comment
+     * @param Comment $comment
      */
-    public function addComment(CommentInterface $comment)
+    public function addComment(Comment $comment)
     {
         $comment->setPost($this);
         $this->comments[] = $comment;
@@ -708,9 +708,9 @@ class PostInterface
     /**
      * Add taxonomies
      *
-     * @param TaxonomyInterface $taxonomy
+     * @param Taxonomy $taxonomy
      */
-    public function addTaxonomy(TaxonomyInterface $taxonomy)
+    public function addTaxonomy(Taxonomy $taxonomy)
     {
         $this->taxonomies[] = $taxonomy;
     }

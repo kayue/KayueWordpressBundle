@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class PostMetaInterface
+class PostMeta
 {
     /**
      * @var int $id
@@ -20,7 +20,7 @@ class PostMetaInterface
     protected $value;
 
     /**
-     * @var PostInterface
+     * @var Post
      */
     protected $post;
 
@@ -77,9 +77,9 @@ class PostMetaInterface
     /**
      * Set post
      *
-     * @param PostInterface $post
+     * @param Post $post
      */
-    public function setPost(PostInterface $post)
+    public function setPost(Post $post)
     {
         $this->post = $post;
     }
@@ -87,7 +87,7 @@ class PostMetaInterface
     /**
      * Get post
      *
-     * @return PostInterface
+     * @return Post
      */
     public function getPost()
     {

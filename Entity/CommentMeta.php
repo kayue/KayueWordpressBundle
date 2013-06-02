@@ -3,14 +3,14 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Model\CommentMetaInterface;
+use Kayue\WordpressBundle\Model\CommentMeta as ModelCommentaMeta;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
  * @ORM\Table(name="commentmeta")
  * @ORM\Entity
  */
-class CommentMeta extends CommentMetaInterface
+class CommentMeta extends ModelCommentaMeta
 {
     /**
      * {@inheritdoc}

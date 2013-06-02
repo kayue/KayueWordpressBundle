@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class OptionInterface
+class CommentMeta
 {
     /**
      * @var int $id
@@ -10,9 +10,9 @@ class OptionInterface
     protected $id;
 
     /**
-     * @var string $name
+     * @var string $key
      */
-    protected $name;
+    protected $key;
 
     /**
      * @var string $value
@@ -20,9 +20,9 @@ class OptionInterface
     protected $value;
 
     /**
-     * @var string $autoload
+     * @var Comment
      */
-    protected $autoload = 'yes';
+    protected $comment;
 
     /**
      * Get id
@@ -35,23 +35,23 @@ class OptionInterface
     }
 
     /**
-     * Set name
+     * Set key
      *
-     * @param string $name
+     * @param string $key
      */
-    public function setName($name)
+    public function setKey($key)
     {
-        $this->name = $name;
+        $this->key = $key;
     }
 
     /**
-     * Get name
+     * Get key
      *
      * @return string
      */
-    public function getName()
+    public function getKey()
     {
-        return $this->name;
+        return $this->key;
     }
 
     /**
@@ -75,22 +75,22 @@ class OptionInterface
     }
 
     /**
-     * Set autoload
+     * Set comment
      *
-     * @param string $autoload Yes or no
+     * @param Comment $comment
      */
-    public function setAutoload($autoload)
+    public function setComment(Comment $comment)
     {
-        $this->autoload = $autoload;
+        $this->comment = $comment;
     }
 
     /**
-     * Get autoload
+     * Get comment
      *
-     * @return string
+     * @return Comment
      */
-    public function getAutoload()
+    public function getComment()
     {
-        return $this->autoload;
+        return $this->comment;
     }
 }

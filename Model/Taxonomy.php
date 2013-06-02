@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class TaxonomyInterface
+class Taxonomy
 {
     /**
      * @var int $id
@@ -30,12 +30,12 @@ class TaxonomyInterface
     protected $count = 0;
 
     /**
-     * @var TermInterface
+     * @var Term
      */
     protected $term;
 
     /**
-     * @var PostInterface[]
+     * @var Post[]
      */
     protected $posts;
 
@@ -132,9 +132,9 @@ class TaxonomyInterface
     /**
      * Set term
      *
-     * @param TermInterface $term
+     * @param Term $term
      */
-    public function setTerm(TermInterface $term)
+    public function setTerm(Term $term)
     {
         $this->term = $term;
     }
@@ -142,7 +142,7 @@ class TaxonomyInterface
     /**
      * Get term
      *
-     * @return TermInterface
+     * @return Term
      */
     public function getTerm()
     {
@@ -152,9 +152,9 @@ class TaxonomyInterface
     /**
      * Add post
      *
-     * @param PostInterface $post
+     * @param Post $post
      */
-    public function addPosts(PostInterface $post)
+    public function addPosts(Post $post)
     {
         $this->posts[] = $post;
     }

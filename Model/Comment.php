@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class CommentInterface
+class Comment
 {
     /**
      * @var int $id
@@ -72,12 +72,12 @@ class CommentInterface
     protected $parent;
 
     /**
-     * @var CommentMetaInterface
+     * @var CommentMeta
      */
     protected $metas;
 
     /**
-     * @var PostInterface
+     * @var Post
      */
     protected $post;
 
@@ -328,9 +328,9 @@ class CommentInterface
     /**
      * Set parent
      *
-     * @param CommentInterface $comment
+     * @param Comment $comment
      */
-    public function setParent(CommentInterface $comment)
+    public function setParent(Comment $comment)
     {
         $this->parent = $comment;
     }
@@ -338,7 +338,7 @@ class CommentInterface
     /**
      * Get parent
      *
-     * @return CommentInterface
+     * @return Comment
      */
     public function getParent()
     {
@@ -348,9 +348,9 @@ class CommentInterface
     /**
      * Add meta
      *
-     * @param CommentMetaInterface $meta
+     * @param CommentMeta $meta
      */
-    public function addMeta(CommentMetaInterface $meta)
+    public function addMeta(CommentMeta $meta)
     {
         $this->metas[] = $meta;
     }
@@ -358,7 +358,7 @@ class CommentInterface
     /**
      * Get metas
      *
-     * @return CommentMetaInterface[]
+     * @return CommentMeta[]
      */
     public function getMetas()
     {
@@ -368,9 +368,9 @@ class CommentInterface
     /**
      * Set post
      *
-     * @param PostInterface $post
+     * @param Post $post
      */
-    public function setPost(PostInterface $post)
+    public function setPost(Post $post)
     {
         $this->post = $post;
     }
@@ -378,7 +378,7 @@ class CommentInterface
     /**
      * Get post
      *
-     * @return PostInterface
+     * @return Post
      */
     public function getPost()
     {

@@ -4,7 +4,7 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Model\PostInterface;
+use Kayue\WordpressBundle\Model\Post as ModelPost;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Post extends PostInterface
+class Post extends ModelPost
 {
     /**
      * {@inheritdoc}

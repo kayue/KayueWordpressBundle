@@ -2,7 +2,9 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-interface UserInterface extends \Symfony\Component\Security\Core\User\UserInterface
+use Symfony\Component\Security\Core\User\UserInterface as SymfonyUserInterface;
+
+interface UserInterface extends SymfonyUserInterface
 {
 
 }
