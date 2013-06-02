@@ -1,5 +1,7 @@
 <?php
 
+namespace Kayue\WordpressBundle\Tests\Subscriber;
+
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Kayue\WordpressBundle\Subscriber\TablePrefixSubscriber;
 
