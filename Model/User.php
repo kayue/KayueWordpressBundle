@@ -60,6 +60,16 @@ class User implements UserInterface, \Serializable
     protected $metas;
 
     /**
+     * @var Kayue\WordpressBundle\Entity\Post
+     */
+    private $posts;
+
+    /**
+     * @var Kayue\WordpressBundle\Entity\Comment
+     */
+    private $comments;
+
+    /**
      * Get ID
      *
      * @return int
@@ -269,6 +279,26 @@ class User implements UserInterface, \Serializable
     public function getMetas()
     {
         return $this->metas;
+    }
+
+    /**
+     * Get posts
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getPosts()
+    {
+        return $this->posts;
+    }
+
+    /**
+     * Get comments
+     *
+     * @return Doctrine\Common\Collections\Collection
+     */
+    public function getComments()
+    {
+        return $this->comments;
     }
 
     /**

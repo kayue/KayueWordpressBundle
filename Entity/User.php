@@ -107,9 +107,25 @@ class User extends ModelUser
      */
     protected $metas;
 
+    /**
+     * {@inheritdoc}
+     *
+     * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\Post", mappedBy="user")
+     */
+    protected $posts;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\Comment", mappedBy="user")
+     */
+    protected $comments;
+
     public function __construct()
     {
         $this->metas = new ArrayCollection();
+        $this->posts = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
 
     /**
