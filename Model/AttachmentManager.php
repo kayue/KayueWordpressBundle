@@ -146,6 +146,10 @@ class AttachmentManager implements AttachmentManagerInterface
 
         $attachment = $this->findOneAttachmentById($featuredImageId);
 
+        if (!$attachment) {
+            return null;
+        }
+
         if (!$size) {
             return $attachment->getThumbnailUrl();
         }
