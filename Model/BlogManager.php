@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle\Model;
 
 use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\DBAL\DBALException;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\WordpressEvents;
@@ -50,8 +51,14 @@ class BlogManager implements BlogManagerInterface
             // use brand a new cache each entity manager to prevent faulty cache
             $em->getMetadataFactory()->setCacheDriver(new ArrayCache());
 
-            if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
-                throw new \Doctrine\ORM\ORMException(sprintf('Blog %d was not found.', $id));
+            try {
+                if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
+                    throw new \Doctrine\ORM\ORMException(sprintf('Blog %d was not found.', $id));
+                }
+            } catch(DBALException $e) {
+                if($id > 1) {
+                    throw new \Exception('Multisite is not installed on your WordPress.');
+                }
             }
 
             $em->setBlogId($id);
