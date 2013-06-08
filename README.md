@@ -12,6 +12,7 @@ I started that bundle two years ago and the original repository grew somewhat ch
 * Custom table prefix (v1.0.1)
 * WordPress entities (v1.0.2)
 * [Multisite](http://codex.wordpress.org/Create_A_Network) support (v1.0.3)
+* Twig extension, improved model manager (dev-master)
 
 ## Installation
 
@@ -129,6 +130,8 @@ public function postAction($slug)
 
 This bundle comes with the following Twig extensions.
 
+#### Functions
+
 * `wp_switch_blog` - equivalent to WordPress's `switch_to_blog()` method.
 * `wp_find_attachments_by_post`
 * `wp_find_one_attachment_by_id`
@@ -143,6 +146,11 @@ This bundle comes with the following Twig extensions.
 * `wp_find_terms_by_post`
 * `wp_find_categories_by_post` - equivalent to WordPress's `get_categories()` method.
 * `wp_find_tags_by_post` - equivalent to WordPress's `get_tags()` method.
+
+#### Filters
+
+* `wp_autop` - Wrap paragraph with `<p>` tag. Needed for post formatting.
+* `wp_texturize` - [Texturize](http://codex.wordpress.org/How_WordPress_Processes_Post_Content#Texturize). Needed for post formatting 
 
 ### Multisite
 
