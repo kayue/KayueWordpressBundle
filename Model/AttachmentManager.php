@@ -98,6 +98,10 @@ class AttachmentManager implements AttachmentManagerInterface
 
     public function getAttachmentOfSize(Attachment $attachment, $size = null)
     {
+        if($size === 'full') {
+            return $attachment->getUrl();
+        }
+
         /** @var $meta PostMeta */
         $meta = $this->postMetaManager->findOneMetaBy(array(
             'post' => $attachment,
@@ -144,14 +148,10 @@ class AttachmentManager implements AttachmentManagerInterface
 
         if (!$featuredImageId) return null;
 
-        $attachment = $this->findOneAttachmentById($featuredImageId);
+        $attachment = $this->findOneAttachmentById($featuredImageId->getValue());
 
         if (!$attachment) {
             return null;
-        }
-
-        if (!$size) {
-            return $attachment->getThumbnailUrl();
         }
 
         return $this->getAttachmentOfSize($attachment, $size);
