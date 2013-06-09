@@ -102,7 +102,8 @@ class WordpressExtension extends \Twig_Extension
             'wp_find_one_meta_by' => new \Twig_Function_Method($this, 'findOneMetaBy'),
             'wp_find_terms_by_post' => new \Twig_Function_Method($this, 'findTermsByPost'),
             'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
-            'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost')
+            'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost'),
+            'wp_find_post_format_by_post' => new \Twig_Function_Method($this, 'findPostFormatByPost')
         );
     }
 
@@ -170,6 +171,13 @@ class WordpressExtension extends \Twig_Extension
     {
         $taxonomy = new Taxonomy();
         $taxonomy->setName('category');
+        return $this->findTermsByPost($post, $taxonomy);
+    }
+
+    public function findPostFormatByPost(Post $post)
+    {
+        $taxonomy = new Taxonomy();
+        $taxonomy->setName('post_format');
         return $this->findTermsByPost($post, $taxonomy);
     }
 
