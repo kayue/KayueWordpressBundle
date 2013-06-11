@@ -6,5 +6,5 @@ interface ShortcodeInterface
 {
     public function getName();
 
-    public function doShortcode();
+    public function process($content);
 }
