@@ -12,6 +12,7 @@ use Kayue\WordpressBundle\Model\OptionManager;
 use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
+use Kayue\WordpressBundle\Model\UserMetaManager;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -52,6 +53,11 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $termManager;
 
+    /**
+     * @var UserMetaManager
+     */
+    protected $userMetaManager;
+
     public function __construct(BlogManager $blogManager)
     {
         $this->blogManager = $blogManager;
@@ -71,6 +77,7 @@ class WordpressExtension extends \Twig_Extension
         $this->postManager = new PostManager($em);
         $this->postMetaManager = new PostMetaManager($em);
         $this->termManager = new TermManager();
+        $this->userMetaManager = new UserMetaManager($em);
     }
 
     public function getName()
@@ -98,8 +105,13 @@ class WordpressExtension extends \Twig_Extension
             'wp_find_one_post_by_id' => new \Twig_Function_Method($this, 'findOnePostById'),
             'wp_find_one_post_by_slug' => new \Twig_Function_Method($this, 'findOnePostBySlug'),
             'wp_find_all_metas_by_post' => new \Twig_Function_Method($this, 'findAllMetasByPost'),
+            'wp_find_all_metas_by_user' => new \Twig_Function_Method($this, 'findAllMetasByUser'),
             'wp_find_metas_by' => new \Twig_Function_Method($this, 'findMetasBy'),
             'wp_find_one_meta_by' => new \Twig_Function_Method($this, 'findOneMetaBy'),
+            'wp_find_user_metas_by' => new \Twig_Function_Method($this, 'findUserMetasBy'),
+            'wp_find_one_user_meta_by' => new \Twig_Function_Method($this, 'findOneUserMetaBy'),
+            'wp_find_post_metas_by' => new \Twig_Function_Method($this, 'findPostMetasBy'),
+            'wp_find_one_post_meta_by' => new \Twig_Function_Method($this, 'findOnePostMetaBy'),
             'wp_find_terms_by_post' => new \Twig_Function_Method($this, 'findTermsByPost'),
             'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
             'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost'),
@@ -152,12 +164,59 @@ class WordpressExtension extends \Twig_Extension
         return $this->postMetaManager->findAllMetasByPost($post);
     }
 
+    public function findAllMetasByUser(User $user)
+    {
+        return $this->userMetaManager->findAllMetasByUser($user);
+    }
+
     public function findMetasBy(array $criteria)
+    {
+        if (array_key_exists('post', $criteria) && array_key_exists('user', $criteria)) {
+            throw new \Exception('It is ambiguous to find metas with both user and post key. Please remove one of them.');
+        }
+
+        if (array_key_exists('post', $criteria)) {
+            return $this->postMetaManager->findMetasBy($criteria);
+        } else if (array_key_exists('user', $criteria)) {
+            return $this->userMetaManager->findMetasBy($criteria);
+        } else {
+            throw new \Exception('It is ambiguous to find metas without giving either post key or user key.
+                    Please use wp_find_one_user_meta_by or wp_find_one_post_meta_by for this case.');
+        }
+    }
+
+    public function findOneMetaBy(array $criteria)
+    {
+        if (array_key_exists('post', $criteria) && array_key_exists('user', $criteria)) {
+            throw new \Exception('It is ambiguous to find metas with both user and post key. Please remove one of them.');
+        }
+
+        if (array_key_exists('post', $criteria)) {
+            return $this->postMetaManager->findOneMetaBy($criteria);
+        } else if (array_key_exists('user', $criteria)) {
+            return $this->userMetaManager->findOneMetaBy($criteria);
+        } else {
+            throw new \Exception('It is ambiguous to find metas without giving either post key or user key.
+                    Please use wp_find_one_user_meta_by or wp_find_one_post_meta_by for this case.');
+        }
+    }
+
+    public function findUserMetasBy(array $criteria)
+    {
+        return $this->userMetaManager->findMetasBy($criteria);
+    }
+
+    public function findOneUserMetaBy(array $criteria)
+    {
+        return $this->userMetaManager->findOneMetaBy($criteria);
+    }
+
+    public function findPostMetasBy(array $criteria)
     {
         return $this->postMetaManager->findMetasBy($criteria);
     }
 
-    public function findOneMetaBy(array $criteria)
+    public function findOnePostMetaBy(array $criteria)
     {
         return $this->postMetaManager->findOneMetaBy($criteria);
     }
