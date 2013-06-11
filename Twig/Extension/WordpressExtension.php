@@ -512,6 +512,6 @@ class WordpressExtension extends \Twig_Extension
      */
     public function doShortcode($content)
     {
-        return $this->shortcodeChain->doShortcode($content);
+        return $this->shortcodeChain->process($content);
     }
 }

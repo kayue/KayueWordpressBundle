@@ -29,7 +29,7 @@ class ShortcodeChain
      * @param  string $content Content to search for shortcodes
      * @return string Content with shortcodes filtered out.
      */
-    public function doShortcode($content)
+    public function process($content)
     {
         if(empty($this->shortcodes)) {
             return $content;
