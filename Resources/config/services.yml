@@ -93,3 +93,6 @@ services:
         tags:
             - { name: twig.extension }
             - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
+
+    kayue_wordpress.shortcode_chain:
+        class: Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain
