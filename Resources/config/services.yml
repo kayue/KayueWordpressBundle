@@ -96,3 +96,8 @@ services:
 
     kayue_wordpress.shortcode_chain:
         class: Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain
+
+    kayue_wordpress.shortcode.caption:
+        class: Kayue\WordpressBundle\Wordpress\Shortcode\CaptionShortcode
+        tags:
+            - { name: kayue_wordpress.shortcode }
