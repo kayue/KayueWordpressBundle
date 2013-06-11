@@ -150,7 +150,8 @@ This bundle comes with the following Twig extensions.
 #### Filters
 
 * `wp_autop` - Wrap paragraph with `<p>` tag. Needed for post formatting.
-* `wp_texturize` - [Texturize](http://codex.wordpress.org/How_WordPress_Processes_Post_Content#Texturize). Needed for post formatting 
+* `wp_texturize` - [Texturize](http://codex.wordpress.org/How_WordPress_Processes_Post_Content#Texturize). Needed for post formatting
+* `wp_shortcode` - equivalent to WordPress's `do_shortcode()` method.
 
 ### Multisite
 
