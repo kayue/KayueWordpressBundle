@@ -13,6 +13,7 @@ use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
 use Kayue\WordpressBundle\Model\UserMetaManager;
+use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -58,10 +59,16 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $userMetaManager;
 
-    public function __construct(BlogManager $blogManager)
+    /**
+     * @var ShortcodeChain
+     */
+    protected $shortcodeChain;
+
+    public function __construct(BlogManager $blogManager, ShortcodeChain $shortcodeChain)
     {
         $this->blogManager = $blogManager;
         $this->setEntityManager($blogManager->getCurrentBlog()->getEntityManager());
+        $this->shortcodeChain = $shortcodeChain;
     }
 
     public function onSwitchBlog(SwitchBlogEvent $event)
@@ -90,6 +97,7 @@ class WordpressExtension extends \Twig_Extension
         return array(
             'wp_autop' => new \Twig_Filter_Method($this, 'wpautop'),
             'wp_texturize' => new \Twig_Filter_Method($this, 'wptexturize'),
+            'wp_shortcode' => new \Twig_Filter_Method($this, 'doShortcode'),
         );
     }
 
@@ -495,5 +503,15 @@ class WordpressExtension extends \Twig_Extension
                     array_push($stack, $last);
             }
         }
+    }
+
+    /**
+     * @param $content Content to search for shortcodes
+     *
+     * @return string Content with shortcodes filtered out.
+     */
+    public function doShortcode($content)
+    {
+        return $this->shortcodeChain->process($content);
     }
 }

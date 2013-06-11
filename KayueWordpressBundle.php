@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle;
 
 use Doctrine\DBAL\Types\Type;
+use Kayue\WordpressBundle\DependencyInjection\Compiler\ShortcodeCompilerPass;
 use Kayue\WordpressBundle\DependencyInjection\Security\Factory\WordpressFactory;
 use Kayue\WordpressBundle\Types\WordpressIdType;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -11,7 +12,6 @@ use Kayue\WordpressBundle\Types\WordpressMetaType;
 
 class KayueWordpressBundle extends Bundle
 {
-
     public function boot()
     {
         parent::boot();
@@ -29,7 +29,11 @@ class KayueWordpressBundle extends Bundle
     {
         parent::build($container);
 
+        // Security
         $extension = $container->getExtension('security');
         $extension->addSecurityListenerFactory(new WordpressFactory());
+
+        // Shortcode
+        $container->addCompilerPass(new ShortcodeCompilerPass());
     }
 }
