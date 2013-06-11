@@ -90,6 +90,7 @@ services:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
             - @kayue_wordpress.blog.manager
+            - @kayue_wordpress.shortcode_chain
         tags:
             - { name: twig.extension }
             - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }

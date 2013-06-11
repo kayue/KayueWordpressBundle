@@ -19,6 +19,16 @@ class ShortcodeChain
         $this->shortcodes[$shortcode->getName()] = $shortcode;
     }
 
+    /**
+     * Search content for shortcodes and filter shortcodes through their hooks.
+     *
+     * If there are no shortcode tags defined, then the content will be returned
+     * without any filtering. This might cause issues when plugins are disabled but
+     * the shortcode will still show up in the post or content.
+     *
+     * @param  string $content Content to search for shortcodes
+     * @return string Content with shortcodes filtered out.
+     */
     public function doShortcode($content)
     {
         if(empty($this->shortcodes)) {
