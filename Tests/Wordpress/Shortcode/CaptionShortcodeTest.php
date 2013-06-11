@@ -24,4 +24,24 @@ class CaptionShortcodeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('<div class="wp-caption alignnone" style="width: 610px"><img src="http://placehold.it/300x200" /><p class="wp-caption-text">A football video</p></div>', $result);
     }
+
+    public function testMultipleCaption()
+    {
+        $result = $this->chain->doShortcode('
+        [caption width="400" caption="A football video"]<img src="http://placehold.it/100x200" />[/caption]
+        [caption width="300" caption="A football video"]<img src="http://placehold.it/200x200" />[/caption]
+        ');
+
+        $this->assertEquals('
+        <div class="wp-caption alignnone" style="width: 410px"><img src="http://placehold.it/100x200" /><p class="wp-caption-text">A football video</p></div>
+        <div class="wp-caption alignnone" style="width: 310px"><img src="http://placehold.it/200x200" /><p class="wp-caption-text">A football video</p></div>
+        ', $result);
+    }
+
+    public function testCaptionWithNoWidth()
+    {
+        $result = $this->chain->doShortcode('[caption]<img src="http://placehold.it/300x200" />[/caption]');
+
+        $this->assertEquals('<img src="http://placehold.it/300x200" />', $result);
+    }
 }
