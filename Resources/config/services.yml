@@ -81,6 +81,11 @@ services:
         arguments:
             - @doctrine.orm.default_entity_manager
 
+    kayue_wordpress.user_meta.manager:
+        class: Kayue\WordpressBundle\Model\UserMetaManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
