@@ -12,6 +12,7 @@ use Kayue\WordpressBundle\Model\OptionManager;
 use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
+use Kayue\WordpressBundle\Model\UserMetaManager;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -215,7 +216,7 @@ class WordpressExtension extends \Twig_Extension
         return $this->postMetaManager->findMetasBy($criteria);
     }
 
-    public function findPostMetasBy(array $criteria)
+    public function findOnePostMetaBy(array $criteria)
     {
         return $this->postMetaManager->findOneMetaBy($criteria);
     }
