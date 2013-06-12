@@ -245,7 +245,14 @@ class WordpressExtension extends \Twig_Extension
     {
         $taxonomy = new Taxonomy();
         $taxonomy->setName('post_format');
-        return $this->findTermsByPost($post, $taxonomy);
+        /** @var $term \Kayue\WordpressBundle\Model\Term[] */
+        $term = $this->findTermsByPost($post, $taxonomy);
+
+        if(!empty($term)) {
+            return str_replace('post-format-', '', $term[0]->getSlug());
+        }
+
+        return 'standard';
     }
 
     public function findTagsByPost(Post $post)
