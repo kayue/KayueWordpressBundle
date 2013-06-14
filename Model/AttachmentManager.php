@@ -57,7 +57,9 @@ class AttachmentManager implements AttachmentManagerInterface
                 $attachment = new Attachment($post);
 
                 $attachment->setUrl($rawMeta['file']);
-                $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
+                if (isset($rawMeta['sizes']['thumbnail'])) {
+                    $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
+                }
 
                 $result[] = $attachment;
             }
@@ -141,7 +143,7 @@ class AttachmentManager implements AttachmentManagerInterface
      *
      * @return mixed
      */
-    public function findFeaturedImageByPost(Post $post, $size = null)
+    public function findFeaturedImageByPost(Post $post)
     {
         $featuredImageId = $this->postMetaManager->findOneMetaBy(array(
             'post' => $post,
@@ -150,12 +152,6 @@ class AttachmentManager implements AttachmentManagerInterface
 
         if (!$featuredImageId) return null;
 
-        $attachment = $this->findOneAttachmentById($featuredImageId->getValue());
-
-        if (!$attachment) {
-            return null;
-        }
-
-        return $this->getAttachmentOfSize($attachment, $size);
+        return $this->findOneAttachmentById($featuredImageId->getValue());
     }
 }
