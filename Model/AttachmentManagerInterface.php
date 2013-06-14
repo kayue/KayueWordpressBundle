@@ -18,8 +18,7 @@ interface AttachmentManagerInterface
 
     /**
      * @param Post $post
-     * @param array $size A 2-item array representing width and height in pixels, e.g. array(32,32).
      * @return mixed
      */
-    public function findFeaturedImageByPost(Post $post, $size = null);
+    public function findFeaturedImageByPost(Post $post);
 }
