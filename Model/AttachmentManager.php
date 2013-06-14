@@ -89,7 +89,9 @@ class AttachmentManager implements AttachmentManagerInterface
             $attachment = new Attachment($post);
 
             $attachment->setUrl($rawMeta['file']);
-            $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
+            if (isset($rawMeta['sizes']['thumbnail'])) {
+                $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
+            }
             return $attachment;
         }
 
