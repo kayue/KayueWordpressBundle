@@ -521,7 +521,7 @@ class WordpressExtension extends \Twig_Extension
     }
 
     /**
-     * @param $content Content to search for shortcodes
+     * @param string $content Content to search for shortcodes
      *
      * @return string Content with shortcodes filtered out.
      */
