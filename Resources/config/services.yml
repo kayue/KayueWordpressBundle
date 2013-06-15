@@ -56,6 +56,11 @@ services:
         arguments:
             - @service_container
 
+    kayue_wordpress.comment.manager:
+        class: Kayue\WordpressBundle\Model\CommentManager
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
     kayue_wordpress.option.manager:
         class: Kayue\WordpressBundle\Model\OptionManager
         arguments:
