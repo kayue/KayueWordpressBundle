@@ -24,7 +24,7 @@ class User extends ModelUser
     /**
      * {@inheritdoc}
      *
-     * @ORM\Column(name="ID", type="integer", length=20)
+     * @ORM\Column(name="ID", type="wordpressid", length=20)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
