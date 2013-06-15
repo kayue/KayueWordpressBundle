@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class Comment
+class Comment implements CommentInterface
 {
     /**
      * @var int $id

@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class Post
+class Post implements PostInterface
 {
     /**
      * @var int $id
