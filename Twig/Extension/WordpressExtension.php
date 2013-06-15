@@ -8,6 +8,7 @@ use Kayue\WordpressBundle\Entity\Taxonomy;
 use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\Model\AttachmentManager;
 use Kayue\WordpressBundle\Model\BlogManager;
+use Kayue\WordpressBundle\Model\CommentManager;
 use Kayue\WordpressBundle\Model\OptionManager;
 use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
@@ -60,6 +61,11 @@ class WordpressExtension extends \Twig_Extension
     protected $userMetaManager;
 
     /**
+     * @var CommentManager
+     */
+    protected $commentManager;
+
+    /**
      * @var ShortcodeChain
      */
     protected $shortcodeChain;
@@ -85,6 +91,7 @@ class WordpressExtension extends \Twig_Extension
         $this->postMetaManager = new PostMetaManager($em);
         $this->termManager = new TermManager();
         $this->userMetaManager = new UserMetaManager($em);
+        $this->commentManager = new CommentManager($em);
     }
 
     public function getName()
@@ -123,7 +130,8 @@ class WordpressExtension extends \Twig_Extension
             'wp_find_terms_by_post' => new \Twig_Function_Method($this, 'findTermsByPost'),
             'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
             'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost'),
-            'wp_find_post_format_by_post' => new \Twig_Function_Method($this, 'findPostFormatByPost')
+            'wp_find_post_format_by_post' => new \Twig_Function_Method($this, 'findPostFormatByPost'),
+            'wp_find_comments_by_post' => new \Twig_Function_Method($this, 'findCommentsByPost'),
         );
     }
 
@@ -227,6 +235,11 @@ class WordpressExtension extends \Twig_Extension
     public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
     {
         return $this->termManager->findTermsByPost($post, $taxonomy);
+    }
+
+    public function findCommentsByPost(Post $post)
+    {
+        return $this->commentManager->findCommentsByPost($post);
     }
 
     public function findCategoriesByPost(Post $post)

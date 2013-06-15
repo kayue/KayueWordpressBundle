@@ -59,8 +59,10 @@ class CommentManager implements CommentManagerInterface
 
     public function findCommentsByPost(PostInterface $post)
     {
-        $this->repository->findBy(array(
-            'post' => $post
+        return $this->repository->findBy(array(
+            'post'     => $post,
+            'approved' => 1,
+            'type'     => ''
         ));
     }
 }
