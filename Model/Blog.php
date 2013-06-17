@@ -2,6 +2,8 @@
 
 namespace Kayue\WordpressBundle\Model;
 
+use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
+
 class Blog implements BlogInterface
 {
     /**
@@ -33,7 +35,7 @@ class Blog implements BlogInterface
     /**
      * @param WordpressEntityManager $manager
      */
-    public function setEntityManager($manager)
+    public function setEntityManager(WordpressEntityManager $manager)
     {
         $this->entityManager = $manager;
     }
