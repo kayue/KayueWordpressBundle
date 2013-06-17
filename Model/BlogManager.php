@@ -43,25 +43,32 @@ class BlogManager implements BlogManagerInterface
     public function findBlogById($id)
     {
         if (!isset($this->blogs[$id])) {
-            $em = WordpressEntityManager::create(
-                $this->container->get('database_connection'),
-                $this->container->get('doctrine.orm.entity_manager')->getConfiguration()
-            );
+            if ($id == 1) {
+                $em = $this->container->get('doctrine.orm.default_entity_manager');
 
-            // use brand a new cache each entity manager to prevent faulty cache
-            $em->getMetadataFactory()->setCacheDriver(new ArrayCache());
+                $em->getBlogId = function(){return 1;};
+            } else {
 
-            try {
-                if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
-                    throw new \Doctrine\ORM\ORMException(sprintf('Blog %d was not found.', $id));
+                $em = WordpressEntityManager::create(
+                    $this->container->get('database_connection'),
+                    $this->container->get('doctrine.orm.entity_manager')->getConfiguration()
+                );
+
+                // use brand a new cache each entity manager to prevent faulty cache
+                $em->getMetadataFactory()->setCacheDriver(new ArrayCache());
+
+                try {
+                    if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
+                        throw new \Doctrine\ORM\ORMException(sprintf('Blog %d was not found.', $id));
+                    }
+                } catch(DBALException $e) {
+                    if($id > 1) {
+                        throw new \Exception('Multisite is not installed on your WordPress.');
+                    }
                 }
-            } catch(DBALException $e) {
-                if($id > 1) {
-                    throw new \Exception('Multisite is not installed on your WordPress.');
-                }
+
+                $em->setBlogId($id);
             }
-
-            $em->setBlogId($id);
 
             $blog = new Blog();
             $blog->setId($id);
