@@ -3,7 +3,6 @@
 namespace Kayue\WordpressBundle\EventListener;
 
 use Kayue\WordpressBundle\Event\SwitchBlogEvent;
-use Kayue\WordpressBundle\Model\Attachment;
 use Kayue\WordpressBundle\Model\AttachmentManager;
 use Kayue\WordpressBundle\Model\CommentManager;
 use Kayue\WordpressBundle\Model\OptionManager;
