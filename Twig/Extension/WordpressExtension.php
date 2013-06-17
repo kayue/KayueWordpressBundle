@@ -5,7 +5,6 @@ namespace Kayue\WordpressBundle\Twig\Extension;
 use Doctrine\ORM\EntityManager;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
-use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\Model\AttachmentManager;
 use Kayue\WordpressBundle\Model\BlogManager;
 use Kayue\WordpressBundle\Model\CommentManager;
@@ -26,14 +25,14 @@ class WordpressExtension extends \Twig_Extension
     protected $em;
 
     /**
-     * @var AttachmentManager
-     */
-    protected $attachmentManager;
-
-    /**
      * @var BlogManager
      */
     protected $blogManager;
+
+    /**
+     * @var AttachmentManager
+     */
+    protected $attachmentManager;
 
     /**
      * @var OptionManager
@@ -70,16 +69,11 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $shortcodeChain;
 
-    public function __construct(BlogManager $blogManager, ShortcodeChain $shortcodeChain)
+    public function __construct(EntityManager $em, BlogManager $blogManager, ShortcodeChain $shortcodeChain)
     {
         $this->blogManager = $blogManager;
-        $this->setEntityManager($blogManager->getCurrentBlog()->getEntityManager());
+        $this->setEntityManager($em);
         $this->shortcodeChain = $shortcodeChain;
-    }
-
-    public function onSwitchBlog(SwitchBlogEvent $event)
-    {
-        $this->setEntityManager($event->getBlog()->getEntityManager());
     }
 
     public function setEntityManager(EntityManager $em)

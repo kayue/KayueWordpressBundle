@@ -94,11 +94,11 @@ services:
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
+            - @doctrine.orm.default_entity_manager
             - @kayue_wordpress.blog.manager
             - @kayue_wordpress.shortcode_chain
         tags:
             - { name: twig.extension }
-            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
 
     kayue_wordpress.shortcode_chain:
         class: Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain
@@ -107,3 +107,10 @@ services:
         class: Kayue\WordpressBundle\Wordpress\Shortcode\CaptionShortcode
         tags:
             - { name: kayue_wordpress.shortcode }
+
+    kayue_wordpress.event_listener.switch_blog:
+        class: Kayue\WordpressBundle\EventListener\SwitchBlogListener
+        arguments:
+            - @service_container
+        tags:
+            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }
