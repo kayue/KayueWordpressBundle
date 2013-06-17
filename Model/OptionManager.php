@@ -9,14 +9,9 @@ use Doctrine\ORM\EntityRepository;
 class OptionManager implements OptionManagerInterface
 {
     /**
-     * @var EntityManager
+     * @var BlogManager
      */
-    protected $em;
-
-    /**
-     * @var EntityRepository
-     */
-    protected $repository;
+    protected $blogManager;
 
     /**
      * @var ArrayCache
@@ -28,10 +23,9 @@ class OptionManager implements OptionManagerInterface
      *
      * @param EntityManager     $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(BlogManager $blogManager)
     {
-        $this->em         = $em;
-        $this->repository = $em->getRepository('KayueWordpressBundle:Option');
+        $this->blogManager = $blogManager;
         $this->cache      = new ArrayCache();
 
         $this->cacheAutoloadOptions();
@@ -41,7 +35,7 @@ class OptionManager implements OptionManagerInterface
     {
         if(false === $option = $this->cache->fetch($name)) {
             /** @var $option Option */
-            $option = $this->repository->findOneBy(array(
+            $option = $this->getOptionRepository()->findOneBy(array(
                 'name' => $name
             ));
 
@@ -55,7 +49,7 @@ class OptionManager implements OptionManagerInterface
 
     private function cacheAutoloadOptions()
     {
-        $options = $this->repository->findBy(array(
+        $options = $this->getOptionRepository()->findBy(array(
             'autoload' => 'yes'
         ));
 
@@ -67,5 +61,10 @@ class OptionManager implements OptionManagerInterface
     private function cacheOption(Option $option)
     {
         $this->cache->save($option->getName(), clone $option);
+    }
+
+    private function getOptionRepository()
+    {
+        return $this->blogManager->getCurrentBlog()->getEntityManager()->getRepository('KayueWordpressBundle:Option');
     }
 }
