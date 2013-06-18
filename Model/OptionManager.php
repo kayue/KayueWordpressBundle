@@ -21,9 +21,9 @@ class OptionManager implements OptionManagerInterface
     /**
      * @var ArrayCache
      */
-    protected static $cache;
+    protected $cache;
 
-    private static $cacheWarmedUp;
+    private $optionAutoloaded = false;
 
     /**
      * Constructor.
@@ -34,24 +34,17 @@ class OptionManager implements OptionManagerInterface
     {
         $this->em         = $em;
         $this->repository = $em->getRepository('KayueWordpressBundle:Option');
-
-        $this->cacheAutoloadOptions();
-    }
-
-    private function getOptionCache()
-    {
-        $hash = spl_object_hash($this->em);
-
-        if (!isset(self::$cache[$hash])) {
-            self::$cache[$hash] = new ArrayCache();
-        }
-
-        return self::$cache[$hash];
+        $this->cache      = new ArrayCache();
     }
 
     public function findOneOptionByName($name)
     {
-        if (false === $option = $this->getOptionCache()->fetch($name)) {
+        if (!$this->optionAutoloaded) {
+            $this->cacheAutoloadOptions();
+            $this->optionAutoloaded = true;
+        }
+
+        if (false === $option = $this->cache->fetch($name)) {
             /** @var $option Option */
             $option = $this->repository->findOneBy(array(
                 'name' => $name
@@ -67,24 +60,17 @@ class OptionManager implements OptionManagerInterface
 
     private function cacheAutoloadOptions()
     {
-        $hash = spl_object_hash($this->em);
+        $options = $this->repository->findBy(array(
+            'autoload' => 'yes'
+        ));
 
-        if (!isset(self::$cacheWarmedUp[$hash]))
-        {
-            $options = $this->repository->findBy(array(
-                'autoload' => 'yes'
-            ));
-
-            foreach($options as $option) {
-                $this->cacheOption($option);
-            }
-
-            self::$cacheWarmedUp[$hash] = true;
+        foreach($options as $option) {
+            $this->cacheOption($option);
         }
     }
 
     private function cacheOption(Option $option)
     {
-        $this->getOptionCache()->save($option->getName(), clone $option);
+        $this->cache->save($option->getName(), clone $option);
     }
 }
