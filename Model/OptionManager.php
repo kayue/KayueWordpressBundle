@@ -23,6 +23,8 @@ class OptionManager implements OptionManagerInterface
      */
     protected $cache;
 
+    private $optionAutoloaded = false;
+
     /**
      * Constructor.
      *
@@ -33,13 +35,16 @@ class OptionManager implements OptionManagerInterface
         $this->em         = $em;
         $this->repository = $em->getRepository('KayueWordpressBundle:Option');
         $this->cache      = new ArrayCache();
-
-        $this->cacheAutoloadOptions();
     }
 
     public function findOneOptionByName($name)
     {
-        if(false === $option = $this->cache->fetch($name)) {
+        if (!$this->optionAutoloaded) {
+            $this->cacheAutoloadOptions();
+            $this->optionAutoloaded = true;
+        }
+
+        if (false === $option = $this->cache->fetch($name)) {
             /** @var $option Option */
             $option = $this->repository->findOneBy(array(
                 'name' => $name
