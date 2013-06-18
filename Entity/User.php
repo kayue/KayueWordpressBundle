@@ -13,10 +13,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *
  * @ORM\Table(name="users")
  * @ORM\Entity
- * @UniqueEntity({"fields": "email", "message": "Sorry, that email address is already used.", "groups": {"register", "edit"}})
- * @UniqueEntity({"fields": "username", "message": "Sorry, that username is already used.", "groups": {"register", "edit"}})
- * @UniqueEntity({"fields": "nicename", "message": "Sorry, that nicename is already used.", "groups": {"unused"}})
- * @UniqueEntity({"fields": "displayName", "message": "Sorry, that display name has already been taken.", "groups": {"edit"}})
+ * @UniqueEntity({"fields": "email", "message": "Sorry, that email address is already used."})
+ * @UniqueEntity({"fields": "username", "message": "Sorry, that username is already used."})
+ * @UniqueEntity({"fields": "nicename", "message": "Sorry, that nicename is already used."})
+ * @UniqueEntity({"fields": "displayName", "message": "Sorry, that display name has already been taken."})
  * @ORM\HasLifecycleCallbacks
  */
 class User extends ModelUser
@@ -34,7 +34,7 @@ class User extends ModelUser
      * {@inheritdoc}
      *
      * @ORM\Column(name="user_login", type="string", length=60, unique=true)
-     * @Constraints\NotBlank(groups={"register", "edit"})
+     * @Constraints\NotBlank()
      */
     protected $username;
 
@@ -42,7 +42,7 @@ class User extends ModelUser
      * {@inheritdoc}
      *
      * @ORM\Column(name="user_pass", type="string", length=64)
-     * @Constraints\NotBlank(groups={"register", "edit"})
+     * @Constraints\NotBlank()
      */
     protected $password;
 
@@ -50,7 +50,7 @@ class User extends ModelUser
      * {@inheritdoc}
      *
      * @ORM\Column(name="user_nicename", type="string", length=64)
-     * @Constraints\NotBlank(groups={"unused"})
+     * @Constraints\NotBlank()
      */
     protected $nicename;
 
@@ -58,8 +58,8 @@ class User extends ModelUser
      * {@inheritdoc}
      *
      * @ORM\Column(name="user_email", type="string", length=100)
-     * @Constraints\NotBlank(groups={"register", "edit"})
-     * @Constraints\Email(groups={"register", "edit"})
+     * @Constraints\NotBlank()
+     * @Constraints\Email()
      */
     protected $email;
 
@@ -96,7 +96,7 @@ class User extends ModelUser
      * {@inheritdoc}
      *
      * @ORM\Column(name="display_name", type="string", length=250)
-     * @Constraints\NotBlank(groups={"edit"})
+     * @Constraints\NotBlank()
      */
     protected $displayName;
 
