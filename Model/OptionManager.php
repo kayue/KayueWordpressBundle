@@ -21,7 +21,9 @@ class OptionManager implements OptionManagerInterface
     /**
      * @var ArrayCache
      */
-    protected $cache;
+    protected static $cache;
+
+    private static $cacheWarmedUp;
 
     /**
      * Constructor.
@@ -32,14 +34,24 @@ class OptionManager implements OptionManagerInterface
     {
         $this->em         = $em;
         $this->repository = $em->getRepository('KayueWordpressBundle:Option');
-        $this->cache      = new ArrayCache();
 
         $this->cacheAutoloadOptions();
     }
 
+    private function getOptionCache()
+    {
+        $hash = spl_object_hash($this->em);
+
+        if (!isset(self::$cache[$hash])) {
+            self::$cache[$hash] = new ArrayCache();
+        }
+
+        return self::$cache[$hash];
+    }
+
     public function findOneOptionByName($name)
     {
-        if(false === $option = $this->cache->fetch($name)) {
+        if (false === $option = $this->getOptionCache()->fetch($name)) {
             /** @var $option Option */
             $option = $this->repository->findOneBy(array(
                 'name' => $name
@@ -55,17 +67,24 @@ class OptionManager implements OptionManagerInterface
 
     private function cacheAutoloadOptions()
     {
-        $options = $this->repository->findBy(array(
-            'autoload' => 'yes'
-        ));
+        $hash = spl_object_hash($this->em);
 
-        foreach($options as $option) {
-            $this->cacheOption($option);
+        if (!isset(self::$cacheWarmedUp[$hash]))
+        {
+            $options = $this->repository->findBy(array(
+                'autoload' => 'yes'
+            ));
+
+            foreach($options as $option) {
+                $this->cacheOption($option);
+            }
+
+            self::$cacheWarmedUp[$hash] = true;
         }
     }
 
     private function cacheOption(Option $option)
     {
-        $this->cache->save($option->getName(), clone $option);
+        $this->getOptionCache()->save($option->getName(), clone $option);
     }
 }
