@@ -20,9 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class WordpressExtension extends \Twig_Extension
 {
     /**
-     * @var EntityManager
+     * @var ContainerInterface
      */
-    protected $em;
+    protected $container;
 
     /**
      * @var BlogManager
@@ -69,23 +69,23 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $shortcodeChain;
 
-    public function __construct(EntityManager $em, BlogManager $blogManager, ShortcodeChain $shortcodeChain)
+    public function __construct(ContainerInterface $container)
     {
-        $this->blogManager = $blogManager;
-        $this->setEntityManager($em);
-        $this->shortcodeChain = $shortcodeChain;
+        $this->container = $container;
+        $this->blogManager = $this->container->get('kayue_wordpress.blog.manager');
+        $this->shortcodeChain = $this->container->get('kayue_wordpress.shortcode_chain');
+        $this->reloadManagers();
     }
 
-    public function setEntityManager(EntityManager $em)
+    public function reloadManagers()
     {
-        $this->em = $em;
-        $this->attachmentManager = new AttachmentManager($em);
-        $this->optionManager = new OptionManager($em);
-        $this->postManager = new PostManager($em);
-        $this->postMetaManager = new PostMetaManager($em);
-        $this->termManager = new TermManager();
-        $this->userMetaManager = new UserMetaManager($em);
-        $this->commentManager = new CommentManager($em);
+        $this->optionManager = $this->container->get('kayue_wordpress.option.manager');
+        $this->postManager = $this->container->get('kayue_wordpress.post.manager');
+        $this->postMetaManager = $this->container->get('kayue_wordpress.post_meta.manager');
+        $this->attachmentManager = $this->container->get('kayue_wordpress.attachment.manager');
+        $this->termManager = $this->container->get('kayue_wordpress.term.manager');
+        $this->userMetaManager = $this->container->get('kayue_wordpress.user_meta.manager');
+        $this->commentManager = $this->container->get('kayue_wordpress.comment.manager');
     }
 
     public function getName()

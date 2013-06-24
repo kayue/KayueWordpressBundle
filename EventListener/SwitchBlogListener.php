@@ -7,6 +7,7 @@ use Kayue\WordpressBundle\Model\AttachmentManager;
 use Kayue\WordpressBundle\Model\CommentManager;
 use Kayue\WordpressBundle\Model\OptionManager;
 use Kayue\WordpressBundle\Model\PostManager;
+use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
 use Kayue\WordpressBundle\Twig\Extension\WordpressExtension;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,17 +33,16 @@ class SwitchBlogListener
 
         $this->container->set('kayue_wordpress.option.manager', new OptionManager($em));
         $this->container->set('kayue_wordpress.post.manager', new PostManager($em));
-        $this->container->set('kayue_wordpress.comment.manager', new CommentManager($em));
-        $this->container->set('kayue_wordpress.term.manager', new TermManager($em));
+        $this->container->set('kayue_wordpress.post_meta.manager', new PostMetaManager($em));
         $this->container->set('kayue_wordpress.attachment.manager', new AttachmentManager($em));
+        $this->container->set('kayue_wordpress.term.manager', new TermManager($em));
+        $this->container->set('kayue_wordpress.comment.manager', new CommentManager($em));
     }
 
     private function updateWordpressTwigExtension(SwitchBlogEvent $event)
     {
         /** @var $extension WordpressExtension */
         $extension = $this->container->get('kayue_wordpress.twig.wordpress');
-        $em = $event->getBlog()->getEntityManager();
-
-        $extension->setEntityManager($em);
+        $extension->reloadManagers();
     }
 }

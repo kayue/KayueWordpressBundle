@@ -94,9 +94,7 @@ services:
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
-            - @doctrine.orm.default_entity_manager
-            - @kayue_wordpress.blog.manager
-            - @kayue_wordpress.shortcode_chain
+            - @service_container
         tags:
             - { name: twig.extension }
 
