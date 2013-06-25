@@ -23,8 +23,6 @@ class OptionManager implements OptionManagerInterface
      */
     protected $cache;
 
-    private $optionAutoloaded = false;
-
     /**
      * Constructor.
      *
@@ -39,11 +37,6 @@ class OptionManager implements OptionManagerInterface
 
     public function findOneOptionByName($name)
     {
-        if (!$this->optionAutoloaded) {
-            $this->cacheAutoloadOptions();
-            $this->optionAutoloaded = true;
-        }
-
         if (false === $option = $this->cache->fetch($name)) {
             /** @var $option Option */
             $option = $this->repository->findOneBy(array(
@@ -56,17 +49,6 @@ class OptionManager implements OptionManagerInterface
         }
 
         return $option;
-    }
-
-    private function cacheAutoloadOptions()
-    {
-        $options = $this->repository->findBy(array(
-            'autoload' => 'yes'
-        ));
-
-        foreach($options as $option) {
-            $this->cacheOption($option);
-        }
     }
 
     private function cacheOption(Option $option)
