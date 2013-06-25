@@ -91,4 +91,76 @@ class BlogManager implements BlogManagerInterface
         $dispatcher = $this->container->get('event_dispatcher');
         $dispatcher->dispatch(WordpressEvents::SWITCH_BLOG, $event);
     }
+
+    /**
+     * Loads a configured object manager metadata, query or result cache driver.
+     *
+     * @param array            $objectManager A configured object manager.
+     * @param ContainerBuilder $container     A ContainerBuilder instance.
+     * @param string           $cacheName
+     *
+     * @throws \InvalidArgumentException In case of unknown driver type.
+     */
+    protected function getCacheDriver($name)
+    {
+        $orm = $this->container->getParameter('kayue_wordpress.orm');
+
+        switch ($orm[$name]['type']) {
+            case 'memcache':
+                $memcacheClass = !empty($cacheDriver['class']) ? $cacheDriver['class'] : '%'.$this->getObjectManagerElementName('cache.memcache.class').'%';
+                $memcacheInstanceClass = !empty($cacheDriver['instance_class']) ? $cacheDriver['instance_class'] : '%'.$this->getObjectManagerElementName('cache.memcache_instance.class').'%';
+                $memcacheHost = !empty($cacheDriver['host']) ? $cacheDriver['host'] : '%'.$this->getObjectManagerElementName('cache.memcache_host').'%';
+                $memcachePort = !empty($cacheDriver['port']) || (isset($cacheDriver['port']) && $cacheDriver['port'] === 0)  ? $cacheDriver['port'] : '%'.$this->getObjectManagerElementName('cache.memcache_port').'%';
+                $cacheDef = new Definition($memcacheClass);
+                $memcacheInstance = new Definition($memcacheInstanceClass);
+                $memcacheInstance->addMethodCall('connect', array(
+                    $memcacheHost, $memcachePort
+                ));
+                $container->setDefinition($this->getObjectManagerElementName(sprintf('%s_memcache_instance', $objectManager['name'])), $memcacheInstance);
+                $cacheDef->addMethodCall('setMemcache', array(new Reference($this->getObjectManagerElementName(sprintf('%s_memcache_instance', $objectManager['name'])))));
+                break;
+            case 'memcached':
+                $memcachedClass = !empty($cacheDriver['class']) ? $cacheDriver['class'] : '%'.$this->getObjectManagerElementName('cache.memcached.class').'%';
+                $memcachedInstanceClass = !empty($cacheDriver['instance_class']) ? $cacheDriver['instance_class'] : '%'.$this->getObjectManagerElementName('cache.memcached_instance.class').'%';
+                $memcachedHost = !empty($cacheDriver['host']) ? $cacheDriver['host'] : '%'.$this->getObjectManagerElementName('cache.memcached_host').'%';
+                $memcachedPort = !empty($cacheDriver['port']) ? $cacheDriver['port'] : '%'.$this->getObjectManagerElementName('cache.memcached_port').'%';
+                $cacheDef = new Definition($memcachedClass);
+                $memcachedInstance = new Definition($memcachedInstanceClass);
+                $memcachedInstance->addMethodCall('addServer', array(
+                    $memcachedHost, $memcachedPort
+                ));
+                $container->setDefinition($this->getObjectManagerElementName(sprintf('%s_memcached_instance', $objectManager['name'])), $memcachedInstance);
+                $cacheDef->addMethodCall('setMemcached', array(new Reference($this->getObjectManagerElementName(sprintf('%s_memcached_instance', $objectManager['name'])))));
+                break;
+            case 'redis':
+                $redisClass = !empty($cacheDriver['class']) ? $cacheDriver['class'] : '%'.$this->getObjectManagerElementName('cache.redis.class').'%';
+                $redisInstanceClass = !empty($cacheDriver['instance_class']) ? $cacheDriver['instance_class'] : '%'.$this->getObjectManagerElementName('cache.redis_instance.class').'%';
+                $redisHost = !empty($cacheDriver['host']) ? $cacheDriver['host'] : '%'.$this->getObjectManagerElementName('cache.redis_host').'%';
+                $redisPort = !empty($cacheDriver['port']) ? $cacheDriver['port'] : '%'.$this->getObjectManagerElementName('cache.redis_port').'%';
+                $cacheDef = new Definition($redisClass);
+                $redisInstance = new Definition($redisInstanceClass);
+                $redisInstance->addMethodCall('connect', array(
+                    $redisHost, $redisPort
+                ));
+                $container->setDefinition($this->getObjectManagerElementName(sprintf('%s_redis_instance', $objectManager['name'])), $redisInstance);
+                $cacheDef->addMethodCall('setRedis', array(new Reference($this->getObjectManagerElementName(sprintf('%s_redis_instance', $objectManager['name'])))));
+                break;
+            case 'apc':
+            case 'array':
+            case 'xcache':
+            case 'wincache':
+            case 'zenddata':
+                $cacheDef = new Definition('%'.$this->getObjectManagerElementName(sprintf('cache.%s.class', $cacheDriver['type'])).'%');
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('"%s" is an unrecognized Doctrine cache driver.', $cacheDriver['type']));
+        }
+
+        $cacheDef->setPublic(false);
+        // generate a unique namespace for the given application
+        $namespace = 'sf2'.$this->getMappingResourceExtension().'_'.$objectManager['name'].'_'.md5($container->getParameter('kernel.root_dir').$container->getParameter('kernel.environment'));
+        $cacheDef->addMethodCall('setNamespace', array($namespace));
+
+        $container->setDefinition($cacheDriverService, $cacheDef);
+    }
 }
