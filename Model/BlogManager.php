@@ -43,10 +43,12 @@ class BlogManager implements BlogManagerInterface
      */
     public function findBlogById($id)
     {
+        $baseEmName = $this->container->getParameter('kayue_wordpress.base_entity_manager');
+        $baseConfig = $this->container->get('doctrine.orm.'.$baseEmName.'_entity_manager')->getConfiguration();
+
         if (!isset($this->blogs[$id])) {
             $em = WordpressEntityManager::create(
-                $this->container->get('database_connection'),
-                $this->container->get('doctrine.orm.entity_manager')->getConfiguration()
+                $this->container->get('database_connection'), $baseConfig
             );
 
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'));
@@ -106,7 +108,8 @@ class BlogManager implements BlogManagerInterface
      */
     protected function getCacheImpl($cacheName)
     {
-        $config = $this->container->get('doctrine.orm.entity_manager')->getConfiguration();
+        $baseEmName = $this->container->getParameter('kayue_wordpress.base_entity_manager');
+        $config = $this->container->get('doctrine.orm.'.$baseEmName.'_entity_manager')->getConfiguration();
 
         switch ($cacheName) {
             case 'metadata_cache':
