@@ -48,8 +48,10 @@ class BlogManager implements BlogManagerInterface
                 $this->container->get('doctrine.orm.entity_manager')->getConfiguration()
             );
 
-            // use brand a new cache each entity manager to prevent faulty cache
-            $em->getMetadataFactory()->setCacheDriver(new ArrayCache());
+            // TODO: Set query cache and result cache here
+            // $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'));
+            // $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache'));
+            // $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache'));
 
             try {
                 if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
@@ -95,15 +97,17 @@ class BlogManager implements BlogManagerInterface
     /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
-     * @param array            $objectManager A configured object manager.
-     * @param ContainerBuilder $container     A ContainerBuilder instance.
-     * @param string           $cacheName
+     * @param  string           $cacheName
+     *
+     * @return \Doctrine\Common\Cache\Cache
      *
      * @throws \InvalidArgumentException In case of unknown driver type.
      */
-    protected function getCacheDriver($name)
+    protected function getCacheImpl($cacheName)
     {
         $orm = $this->container->getParameter('kayue_wordpress.orm');
+
+
 
         switch ($orm[$name]['type']) {
             case 'memcache':
