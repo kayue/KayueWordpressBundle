@@ -8,6 +8,7 @@ use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\WordpressEvents;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class BlogManager implements BlogManagerInterface
@@ -48,10 +49,9 @@ class BlogManager implements BlogManagerInterface
                 $this->container->get('doctrine.orm.entity_manager')->getConfiguration()
             );
 
-            // TODO: Set query cache and result cache here
-            // $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'));
-            // $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache'));
-            // $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache'));
+            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'));
+            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache'));
+            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache'));
 
             try {
                 if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
@@ -94,6 +94,7 @@ class BlogManager implements BlogManagerInterface
         $dispatcher->dispatch(WordpressEvents::SWITCH_BLOG, $event);
     }
 
+    private static $autoId = 0;
     /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
@@ -105,66 +106,58 @@ class BlogManager implements BlogManagerInterface
      */
     protected function getCacheImpl($cacheName)
     {
-        $orm = $this->container->getParameter('kayue_wordpress.orm');
+        $config = $this->container->get('doctrine.orm.entity_manager')->getConfiguration();
 
-
-
-        switch ($orm[$name]['type']) {
-            case 'memcache':
-                $memcacheClass = !empty($cacheDriver['class']) ? $cacheDriver['class'] : '%'.$this->getObjectManagerElementName('cache.memcache.class').'%';
-                $memcacheInstanceClass = !empty($cacheDriver['instance_class']) ? $cacheDriver['instance_class'] : '%'.$this->getObjectManagerElementName('cache.memcache_instance.class').'%';
-                $memcacheHost = !empty($cacheDriver['host']) ? $cacheDriver['host'] : '%'.$this->getObjectManagerElementName('cache.memcache_host').'%';
-                $memcachePort = !empty($cacheDriver['port']) || (isset($cacheDriver['port']) && $cacheDriver['port'] === 0)  ? $cacheDriver['port'] : '%'.$this->getObjectManagerElementName('cache.memcache_port').'%';
-                $cacheDef = new Definition($memcacheClass);
-                $memcacheInstance = new Definition($memcacheInstanceClass);
-                $memcacheInstance->addMethodCall('connect', array(
-                    $memcacheHost, $memcachePort
-                ));
-                $container->setDefinition($this->getObjectManagerElementName(sprintf('%s_memcache_instance', $objectManager['name'])), $memcacheInstance);
-                $cacheDef->addMethodCall('setMemcache', array(new Reference($this->getObjectManagerElementName(sprintf('%s_memcache_instance', $objectManager['name'])))));
+        switch ($cacheName) {
+            case 'metadata_cache':
+                $baseCache = $config->getMetadataCacheImpl();
                 break;
-            case 'memcached':
-                $memcachedClass = !empty($cacheDriver['class']) ? $cacheDriver['class'] : '%'.$this->getObjectManagerElementName('cache.memcached.class').'%';
-                $memcachedInstanceClass = !empty($cacheDriver['instance_class']) ? $cacheDriver['instance_class'] : '%'.$this->getObjectManagerElementName('cache.memcached_instance.class').'%';
-                $memcachedHost = !empty($cacheDriver['host']) ? $cacheDriver['host'] : '%'.$this->getObjectManagerElementName('cache.memcached_host').'%';
-                $memcachedPort = !empty($cacheDriver['port']) ? $cacheDriver['port'] : '%'.$this->getObjectManagerElementName('cache.memcached_port').'%';
-                $cacheDef = new Definition($memcachedClass);
-                $memcachedInstance = new Definition($memcachedInstanceClass);
-                $memcachedInstance->addMethodCall('addServer', array(
-                    $memcachedHost, $memcachedPort
-                ));
-                $container->setDefinition($this->getObjectManagerElementName(sprintf('%s_memcached_instance', $objectManager['name'])), $memcachedInstance);
-                $cacheDef->addMethodCall('setMemcached', array(new Reference($this->getObjectManagerElementName(sprintf('%s_memcached_instance', $objectManager['name'])))));
+            case 'query_cache':
+                $baseCache = $config->getQueryCacheImpl();
                 break;
-            case 'redis':
-                $redisClass = !empty($cacheDriver['class']) ? $cacheDriver['class'] : '%'.$this->getObjectManagerElementName('cache.redis.class').'%';
-                $redisInstanceClass = !empty($cacheDriver['instance_class']) ? $cacheDriver['instance_class'] : '%'.$this->getObjectManagerElementName('cache.redis_instance.class').'%';
-                $redisHost = !empty($cacheDriver['host']) ? $cacheDriver['host'] : '%'.$this->getObjectManagerElementName('cache.redis_host').'%';
-                $redisPort = !empty($cacheDriver['port']) ? $cacheDriver['port'] : '%'.$this->getObjectManagerElementName('cache.redis_port').'%';
-                $cacheDef = new Definition($redisClass);
-                $redisInstance = new Definition($redisInstanceClass);
-                $redisInstance->addMethodCall('connect', array(
-                    $redisHost, $redisPort
-                ));
-                $container->setDefinition($this->getObjectManagerElementName(sprintf('%s_redis_instance', $objectManager['name'])), $redisInstance);
-                $cacheDef->addMethodCall('setRedis', array(new Reference($this->getObjectManagerElementName(sprintf('%s_redis_instance', $objectManager['name'])))));
-                break;
-            case 'apc':
-            case 'array':
-            case 'xcache':
-            case 'wincache':
-            case 'zenddata':
-                $cacheDef = new Definition('%'.$this->getObjectManagerElementName(sprintf('cache.%s.class', $cacheDriver['type'])).'%');
+            case 'result_cache':
+                $baseCache = $config->getResultCacheImpl();
                 break;
             default:
-                throw new \InvalidArgumentException(sprintf('"%s" is an unrecognized Doctrine cache driver.', $cacheDriver['type']));
+                throw new \InvalidArgumentException(sprintf('"%s" is an unrecognized Doctrine cache name.
+                        Supported cache names are: "metadata_cache", "query_cache" and "result_cache"', $cacheName));
         }
 
-        $cacheDef->setPublic(false);
-        // generate a unique namespace for the given application
-        $namespace = 'sf2'.$this->getMappingResourceExtension().'_'.$objectManager['name'].'_'.md5($container->getParameter('kernel.root_dir').$container->getParameter('kernel.environment'));
-        $cacheDef->addMethodCall('setNamespace', array($namespace));
+        $namespace = 'sf2'.md5($this->container->getParameter('kernel.root_dir').$this->container->getParameter('kernel.environment')
+            .$cacheName.self::$autoId);
+        self::$autoId++;
 
-        $container->setDefinition($cacheDriverService, $cacheDef);
+        $className = get_class($baseCache);
+
+        switch ($className) {
+            case 'Doctrine\Common\Cache\ApcCache':
+            case 'Doctrine\Common\Cache\ArrayCache':
+            case 'Doctrine\Common\Cache\XcacheCache':
+            case 'Doctrine\Common\Cache\WinCacheCache':
+            case 'Doctrine\Common\Cache\ZendDataCache':
+                $cache = new $className();
+                break;
+            case 'Doctrine\Common\Cache\MemcacheCache':
+                $memcache = $baseCache->getMemcache();
+                $cache = new $className();
+                $cache->setMemcache($memcache);
+                break;
+            case 'Doctrine\Common\Cache\MemcachedCache':
+                $memcached = $baseCache->getMemcached();
+                $cache = new $className();
+                $cache->setMemcached($memcached);
+                break;
+            case 'Doctrine\Common\Cache\RedisCache':
+                $redis = $baseCache->getRedis();
+                $cache = new $className();
+                $cache->setRedis($redis);
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('Unknown or unsupported cache type class in configuration: "%s"', get_class($baseCache)));
+        }
+        $cache->setNamespace($namespace);
+
+        return $cache;
     }
+
 }
