@@ -43,8 +43,8 @@ class BlogManager implements BlogManagerInterface
      */
     public function findBlogById($id)
     {
-        $baseEmName = $this->container->getParameter('kayue_wordpress.base_entity_manager');
-        $baseConfig = $this->container->get('doctrine.orm.'.$baseEmName.'_entity_manager')->getConfiguration();
+        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager_name');
+        $baseConfig = $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
 
         if (!isset($this->blogs[$id])) {
             $em = WordpressEntityManager::create(
@@ -107,8 +107,8 @@ class BlogManager implements BlogManagerInterface
      */
     protected function getCacheImpl($cacheName, $blogId)
     {
-        $baseEmName = $this->container->getParameter('kayue_wordpress.base_entity_manager');
-        $config = $this->container->get('doctrine.orm.'.$baseEmName.'_entity_manager')->getConfiguration();
+        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager_name');
+        $config = $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
 
         switch ($cacheName) {
             case 'metadata_cache':
