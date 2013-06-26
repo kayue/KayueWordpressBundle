@@ -51,9 +51,9 @@ class BlogManager implements BlogManagerInterface
                 $this->container->get('database_connection'), $baseConfig
             );
 
-            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'));
-            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache'));
-            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache'));
+            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'), $id);
+            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache'), $id);
+            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache'), $id);
 
             try {
                 if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
@@ -96,7 +96,6 @@ class BlogManager implements BlogManagerInterface
         $dispatcher->dispatch(WordpressEvents::SWITCH_BLOG, $event);
     }
 
-    private static $autoId = 0;
     /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
@@ -106,7 +105,7 @@ class BlogManager implements BlogManagerInterface
      *
      * @throws \InvalidArgumentException In case of unknown driver type.
      */
-    protected function getCacheImpl($cacheName)
+    protected function getCacheImpl($cacheName, $blogId)
     {
         $baseEmName = $this->container->getParameter('kayue_wordpress.base_entity_manager');
         $config = $this->container->get('doctrine.orm.'.$baseEmName.'_entity_manager')->getConfiguration();
@@ -126,9 +125,7 @@ class BlogManager implements BlogManagerInterface
                         Supported cache names are: "metadata_cache", "query_cache" and "result_cache"', $cacheName));
         }
 
-        $namespace = 'sf2'.md5($this->container->getParameter('kernel.root_dir').$this->container->getParameter('kernel.environment')
-            .$cacheName.self::$autoId);
-        self::$autoId++;
+        $namespace = 'kayue_wordpress_bundle_blog_'.$blogId;
 
         $className = get_class($baseCache);
 
