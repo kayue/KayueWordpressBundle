@@ -51,9 +51,9 @@ class BlogManager implements BlogManagerInterface
                 $this->container->get('database_connection'), $baseConfig
             );
 
-            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache'), $id);
-            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache'), $id);
-            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache'), $id);
+            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $id));
+            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $id));
+            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache', $id));
 
             try {
                 if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
