@@ -43,13 +43,10 @@ class BlogManager implements BlogManagerInterface
      */
     public function findBlogById($id)
     {
-        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager_name');
-        $baseConfig = $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
+        $config = $this->getEntityManagerConfiguration();
 
         if (!isset($this->blogs[$id])) {
-            $em = WordpressEntityManager::create(
-                $this->container->get('database_connection'), $baseConfig
-            );
+            $em = WordpressEntityManager::create($this->container->get('database_connection'), $config);
 
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $id));
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $id));
@@ -96,6 +93,12 @@ class BlogManager implements BlogManagerInterface
         $dispatcher->dispatch(WordpressEvents::SWITCH_BLOG, $event);
     }
 
+    private function getEntityManagerConfiguration()
+    {
+        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager_name');
+        return $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
+    }
+
     /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
@@ -107,8 +110,7 @@ class BlogManager implements BlogManagerInterface
      */
     protected function getCacheImpl($cacheName, $blogId)
     {
-        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager_name');
-        $config = $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
+        $config = $this->getEntityManagerConfiguration();
 
         switch ($cacheName) {
             case 'metadata_cache':
