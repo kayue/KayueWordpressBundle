@@ -127,7 +127,7 @@ class BlogManager implements BlogManagerInterface
                         Supported cache names are: "metadata_cache", "query_cache" and "result_cache"', $cacheName));
         }
 
-        $namespace = 'kayue_wordpress_bundle_blog_'.$blogId;
+        $namespace = 'sf2_kayue_wordpress_bundle_blog_'.$blogId.'_'.md5($this->container->getParameter('kernel.root_dir').$this->container->getParameter('kernel.environment'));
 
         $className = get_class($baseCache);
 
@@ -157,6 +157,7 @@ class BlogManager implements BlogManagerInterface
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown or unsupported cache type class in configuration: "%s"', get_class($baseCache)));
         }
+        
         $cache->setNamespace($namespace);
 
         return $cache;
