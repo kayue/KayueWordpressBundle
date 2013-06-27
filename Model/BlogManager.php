@@ -2,6 +2,9 @@
 
 namespace Kayue\WordpressBundle\Model;
 
+use \Redis;
+use \Memcache;
+use \Memcached;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\DBAL\DBALException;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
@@ -141,23 +144,49 @@ class BlogManager implements BlogManagerInterface
                 break;
             case 'Doctrine\Common\Cache\MemcacheCache':
                 $memcache = $baseCache->getMemcache();
+                $rawStats = $memcache->getExtendedStats();
+                $servers = array_keys($rawStats);
+
                 $cache = new $className();
-                $cache->setMemcache($memcache);
+                $newMemcache = new Memcache();
+
+                foreach ($servers as $server) {
+                    $host = substr($server, 0, strpos($server, ':'));
+                    $port = substr($server, strpos($server, ':') + 1);
+                    $newMemcache->connect($host, $port);
+                }
+
+                $cache->setMemcache($newMemcache);
                 break;
             case 'Doctrine\Common\Cache\MemcachedCache':
                 $memcached = $baseCache->getMemcached();
+                $servers = $memcached->getServerList();
+
                 $cache = new $className();
-                $cache->setMemcached($memcached);
+                $newMemcached = new Memcached();
+
+                foreach ($servers as $server) {
+                    $newMemcached->connect($server['host'], $server['port']);
+                }
+
+                $cache->setMemcached($newMemcached);
                 break;
             case 'Doctrine\Common\Cache\RedisCache':
                 $redis = $baseCache->getRedis();
+                $host = $redis->getHost();
+                $port = $redis->getPort();
+
                 $cache = new $className();
-                $cache->setRedis($redis);
+
+                $newRedis = new Redis();
+                $newRedis->connect($host, $port);
+
+                $cache->setRedis($newRedis);
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Unknown or unsupported cache type class in configuration: "%s"', get_class($baseCache)));
         }
-        
+
         $cache->setNamespace($namespace);
 
         return $cache;
