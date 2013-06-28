@@ -82,6 +82,28 @@ class UserTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($user->getRoles());
     }
 
+    public function testEqualUser()
+    {
+        $foo = new User();
+        $foo->setUsername('Foo');
+
+        $bar = new User();
+        $bar->setUsername('Foo');
+
+        $this->assertTrue($foo->equals($bar));
+    }
+
+    public function testNotEqualUser()
+    {
+        $foo = new User();
+        $foo->setUsername('Foo');
+
+        $bar = new User();
+        $bar->setUsername('Bar');
+
+        $this->assertFalse($foo->equals($bar));
+    }
+
     /**
      * @return User
      */
