@@ -11,8 +11,15 @@ I started that bundle two years ago and the original repository grew somewhat ch
 * WordPress authentication (v1.0.0)
 * Custom table prefix (v1.0.1)
 * WordPress entities (v1.0.2)
-* [Multisite](http://codex.wordpress.org/Create_A_Network) support (v1.0.3)
-* Twig extension, improved model manager (dev-master)
+* [Multisite](http://codex.wordpress.org/Create_A_Network) support (v1.1.0)
+* Twig extension (v1.1.0)
+* WordPress style shortcode (v1.1.0)
+
+#### Todo
+
+* Unit test (please help!)
+* Port more WordPress shortcode over
+* Refactor blog manager's code
 
 ## Installation
 
@@ -23,7 +30,7 @@ Add the bundle to `composer.json`
 ```json
 {
     "require": {
-        "kayue/kayue-wordpress-bundle": "v1"
+        "kayue/kayue-wordpress-bundle": "1.1.*"
     }
 }
 ```
