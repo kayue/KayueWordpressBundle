@@ -219,3 +219,40 @@ security:
                 target: /demo/secured/login
             # ...
 ```
+
+### Shortcode
+
+WordpressBundle support WordPress style shortcode. At the moment the bundle only come with the `[caption]` shortcode.
+Pull request is welcome.
+
+To create new shortcode, you need to 1) extends `ShortcodeInterface`, and then 2) tag it with `kayue_wordpress.shortcode`
+
+```php
+<?php
+
+use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeInterface;
+
+class GalleryShortcode implements ShortcodeInterface
+{
+    public function getName()
+    {
+        return 'gallery';
+    }
+
+    public function($attr, $content = null)
+    {
+        // do your things...
+
+        return $html.
+    }
+}
+}
+```
+
+```yaml
+services:
+    acme_demo_bundle.wordpress.shortcode.gallery:
+        class: Acme\DemoBundle\Wordpress\Shortcode\GalleryShortcode
+        tags:
+            - { name: kayue_wordpress.shortcode }
+```
