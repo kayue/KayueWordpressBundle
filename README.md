@@ -97,7 +97,7 @@ kayue_wordpress:
     table_prefix:   'wp_'
 
     # Optional: Entity manager configuration to use (cache etc). Default is 'default'.
-    entity_manager_name: 'default'
+    entity_manager: 'default'
 ```
 
 ## Usage

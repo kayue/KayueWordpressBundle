@@ -97,7 +97,7 @@ class BlogManager implements BlogManagerInterface
 
     private function getEntityManagerConfiguration()
     {
-        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager_name');
+        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager');
         return $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
     }
 
