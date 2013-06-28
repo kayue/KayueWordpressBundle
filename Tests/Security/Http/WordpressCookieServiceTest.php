@@ -106,6 +106,9 @@ class WordpressCookieServiceTest extends \PHPUnit_Framework_TestCase
         $userMock->expects($this->any())
             ->method('getPassword')
             ->will($this->returnValue('password'));
+        $userMock->expects($this->any())
+            ->method('getRoles')
+            ->will($this->returnValue(['WP_SUBSCRIBER']));
 
         return $userMock;
     }
