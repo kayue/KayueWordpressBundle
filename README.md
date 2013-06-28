@@ -243,7 +243,7 @@ class GalleryShortcode implements ShortcodeInterface
     {
         // do your things...
 
-        return $html.
+        return "<p>Return HTML</p>";
     }
 }
 }
