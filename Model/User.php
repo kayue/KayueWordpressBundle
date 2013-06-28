@@ -60,12 +60,12 @@ class User implements UserInterface, \Serializable
     protected $metas;
 
     /**
-     * @var Kayue\WordpressBundle\Entity\Post
+     * @var \Kayue\WordpressBundle\Entity\Post
      */
     private $posts;
 
     /**
-     * @var Kayue\WordpressBundle\Entity\Comment
+     * @var \Kayue\WordpressBundle\Entity\Comment
      */
     private $comments;
 
@@ -284,7 +284,7 @@ class User implements UserInterface, \Serializable
     /**
      * Get posts
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPosts()
     {
@@ -294,7 +294,7 @@ class User implements UserInterface, \Serializable
     /**
      * Get comments
      *
-     * @return Doctrine\Common\Collections\Collection
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getComments()
     {
