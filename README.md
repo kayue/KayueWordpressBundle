@@ -86,8 +86,11 @@ kayue_wordpress:
     cookie_path:    '/'
     cookie_domain:  null
 
-    # Optional: Custom table prefix, default is "wp_".
+    # Optional: Custom table prefix. Default is "wp_".
     table_prefix:   'wp_'
+
+    # Optional: Entity manager configuration to use (cache etc). Default is 'default'.
+    entity_manager_name: 'default'
 ```
 
 ## Usage
@@ -162,24 +165,19 @@ The following example shows you how to display the latest 10 posts in blog 2.
 ```php
 <?php
 
-public function multisiteAction()
+public function firstPostAction()
 {
     $blogManager = $this->get('kayue_wordpress.blog.manager');
     
     // Method 1: Switch current blog's id. Similar to WordPress's `switch_to_blog()` method.
     // Changing the current blog ID will affect Twig extensions too.
     $blogManager->setCurrentBlogId(2);
-    $entityManager = $blogManager->getCurrentBlog()->getEntityManager();
-    
-    // Method 2: Use the find by method. This won't change the current blog ID.
-    $entityManager = $blogManager->findBlogById(2)->getEntityManager();
+    $this->get('kayue_wordpress.post.manager')->findOnePostById(1);
 
-    $posts = $entityManager->getRepository('KayueWordpressBundle:Post')->findBy(array(
-        'status' => 'publish',
-        'type'   => 'post',
-    ), array('date' => 'DESC'), 10);
-
-    // ...
+    // Method 2: Use entity manager if you don't want to switch the entire blog.
+    // This won't change the current blog ID.
+    $anotherBlog = $blogManager->findBlogById(3)->getEntityManager();
+    $posts = $anotherBlog->getRepository('KayueWordpressBundle:Post')->findOneById(1);
 }
 ```
 
