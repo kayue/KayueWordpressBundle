@@ -5,7 +5,6 @@ namespace Kayue\WordpressBundle\Model;
 use \Redis;
 use \Memcache;
 use \Memcached;
-use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\DBAL\DBALException;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Event\SwitchBlogEvent;
@@ -49,7 +48,7 @@ class BlogManager implements BlogManagerInterface
         $config = $this->getEntityManagerConfiguration();
 
         if (!isset($this->blogs[$id])) {
-            $em = WordpressEntityManager::create($this->container->get('database_connection'), $config);
+            $em = WordpressEntityManager::create($this->container->get('database_connection'), clone $config);
 
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $id));
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $id));
