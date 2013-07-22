@@ -13,13 +13,8 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
-class BlogManager implements BlogManagerInterface
+class BlogManager extends AbstractManager implements BlogManagerInterface
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
     /**
      * @var array
      */
@@ -35,7 +30,7 @@ class BlogManager implements BlogManagerInterface
      */
     public function __construct(Container $container)
     {
-        $this->container = $container;
+        parent::__construct($container);
     }
 
     /**
@@ -48,7 +43,7 @@ class BlogManager implements BlogManagerInterface
         $config = $this->getEntityManagerConfiguration();
 
         if (!isset($this->blogs[$id])) {
-            $em = WordpressEntityManager::create($this->container->get('database_connection'), clone $config);
+            $em = $this->getEntityManager();
 
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $id));
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $id));
@@ -97,8 +92,7 @@ class BlogManager implements BlogManagerInterface
 
     private function getEntityManagerConfiguration()
     {
-        $entityManagerName = $this->container->getParameter('kayue_wordpress.entity_manager');
-        return $this->container->get('doctrine.orm.'.$entityManagerName.'_entity_manager')->getConfiguration();
+        return $this->getEntityManager()->getConfiguration();
     }
 
     /**

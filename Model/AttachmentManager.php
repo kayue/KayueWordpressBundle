@@ -4,8 +4,9 @@ namespace Kayue\WordpressBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\DependencyInjection\Container;
 
-class AttachmentManager implements AttachmentManagerInterface
+class AttachmentManager extends AbstractManager implements AttachmentManagerInterface
 {
     /**
      * @var EntityManager
@@ -24,11 +25,13 @@ class AttachmentManager implements AttachmentManagerInterface
      *
      * @param EntityManager     $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(Container $container)
     {
-        $this->em         = $em;
-        $this->repository = $em->getRepository('KayueWordpressBundle:Post');
-        $this->postMetaManager = new PostMetaManager($em);
+        parent::__construct($container);
+
+        $this->em         = $this->getEntityManager();
+        $this->repository = $this->em->getRepository('KayueWordpressBundle:Post');
+        $this->postMetaManager = new PostMetaManager($container);
     }
 
     /**
