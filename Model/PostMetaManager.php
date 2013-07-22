@@ -4,8 +4,9 @@ namespace Kayue\WordpressBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\DependencyInjection\Container;
 
-class PostMetaManager implements PostMetaManagerInterface
+class PostMetaManager extends AbstractManager implements PostMetaManagerInterface
 {
     /**
      * @var EntityManager
@@ -22,10 +23,12 @@ class PostMetaManager implements PostMetaManagerInterface
      *
      * @param EntityManager     $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(Container $container)
     {
-        $this->em = $em;
-        $this->repository = $em->getRepository('KayueWordpressBundle:PostMeta');
+        parent::__construct($container);
+
+        $this->em = $this->getEntityManager();
+        $this->repository = $this->em->getRepository('KayueWordpressBundle:PostMeta');
     }
 
     public function addMeta(Post $post, PostMeta $meta)
