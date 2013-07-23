@@ -5,8 +5,9 @@ namespace Kayue\WordpressBundle\Model;
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
+use Symfony\Component\DependencyInjection\Container;
 
-class OptionManager implements OptionManagerInterface
+class OptionManager extends AbstractManager implements OptionManagerInterface
 {
     /**
      * @var EntityManager
@@ -28,10 +29,12 @@ class OptionManager implements OptionManagerInterface
      *
      * @param EntityManager     $em
      */
-    public function __construct(EntityManager $em)
+    public function __construct(Container $container)
     {
-        $this->em         = $em;
-        $this->repository = $em->getRepository('KayueWordpressBundle:Option');
+        parent::__construct($container);
+
+        $this->em         = $this->getEntityManager();
+        $this->repository = $this->em->getRepository('KayueWordpressBundle:Option');
         $this->cache      = new ArrayCache();
     }
 
