@@ -5,6 +5,7 @@ namespace Kayue\WordpressBundle\Twig\Extension;
 use Doctrine\ORM\EntityManager;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
+use Kayue\WordpressBundle\Entity\User;
 use Kayue\WordpressBundle\Model\AttachmentManager;
 use Kayue\WordpressBundle\Model\BlogManager;
 use Kayue\WordpressBundle\Model\CommentManager;
