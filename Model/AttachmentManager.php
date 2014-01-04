@@ -49,23 +49,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
         $result = array();
         /** @var $post Post */
         foreach ($posts as $post) {
-            /** @var $meta PostMeta */
-            $meta = $this->postMetaManager->findOneMetaBy(array(
-                'post' => $post,
-                'key'  => '_wp_attachment_metadata'
-            ));
-
-            if ($meta) {
-                $rawMeta = $meta->getValue();
-                $attachment = new Attachment($post);
-
-                $attachment->setUrl($rawMeta['file']);
-                if (isset($rawMeta['sizes']['thumbnail'])) {
-                    $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
-                }
-
-                $result[] = $attachment;
-            }
+            $result[] = new Attachment($post);
         }
 
         return $result;
@@ -83,24 +67,7 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
             'type'   => 'attachment',
         ));
 
-        /** @var $meta PostMeta */
-        $meta = $this->postMetaManager->findOneMetaBy(array(
-            'post' => $post,
-            'key'  => '_wp_attachment_metadata'
-        ));
-
-        if ($meta) {
-            $rawMeta = $meta->getValue();
-            $attachment = new Attachment($post);
-
-            $attachment->setUrl($rawMeta['file']);
-            if (isset($rawMeta['sizes']['thumbnail'])) {
-                $attachment->setThumbnailUrl(substr($rawMeta['file'], 0, strrpos($rawMeta['file'], '/') + 1) . $rawMeta['sizes']['thumbnail']['file']);
-            }
-            return $attachment;
-        }
-
-        return null;
+        return new Attachment($post);
     }
 
     public function getAttachmentOfSize(Attachment $attachment, $size = null)
