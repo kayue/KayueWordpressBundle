@@ -3,12 +3,14 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Annotation as Kayue;
 use Kayue\WordpressBundle\Model\Term as ModelTerm;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
  * @ORM\Table(name="terms")
  * @ORM\Entity
+ * @Kayue\WPTable
  */
 class Term extends ModelTerm
 {

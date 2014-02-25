@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Annotation as Kayue;
 use Kayue\WordpressBundle\Model\UserMeta as ModelUserMeta;
 use Symfony\Component\Validator\Constraints as Constraints;
 
@@ -11,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  *
  * @ORM\Table(name="usermeta")
  * @ORM\Entity
+ * @Kayue\WPTable
  */
 class UserMeta extends ModelUserMeta
 {
