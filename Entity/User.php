@@ -4,6 +4,7 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Annotation as Kayue;
 use Symfony\Component\Validator\Constraints as Constraints;
 use Kayue\WordpressBundle\Model\User as ModelUser;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -18,6 +19,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity({"fields": "nicename", "message": "Sorry, that nicename is already used."})
  * @UniqueEntity({"fields": "displayName", "message": "Sorry, that display name has already been taken."})
  * @ORM\HasLifecycleCallbacks
+ * @Kayue\WPTable
  */
 class User extends ModelUser
 {

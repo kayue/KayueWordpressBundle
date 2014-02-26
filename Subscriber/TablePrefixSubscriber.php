@@ -5,6 +5,8 @@ namespace Kayue\WordpressBundle\Subscriber;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\Common\Annotations\AnnotationReader;
+use Kayue\WordpressBundle\Annotation\WPTable;
 
 class TablePrefixSubscriber implements EventSubscriber
 {
@@ -24,8 +26,21 @@ class TablePrefixSubscriber implements EventSubscriber
     {
         $classMetadata = $args->getClassMetadata();
 
-        // only apply to WordpressBundle's Entitiy
-        if ($classMetadata->namespace !== 'Kayue\WordpressBundle\Entity') {
+        // Get class annotations
+        $reader = new AnnotationReader();
+        $classAnnotations = $reader->getClassAnnotations($classMetadata->getReflectionClass());
+
+        // Search for WPTable annotation
+        $found = false;
+        foreach ($classAnnotations as $classAnnotation) {
+            if ($classAnnotation instanceof WPTable) {
+                $found = true;
+                break;
+            }
+        }
+
+        // Only apply to classes having WPTable annotation
+        if (!$found) {
             return;
         }
 

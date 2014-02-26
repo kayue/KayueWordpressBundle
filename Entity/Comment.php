@@ -4,6 +4,7 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Annotation as Kayue;
 use Kayue\WordpressBundle\Model\Comment as ModelComment;
 use Symfony\Component\Validator\Constraints as Constraints;
 
@@ -11,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="comments")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @Kayue\WPTable
  */
 class Comment extends ModelComment
 {

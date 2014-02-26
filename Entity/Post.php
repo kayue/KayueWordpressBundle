@@ -4,6 +4,7 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Kayue\WordpressBundle\Annotation as Kayue;
 use Kayue\WordpressBundle\Model\Post as ModelPost;
 use Symfony\Component\Validator\Constraints as Constraints;
 
@@ -13,6 +14,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="posts")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @Kayue\WPTable
  */
 class Post extends ModelPost
 {
