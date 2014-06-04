@@ -1,9 +1,8 @@
 <?php
 
-namespace Kayue\WordpressBundle\Command;
+namespace Kayue\WordpressBundle\FixturesCommand;
 
 use Doctrine\Bundle\FixturesBundle\Command\LoadDataFixturesDoctrineCommand as BaseLoadDataFixturesDoctrineCommand;
-use Kayue\WordpressBundle\Purger\ORMPurger;
 
 class LoadDataFixturesDoctrineCommand extends BaseLoadDataFixturesDoctrineCommand
 {

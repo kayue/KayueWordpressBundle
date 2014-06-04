@@ -1,6 +1,6 @@
 <?php
 
-namespace Kayue\WordpressBundle\Purger;
+namespace Kayue\WordpressBundle\FixturesCommand;
 
 use Doctrine\Common\DataFixtures\Purger\ORMPurger as BaseORMPurger;
 
@@ -20,6 +20,7 @@ class ORMPurger extends BaseORMPurger
 
         $allMetadata = $this->getObjectManager()->getMetadataFactory()->getAllMetadata();
         foreach($allMetadata as $metadata) {
+
             if (strpos($metadata->table['name'], $this->tablePrefix) === 0) continue;
 
             $metadatas[] = $metadata;

@@ -40,8 +40,12 @@ class KayueWordpressBundle extends Bundle
 
     public function registerCommands(Application $application)
     {
+        // override the default doctrine:fixtures:load command if it is registered
         if ($application->has('doctrine:fixtures:load')) {
-            parent::registerCommands($application);
+            $class = $this->getNamespace().'\FixturesCommand\LoadDataFixturesDoctrineCommand';
+            $application->add(new $class);
         }
+
+        parent::registerCommands($application);
     }
 }
