@@ -263,3 +263,47 @@ services:
         tags:
             - { name: kayue_wordpress.shortcode }
 ```
+
+### Doctrine Schema and Migrations
+
+In order to use wordpress side-by-side with Doctrine, you will most likely want
+to configure doctrine to ignore the wordpress tables so that it will not try to drop
+or modify them when you run the ```doctrine:schema:update``` command. If you are using
+data migrations in doctrine, you will run into similar issues when generating
+migrations because doctrine will want to drop the wordpress tables. To avoid this problem,
+you can tell doctrine to ignore the wordpress tables using the ```schema_filter`` 
+configuration option. For example if your wordpress tables start with wp_ you can use 
+the following configuration.
+
+```yaml
+doctrine:
+    dbal:
+        schema_filter: ~^(?!wp_)~
+```
+
+More Information: http://symfony.com/doc/current/bundles/DoctrineMigrationsBundle/index.html#manual-tables
+
+### Doctrine Fixtures
+
+If you are using fixtures with doctrine, the ``doctrine:fixtures:load`` command will
+truncate all of your wordpress tables by default. This is because the fixtures command
+asks the default doctrine entity manager for all of the metadata for any mapped entities.
+You can avoid this by creating a separate entity manager for this bundle to use.
+
+```yaml
+doctrine:
+    default_entity_manager: default
+    entity_managers:
+        default:
+            mappings:
+                MyBundle: ~
+                AnotherBundle: ~
+        wordpress:
+            mappings:
+                KayueWordpressBundle: ~
+
+kayue_wordpress:
+    entity_manager: wordpress
+```
+
+More Information: http://symfony.com/doc/current/cookbook/doctrine/multiple_entity_managers.html
