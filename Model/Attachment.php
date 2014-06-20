@@ -42,6 +42,11 @@ class Attachment extends Post implements AttachmentInterface
 
     public function getUrl()
     {
+        if (!$this->url) {
+            $rawMeta = $this->metadata->getValue();
+            $this->url = $rawMeta['file'];
+        }
+
         return $this->url;
     }
 }
