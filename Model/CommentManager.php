@@ -25,9 +25,7 @@ class CommentManager extends AbstractManager implements CommentManagerInterface
     {
         $class = $this->getClass();
 
-        /**
-         * @var $comment Comment
-         */
+        /** @var $comment Comment */
         $comment = new $class();
 
         $comment->setPost($post);

@@ -162,6 +162,7 @@ This bundle comes with the following Twig extensions.
 * `wp_autop` - Wrap paragraph with `<p>` tag. Needed for post formatting.
 * `wp_texturize` - [Texturize](http://codex.wordpress.org/How_WordPress_Processes_Post_Content#Texturize). Needed for post formatting
 * `wp_shortcode` - equivalent to WordPress's `do_shortcode()` method.
+* `wp_extra` - [You can add some extra transformations easily](#Extra%20transformations)
 
 ### Multisite
 
@@ -175,7 +176,7 @@ The following example shows you how to display the latest 10 posts in blog 2.
 public function firstPostAction()
 {
     $blogManager = $this->get('kayue_wordpress.blog.manager');
-    
+
     // Method 1: Switch current blog's id. Similar to WordPress's `switch_to_blog()` method.
     // Changing the current blog ID will affect Twig extensions too.
     $blogManager->setCurrentBlogId(2);
@@ -188,7 +189,7 @@ public function firstPostAction()
 }
 ```
 
-### WordPress Authentication 
+### WordPress Authentication
 
 This bundle allow you to create a WordPress login form in Symfony. All you have to do is to configure the WordPress firewall in your `security.yml`.
 
@@ -196,7 +197,7 @@ The following example demonstrates how to turn AcmeDemoBundle's login form into 
 
 ```yaml
 security:
-    
+
     encoders:
         # Add the WordPress password encoder
         Kayue\WordpressBundle\Entity\User:
@@ -232,7 +233,10 @@ security:
 WordpressBundle support WordPress style shortcode. At the moment the bundle only come with the `[caption]` shortcode.
 Pull request is welcome.
 
-To create new shortcode, you need to 1) extends `ShortcodeInterface`, and then 2) tag it with `kayue_wordpress.shortcode`
+To create new shortcode, you need to
+
+1. extends `ShortcodeInterface`
+2. tag it with `kayue_wordpress.shortcode`
 
 ```php
 <?php
@@ -264,6 +268,66 @@ services:
             - { name: kayue_wordpress.shortcode }
 ```
 
+### Extra transformations
+
+WordpressBundle provide an easy way to add more transformations to your blogpost, as wordpress can do.
+
+For now the only transformation is for videos links.
+
+#### Configure transformers
+
+You can enable or not transformers by using the configuration. The default configuration will enable every
+transformers. You can disable a transformer by setting its configuration at `false`:
+
+```yaml
+kayue_wordpress:
+    extra_transformers:
+        video: false
+```
+
+Here is the reference of options available for various transformers:
+
+```yaml
+
+kayue_wordpress:
+    extra_transformers:
+        video:
+            width: 100%
+            height: 400
+            allowfullscreen: true
+            types: ['youtube', 'vimeo']
+```
+
+#### Add your own transformer
+
+You can create a transformer and register it with the tag `kayue_wordpress.extra_transformer` and an alias.
+
+```php
+<?php
+
+// YourProject\Wordpress\Transformer\ImageTransformer
+
+use Kayue\WordpressBundle\Wordpress\ExtraTransformer\ExtraTransformerInterface;
+
+class ImageTransformer implements ExtraTransformerInterface
+{
+    public function transform($content)
+    {
+        // transform the content and return it
+        return $content;
+    }
+}
+```
+
+```yaml
+# YourBundle/Resources/config/services.yml
+services:
+    your_project.extra_transformer.video:
+        class: Kayue\WordpressBundle\Wordpress\Extra\VideoExtraTransformer
+        tags:
+            - { name: kayue_wordpress.extra_transformer, alias: videos }
+```
+
 ### Doctrine Schema and Migrations
 
 In order to use wordpress side-by-side with Doctrine, you will most likely want
@@ -271,8 +335,8 @@ to configure doctrine to ignore the wordpress tables so that it will not try to 
 or modify them when you run the ```doctrine:schema:update``` command. If you are using
 data migrations in doctrine, you will run into similar issues when generating
 migrations because doctrine will want to drop the wordpress tables. To avoid this problem,
-you can tell doctrine to ignore the wordpress tables using the ```schema_filter`` 
-configuration option. For example if your wordpress tables start with wp_ you can use 
+you can tell doctrine to ignore the wordpress tables using the ```schema_filter``
+configuration option. For example if your wordpress tables start with wp_ you can use
 the following configuration.
 
 ```yaml

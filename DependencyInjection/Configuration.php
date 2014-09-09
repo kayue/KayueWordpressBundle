@@ -29,6 +29,7 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('cookie_domain')->defaultValue(null)->end()
             ->scalarNode('table_prefix')->defaultValue('wp_')->end()
             ->scalarNode('entity_manager')->defaultValue('default')->end()
+            ->variableNode('extra_transformers')->end()
         ->end();
 
         return $treeBuilder;
