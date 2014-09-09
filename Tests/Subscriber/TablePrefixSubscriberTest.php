@@ -2,17 +2,22 @@
 
 namespace Kayue\WordpressBundle\Tests\Subscriber;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Kayue\WordpressBundle\Subscriber\TablePrefixSubscriber;
 
 class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
 {
+    protected function setUp()
+    {
+        AnnotationRegistry::registerAutoloadNamespace('Kayue\WordpressBundle\Annotation', __DIR__ . '/../../../../');
+    }
+
     public function testLoadClassMetadataWithWordpressBundleEntity()
     {
         $subscriber = new TablePrefixSubscriber('wp_');
         $em = $this->getEntityManagerMock();
         $metadataInfo = $this->getClassMetadataInfoMock();
-        $metadataInfo->namespace = 'Kayue\WordpressBundle\Entity';
         $metadataInfo->expects($this->once())->method('setPrimaryTable');
         $args = new LoadClassMetadataEventArgs($metadataInfo, $em);
 
@@ -23,8 +28,7 @@ class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $subscriber = new TablePrefixSubscriber('wp_');
         $em = $this->getEntityManagerMock();
-        $metadataInfo = $this->getClassMetadataInfoMock();
-        $metadataInfo->namespace = 'Acme\DemoBundle\Entity';
+        $metadataInfo = $this->getClassMetadataInfoMock(false);
         $metadataInfo->expects($this->never())->method('setPrimaryTable');
         $args = new LoadClassMetadataEventArgs($metadataInfo, $em);
 
@@ -38,7 +42,6 @@ class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
         $em = $this->getEntityManagerMock();
 
         $metadataInfo = $this->getClassMetadataInfoMock();
-        $metadataInfo->namespace = 'Kayue\WordpressBundle\Entity';
         $metadataInfo->name = 'Kayue\WordpressBundle\Entity\Post';
         $metadataInfo->expects($this->any())
             ->method('getTableName')
@@ -65,7 +68,6 @@ class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($blogId));
 
         $metadataInfo = $this->getClassMetadataInfoMock();
-        $metadataInfo->namespace = 'Kayue\WordpressBundle\Entity';
         $metadataInfo->name = "Kayue\\WordpressBundle\\Entity\\{$entityName}";
         $metadataInfo->expects($this->any())
             ->method('getTableName')
@@ -93,11 +95,28 @@ class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    private function getClassMetadataInfoMock()
+    private function getClassMetadataInfoMock($wordPressAnnotated = true)
     {
-        return $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadataInfo')
+        $mock = $this->getMockBuilder('Doctrine\ORM\Mapping\ClassMetadataInfo')
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMock()
+        ;
+
+        if ($wordPressAnnotated) {
+            $mock
+                ->expects($this->any())
+                ->method('getReflectionClass')
+                ->will($this->returnValue(new \ReflectionClass('Kayue\WordpressBundle\Tests\Fixture\Sample')))
+            ;
+        } else {
+            $mock
+                ->expects($this->any())
+                ->method('getReflectionClass')
+                ->will($this->returnValue(new \ReflectionClass('Kayue\WordpressBundle\Tests\Fixture\SampleWithoutAnnotation')))
+            ;
+        }
+
+        return $mock;
     }
 
     private function getEntityManagerMock()
