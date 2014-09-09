@@ -328,8 +328,6 @@ services:
             - { name: kayue_wordpress.extra_transformer, alias: videos }
 ```
 
-> If you add transformers do not forget to enable them using the configuration as we said in the dedicated part
-
 ### Doctrine Schema and Migrations
 
 In order to use wordpress side-by-side with Doctrine, you will most likely want
