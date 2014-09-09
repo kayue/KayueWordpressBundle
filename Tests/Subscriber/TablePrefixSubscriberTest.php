@@ -10,7 +10,7 @@ class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        AnnotationRegistry::registerAutoloadNamespace('Kayue\WordpressBundle\Annotation', __DIR__ . '/../../../../');
+        AnnotationRegistry::registerFile(__DIR__ . '/../../Annotation/WPTable.php');
     }
 
     public function testLoadClassMetadataWithWordpressBundleEntity()
