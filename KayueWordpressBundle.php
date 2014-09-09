@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle;
 
 use Doctrine\DBAL\Types\Type;
+use Kayue\WordpressBundle\DependencyInjection\Compiler\ExtraTransformerCompilerPass;
 use Kayue\WordpressBundle\DependencyInjection\Compiler\ShortcodeCompilerPass;
 use Kayue\WordpressBundle\DependencyInjection\Security\Factory\WordpressFactory;
 use Kayue\WordpressBundle\Types\WordpressIdType;
@@ -35,5 +36,8 @@ class KayueWordpressBundle extends Bundle
 
         // Shortcode
         $container->addCompilerPass(new ShortcodeCompilerPass());
+
+        // ExtraTransformers
+        $container->addCompilerPass(new ExtraTransformerCompilerPass());
     }
 }

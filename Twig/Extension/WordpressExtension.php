@@ -14,6 +14,7 @@ use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
 use Kayue\WordpressBundle\Model\UserMetaManager;
+use Kayue\WordpressBundle\Wordpress\Extra\ExtraTransformerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -70,11 +71,17 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $shortcodeChain;
 
+    /**
+     * @var ExtraTransformerRegistry
+     */
+    protected $extraTransformer;
+
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $this->blogManager = $this->container->get('kayue_wordpress.blog.manager');
         $this->shortcodeChain = $this->container->get('kayue_wordpress.shortcode_chain');
+        $this->extraTransformer = $this->container->get('kayue_wordpress.extra_transformer.registry');
         $this->reloadManagers();
     }
 
@@ -97,9 +104,10 @@ class WordpressExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'wp_autop' => new \Twig_Filter_Method($this, 'wpautop'),
+            'wp_autop'     => new \Twig_Filter_Method($this, 'wpautop'),
             'wp_texturize' => new \Twig_Filter_Method($this, 'wptexturize'),
             'wp_shortcode' => new \Twig_Filter_Method($this, 'doShortcode'),
+            'wp_extra'     => new \Twig_Filter_Method($this ,'doExtraTransformation'),
         );
     }
 
@@ -523,5 +531,14 @@ class WordpressExtension extends \Twig_Extension
     public function doShortcode($content)
     {
         return $this->shortcodeChain->process($content);
+    }
+
+    /**
+     * @param string $content ie. content of a post
+     * @return string
+     */
+    public function doExtraTransformation($content)
+    {
+        return $this->extraTransformer->transform($content);
     }
 }

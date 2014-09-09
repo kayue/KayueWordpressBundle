@@ -106,6 +106,14 @@ services:
         tags:
             - { name: kayue_wordpress.shortcode }
 
+    kayue_wordpress.extra_transformer.registry:
+        class: Kayue\WordpressBundle\Wordpress\Extra\ExtraTransformerRegistry
+
+    kayue_wordpress.extra_transformer.video:
+        class: Kayue\WordpressBundle\Wordpress\Extra\VideoExtraTransformer
+        tags:
+            - { name: kayue_wordpress.extra_transformer, alias: video }
+
     kayue_wordpress.event_listener.switch_blog:
         class: Kayue\WordpressBundle\EventListener\SwitchBlogListener
         arguments:
