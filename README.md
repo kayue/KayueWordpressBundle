@@ -163,6 +163,8 @@ This bundle comes with the following Twig extensions.
 * `wp_texturize` - [Texturize](http://codex.wordpress.org/How_WordPress_Processes_Post_Content#Texturize). Needed for post formatting
 * `wp_shortcode` - equivalent to WordPress's `do_shortcode()` method.
 
+> To transform extra content like video links or social network links, you can use the [Essence Bundle](https://github.com/kayue/KayueEssenceBundle)
+
 ### Multisite
 
 Multisite is a feature of WordPress that allows multiple virtual sites to share a single WordPress installation. In this bundle, each blog (site) has its own entity manager. You need to use blog manager to retrive the blog and then the entity manager.
@@ -175,7 +177,7 @@ The following example shows you how to display the latest 10 posts in blog 2.
 public function firstPostAction()
 {
     $blogManager = $this->get('kayue_wordpress.blog.manager');
-    
+
     // Method 1: Switch current blog's id. Similar to WordPress's `switch_to_blog()` method.
     // Changing the current blog ID will affect Twig extensions too.
     $blogManager->setCurrentBlogId(2);
@@ -188,7 +190,7 @@ public function firstPostAction()
 }
 ```
 
-### WordPress Authentication 
+### WordPress Authentication
 
 This bundle allow you to create a WordPress login form in Symfony. All you have to do is to configure the WordPress firewall in your `security.yml`.
 
@@ -196,7 +198,7 @@ The following example demonstrates how to turn AcmeDemoBundle's login form into 
 
 ```yaml
 security:
-    
+
     encoders:
         # Add the WordPress password encoder
         Kayue\WordpressBundle\Entity\User:
@@ -232,7 +234,10 @@ security:
 WordpressBundle support WordPress style shortcode. At the moment the bundle only come with the `[caption]` shortcode.
 Pull request is welcome.
 
-To create new shortcode, you need to 1) extends `ShortcodeInterface`, and then 2) tag it with `kayue_wordpress.shortcode`
+To create new shortcode, you need to
+
+1. extends `ShortcodeInterface`
+2. tag it with `kayue_wordpress.shortcode`
 
 ```php
 <?php
@@ -271,8 +276,8 @@ to configure doctrine to ignore the wordpress tables so that it will not try to 
 or modify them when you run the ```doctrine:schema:update``` command. If you are using
 data migrations in doctrine, you will run into similar issues when generating
 migrations because doctrine will want to drop the wordpress tables. To avoid this problem,
-you can tell doctrine to ignore the wordpress tables using the ```schema_filter`` 
-configuration option. For example if your wordpress tables start with wp_ you can use 
+you can tell doctrine to ignore the wordpress tables using the ```schema_filter``
+configuration option. For example if your wordpress tables start with wp_ you can use
 the following configuration.
 
 ```yaml

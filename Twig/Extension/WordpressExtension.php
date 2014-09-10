@@ -14,6 +14,7 @@ use Kayue\WordpressBundle\Model\PostManager;
 use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
 use Kayue\WordpressBundle\Model\UserMetaManager;
+use Kayue\WordpressBundle\Wordpress\Extra\ExtraTransformerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -97,7 +98,7 @@ class WordpressExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'wp_autop' => new \Twig_Filter_Method($this, 'wpautop'),
+            'wp_autop'     => new \Twig_Filter_Method($this, 'wpautop'),
             'wp_texturize' => new \Twig_Filter_Method($this, 'wptexturize'),
             'wp_shortcode' => new \Twig_Filter_Method($this, 'doShortcode'),
         );

@@ -9,7 +9,7 @@ class CaptionShortcode implements ShortcodeInterface
         return 'caption';
     }
 
-    public function process($attr, $content = null)
+    public function process(array $attr, $content = null)
     {
         // New-style shortcode with the caption inside the shortcode with the link and image tags.
         if (!isset($attr['caption'])) {
