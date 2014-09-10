@@ -18,12 +18,15 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
      */
     protected $repository;
 
+    /**
+     * @var PostMetaManager
+     */
     protected $postMetaManager;
 
     /**
      * Constructor.
      *
-     * @param EntityManager     $em
+     * @param Container     $container
      */
     public function __construct(Container $container)
     {
@@ -46,13 +49,21 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
             'type'   => 'attachment',
         ));
 
-        $result = array();
-        /** @var $post Post */
-        foreach ($posts as $post) {
-            $result[] = new Attachment($post);
-        }
+        return $this->postsToAttachments($posts);
+    }
 
-        return $result;
+    /**
+     * @param  integer $post
+     * @return Attachment[]
+     */
+    public function findAttachmentsByPostId($post)
+    {
+        $posts = $this->repository->findBy(array(
+            'parent' => $this->repository->find($post),
+            'type'   => 'attachment',
+        ));
+
+        return $this->postsToAttachments($posts);
     }
 
     /**
@@ -68,6 +79,32 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
         ));
 
         return new Attachment($post);
+    }
+
+    /**
+     * @param  array  $ids array of id of attachment
+     * @param  string $order
+     * @return \Kayue\WordpressBundle\Entity\Post[]
+     */
+    public function findImageWithIds(array $ids, $order = null)
+    {
+        $qb = $this->repository->createQueryBuilder('i');
+
+        $qb
+            ->where($qb->expr()->eq('i.type', ':type'))
+            ->andWhere($qb->expr()->in('i.id', ':ids'))
+        ;
+
+        if ($order !== null) {
+            $qb->orderBy('id', $order);
+        }
+
+        $qb
+            ->setParameter('type', 'attachment')
+            ->setParameter('ids', $ids)
+        ;
+
+        return $this->postsToAttachments($qb->getQuery()->execute());
     }
 
     public function getAttachmentOfSize(Attachment $attachment, $size = null)
@@ -108,10 +145,41 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
     }
 
     /**
+     * @param int $id
+     * @return array|null
+     */
+    public function getCurrentPreviousAndNextAttachment($id)
+    {
+        $current = $this->findOneAttachmentById($id);
+
+        if (!$current) {
+            return null;
+        }
+
+        /** @var \Kayue\WordpressBundle\Model\Attachment $images */
+        $images = $this->findAttachmentsByPost($current->getParent());
+
+        $last = null;
+        $before = null;
+        $after = null;
+        foreach ($images as $image) {
+            if ($last !== null && $image->getId() === $current->getId()) {
+                $before = $last;
+            }
+            if ($last !== null && $last->getId() === $current->getId()) {
+                $after = $image;
+            }
+
+            $last = $image;
+        }
+
+        return array('before' => $before, 'current' => $current, 'after' => $after, 'all' => $images);
+    }
+
+    /**
      * @param Post  $post
-     * @param array $size A 2-item array representing width and height in pixels, e.g. array(32,32).
      *
-     * @return mixed
+     * @return Attachment
      */
     public function findFeaturedImageByPost(Post $post)
     {
@@ -123,5 +191,20 @@ class AttachmentManager extends AbstractManager implements AttachmentManagerInte
         if (!$featuredImageId) return null;
 
         return $this->findOneAttachmentById($featuredImageId->getValue());
+    }
+
+    /**
+     * @param Post[] $posts
+     * @return Attachment[]
+     */
+    private function postsToAttachments(array $posts)
+    {
+        $res = array();
+
+        foreach ($posts as $post) {
+            $res[] = new Attachment($post);
+        }
+
+        return $res;
     }
 }

@@ -1,3 +1,5 @@
-kayue_wordpress_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: KayueWordpressBundle:Default:index }
+kayue_wordpress_shortcode_gallery:
+    pattern:  /gallery/{id}
+    defaults: { _controller: KayueWordpressBundle:Shortcode:gallery }
+    requirements:
+        id: \d+

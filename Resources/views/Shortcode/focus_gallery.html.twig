@@ -1,0 +1,15 @@
+{% extends '@KayueWordpress/layout.html.twig' %}
+
+{% block kayue_wordpress_bundle_content %}
+    {% if before is not empty %}
+        <div style="float: left; width: 5%; text-align: center;; font-size: 15pt;">
+            <a href="{{ path('kayue_wordpress_shortcode_gallery', {'id': before.id}) }}">«</a>
+        </div>
+    {% endif %}
+    {% if after is not empty %}
+        <div style="float: right; width: 5%; text-align: center; font-size: 15pt;">
+            <a href="{{ path('kayue_wordpress_shortcode_gallery', {'id': after.id}) }}">»</a>
+        </div>
+    {% endif %}
+    <img src="{{ current.guid }}" style="max-width: 90%" />
+{% endblock %}

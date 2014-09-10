@@ -2,7 +2,7 @@
 
 namespace Kayue\WordpressBundle\Model;
 
-class Attachment extends Post implements AttachmentInterface
+class Attachment implements AttachmentInterface
 {
     protected $post;
     protected $metadata;
@@ -11,6 +11,7 @@ class Attachment extends Post implements AttachmentInterface
 
     public function __construct(Post $post)
     {
+        $this->post = $post;
         $this->metadata = $post->getMetas()
             ->filter(function (PostMeta $meta) {
                 return '_wp_attachment_metadata' == $meta->getKey();
@@ -48,5 +49,35 @@ class Attachment extends Post implements AttachmentInterface
         }
 
         return $this->url;
+    }
+
+    public function getMimeType()
+    {
+        return $this->post->getMimeType();
+    }
+
+    public function __isset($name)
+    {
+        return method_exists($this->post, 'get'.ucfirst($name));
+    }
+
+    public function __get($name)
+    {
+        $getter = 'get'.ucfirst($name);
+        if (method_exists($this->post, $getter)) {
+            return $this->post->$getter();
+        }
+
+
+        return null;
+    }
+
+    public function __call($method, $parameters)
+    {
+        if (method_exists($this->post, $method)) {
+            return $this->post->$method($parameters);
+        }
+
+        throw new \BadMethodCallException();
     }
 }

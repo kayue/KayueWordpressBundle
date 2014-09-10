@@ -1,0 +1,20 @@
+parameters:
+    kayue_wordpress.shortcode_chain.class: Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain
+    kayue_wordpress.shortcode.caption.class: Kayue\WordpressBundle\Wordpress\Shortcode\CaptionShortcode
+    kayue_wordpress.shortcode.gallery.class: Kayue\WordpressBundle\Wordpress\Shortcode\GalleryShortcode
+
+
+services:
+    kayue_wordpress.shortcode_chain:
+        class: %kayue_wordpress.shortcode_chain.class%
+
+    kayue_wordpress.shortcode.caption:
+        class: %kayue_wordpress.shortcode.caption.class%
+        tags:
+            - { name: kayue_wordpress.shortcode }
+
+    kayue_wordpress.shortcode.gallery:
+        class: %kayue_wordpress.shortcode.gallery.class%
+        arguments: [@service_container]
+        tags:
+            - { name: kayue_wordpress.shortcode }
