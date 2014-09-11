@@ -231,7 +231,7 @@ security:
 
 ### Shortcode
 
-WordpressBundle support WordPress style shortcode. At the moment the bundle only come with the `[caption]` shortcode.
+WordpressBundle support WordPress style shortcode. At the moment the bundle only come with the `[caption]` and `[gallery]` shortcode.
 Pull request is welcome.
 
 To create new shortcode, you need to
@@ -268,6 +268,8 @@ services:
         tags:
             - { name: kayue_wordpress.shortcode }
 ```
+
+[Learn more about the gallery shortcode in the doc folder](Resources/doc/shortcode_gallery.md)
 
 ### Doctrine Schema and Migrations
 

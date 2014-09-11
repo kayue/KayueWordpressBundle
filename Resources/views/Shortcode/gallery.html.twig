@@ -1,0 +1,7 @@
+<div id="gallery">
+{% for image in images %}
+    <a href="{% if linkToFile %}{{ image.guid }}{% else %}{{ path('kayue_wordpress_shortcode_gallery', { 'id': image.id }) }}{% endif %}">
+        <img src="{{ image.guid }}" alt="{{ image.title }}" style="max-width: 150px; max-height: 150px;" />
+    </a>
+{% endfor %}
+</div>
