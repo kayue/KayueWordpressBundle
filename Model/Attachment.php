@@ -68,7 +68,6 @@ class Attachment implements AttachmentInterface
             return $this->post->$getter();
         }
 
-
         return null;
     }
 
