@@ -60,6 +60,14 @@ class ManagerRegistry
     }
 
     /**
+     * @param $blogId
+     */
+    public function setCurrentBlogId($blogId)
+    {
+        $this->currentBlogId = $blogId;
+    }
+
+    /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
      * @param  string $cacheName
