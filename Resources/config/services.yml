@@ -11,6 +11,14 @@ parameters:
     kayue_wordpress.security.encoder.phpass.class: Kayue\WordpressBundle\Security\Encoder\PhpassPasswordEncoder
 
 services:
+    kayue_wordpress:
+        class: Kayue\WordpressBundle\Wordpress\ManagerRegistry
+        arguments:
+            - @kayue_wordpress.dbal.connection
+            - @doctrine.orm.entity_manager
+            - %kernel.root_dir%
+            - %kernel.environment%
+
     kayue_wordpress.configuration.manager:
         class: %kayue_wordpress.configuration.manager.class%
         arguments:

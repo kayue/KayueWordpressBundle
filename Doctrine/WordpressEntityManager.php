@@ -4,8 +4,9 @@ namespace Kayue\WordpressBundle\Doctrine;
 
 use Doctrine\Common\EventManager;
 use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
 
-class WordpressEntityManager extends \Doctrine\ORM\EntityManager
+class WordpressEntityManager extends EntityManager
 {
     protected $blogId = 1;
 
