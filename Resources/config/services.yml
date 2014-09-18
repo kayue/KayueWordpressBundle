@@ -98,7 +98,8 @@ services:
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
-            - @service_container
+            - @kayue_wordpress
+            - @kayue_wordpress.shortcode_chain
         tags:
             - { name: twig.extension }
 

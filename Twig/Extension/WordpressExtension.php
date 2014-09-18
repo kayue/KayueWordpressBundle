@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle\Twig\Extension;
 
 use Doctrine\ORM\EntityManager;
+use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
 use Kayue\WordpressBundle\Entity\User;
@@ -15,6 +16,7 @@ use Kayue\WordpressBundle\Model\PostMetaManager;
 use Kayue\WordpressBundle\Model\TermManager;
 use Kayue\WordpressBundle\Model\UserMetaManager;
 use Kayue\WordpressBundle\Wordpress\Extra\ExtraTransformerRegistry;
+use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -71,12 +73,21 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $shortcodeChain;
 
-    public function __construct(ContainerInterface $container)
+    /**
+     * @var ManagerRegistry
+     */
+    protected $managerRegistry;
+
+    /**
+     * @var WordpressEntityManager
+     */
+    protected $manager;
+
+    public function __construct(ManagerRegistry $managerRegistry, ShortcodeChain $shortcodeChain)
     {
-        $this->container = $container;
-        $this->blogManager = $this->container->get('kayue_wordpress.blog.manager');
-        $this->shortcodeChain = $this->container->get('kayue_wordpress.shortcode_chain');
-        $this->reloadManagers();
+        $this->managerRegistry = $managerRegistry;
+        $this->manager = $managerRegistry->getManager();
+        $this->shortcodeChain = $shortcodeChain;
     }
 
     public function reloadManagers()
@@ -133,7 +144,8 @@ class WordpressExtension extends \Twig_Extension
 
     public function switchBlog($id)
     {
-        $this->blogManager->setCurrentBlogId($id);
+        $this->managerRegistry->setCurrentBlogId($id);
+        $this->manager = $this->managerRegistry->getManager();
     }
 
     public function findAttachmentsByPost(Post $post)
@@ -151,19 +163,27 @@ class WordpressExtension extends \Twig_Extension
         return $this->attachmentManager->findFeaturedImageByPost($post);
     }
 
-    public function findOneOptionByName($id)
+    public function findOneOptionByName($name)
     {
-        return $this->optionManager->findOneOptionByName($id);
+        return $this->manager->getRepository('KayueWordpressBundle:Option')->findOneBy([
+            'name' => $name,
+        ]);
     }
 
     public function findOnePostById($id)
     {
-        return $this->postManager->findOnePostById($id);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findOneBy([
+            'id' => $id,
+            'type' => 'post',
+        ]);
     }
 
     public function findOnePostBySlug($slug)
     {
-        return $this->postManager->findOnePostBySlug($slug);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findOneBy([
+            'slug' => $slug,
+            'type' => 'post',
+        ]);
     }
 
     public function findAllMetasByPost(Post $post)
@@ -210,22 +230,22 @@ class WordpressExtension extends \Twig_Extension
 
     public function findUserMetasBy(array $criteria)
     {
-        return $this->userMetaManager->findMetasBy($criteria);
+        return $this->manager->getRepository('KayueWordpressBundle:UserMeta')->findBy($criteria);
     }
 
     public function findOneUserMetaBy(array $criteria)
     {
-        return $this->userMetaManager->findOneMetaBy($criteria);
+        return $this->manager->getRepository('KayueWordpressBundle:UserMeta')->findOneBy($criteria);
     }
 
     public function findPostMetasBy(array $criteria)
     {
-        return $this->postMetaManager->findMetasBy($criteria);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findBy($criteria);
     }
 
     public function findOnePostMetaBy(array $criteria)
     {
-        return $this->postMetaManager->findOneMetaBy($criteria);
+        return $this->manager->getRepository('KayueWordpressBundle:PostMeta')->findBy($criteria);
     }
 
     public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
@@ -480,11 +500,11 @@ class WordpressExtension extends \Twig_Extension
      * @access private
      * @since 2.9.0
      *
-     * @param  string $text              Text to check. First character is assumed to be $opening
-     * @param  array  $stack             Array used as stack of opened tag elements
+     * @param  string $text Text to check. First character is assumed to be $opening
+     * @param  array $stack Array used as stack of opened tag elements
      * @param  string $disabled_elements Tags to match against formatted as regexp sub-expression
-     * @param  string $opening           Tag opening character, assumed to be 1 character long
-     * @param  string $opening           Tag closing  character
+     * @param  string $opening Tag closing  character
+     * @param string $closing
      * @return object
      */
     public function wptexturizePushpopElement($text, &$stack, $disabled_elements, $opening = '<', $closing = '>')

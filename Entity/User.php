@@ -8,6 +8,7 @@ use Kayue\WordpressBundle\Annotation as Kayue;
 use Serializable;
 use Symfony\Component\Validator\Constraints as Constraints;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Kayue\WordpressBundle\Entity\User
