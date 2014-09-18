@@ -4,7 +4,6 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Kayue\WordpressBundle\Annotation as Kayue;
-use Kayue\WordpressBundle\Model\CommentMeta as ModelCommentaMeta;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -12,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Entity
  * @Kayue\WPTable
  */
-class CommentMeta extends ModelCommentaMeta
+class CommentMeta
 {
     /**
      * {@inheritdoc}
@@ -47,4 +46,75 @@ class CommentMeta extends ModelCommentaMeta
      * })
      */
     protected $comment;
+
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set key
+     *
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * Get key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set comment
+     *
+     * @param Comment $comment
+     */
+    public function setComment(Comment $comment)
+    {
+        $this->comment = $comment;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return Comment
+     */
+    public function getComment()
+    {
+        return $this->comment;
+    }
 }
