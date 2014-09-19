@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="posts")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="Kayue\WordpressBundle\Repository\PostRepository")
  * @Kayue\WPTable
  */
 class Post

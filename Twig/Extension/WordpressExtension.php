@@ -2,72 +2,15 @@
 
 namespace Kayue\WordpressBundle\Twig\Extension;
 
-use Doctrine\ORM\EntityManager;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
 use Kayue\WordpressBundle\Entity\User;
-use Kayue\WordpressBundle\Model\AttachmentManager;
-use Kayue\WordpressBundle\Model\BlogManager;
-use Kayue\WordpressBundle\Model\CommentManager;
-use Kayue\WordpressBundle\Model\OptionManager;
-use Kayue\WordpressBundle\Model\PostManager;
-use Kayue\WordpressBundle\Model\PostMetaManager;
-use Kayue\WordpressBundle\Model\TermManager;
-use Kayue\WordpressBundle\Model\UserMetaManager;
-use Kayue\WordpressBundle\Wordpress\Extra\ExtraTransformerRegistry;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class WordpressExtension extends \Twig_Extension
 {
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var BlogManager
-     */
-    protected $blogManager;
-
-    /**
-     * @var AttachmentManager
-     */
-    protected $attachmentManager;
-
-    /**
-     * @var OptionManager
-     */
-    protected $optionManager;
-
-    /**
-     * @var PostManager
-     */
-    protected $postManager;
-
-    /**
-     * @var PostMetaManager
-     */
-    protected $postMetaManager;
-
-    /**
-     * @var TermManager
-     */
-    protected $termManager;
-
-    /**
-     * @var UserMetaManager
-     */
-    protected $userMetaManager;
-
-    /**
-     * @var CommentManager
-     */
-    protected $commentManager;
-
     /**
      * @var ShortcodeChain
      */
@@ -90,17 +33,6 @@ class WordpressExtension extends \Twig_Extension
         $this->shortcodeChain = $shortcodeChain;
     }
 
-    public function reloadManagers()
-    {
-        $this->optionManager = $this->container->get('kayue_wordpress.option.manager');
-        $this->postManager = $this->container->get('kayue_wordpress.post.manager');
-        $this->postMetaManager = $this->container->get('kayue_wordpress.post_meta.manager');
-        $this->attachmentManager = $this->container->get('kayue_wordpress.attachment.manager');
-        $this->termManager = $this->container->get('kayue_wordpress.term.manager');
-        $this->userMetaManager = $this->container->get('kayue_wordpress.user_meta.manager');
-        $this->commentManager = $this->container->get('kayue_wordpress.comment.manager');
-    }
-
     public function getName()
     {
         return "wordpress";
@@ -109,36 +41,36 @@ class WordpressExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'wp_autop'     => new \Twig_Filter_Method($this, 'wpautop'),
-            'wp_texturize' => new \Twig_Filter_Method($this, 'wptexturize'),
-            'wp_shortcode' => new \Twig_Filter_Method($this, 'doShortcode'),
+            new \Twig_SimpleFilter('wpautop', [$this, 'wpautop']),
+            new \Twig_SimpleFilter('wptexturize', [$this, 'wptexturize']),
+            new \Twig_SimpleFilter('doShortcode', [$this, 'doShortcode']),
         );
     }
 
     public function getFunctions()
     {
         return array(
-            'wp_switch_blog' => new \Twig_Function_Method($this, 'switchBlog'),
-            'wp_find_attachments_by_post' => new \Twig_Function_Method($this, 'findAttachmentsByPost'),
-            'wp_find_one_attachment_by_id' => new \Twig_Function_Method($this, 'findOneAttachmentById'),
-            'wp_find_featured_image_by_post' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
-            'wp_find_post_thumbnail' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
-            'wp_find_one_option_by_name' => new \Twig_Function_Method($this, 'findOneOptionByName'),
-            'wp_find_one_post_by_id' => new \Twig_Function_Method($this, 'findOnePostById'),
-            'wp_find_one_post_by_slug' => new \Twig_Function_Method($this, 'findOnePostBySlug'),
-            'wp_find_all_metas_by_post' => new \Twig_Function_Method($this, 'findAllMetasByPost'),
-            'wp_find_all_metas_by_user' => new \Twig_Function_Method($this, 'findAllMetasByUser'),
-            'wp_find_metas_by' => new \Twig_Function_Method($this, 'findMetasBy'),
-            'wp_find_one_meta_by' => new \Twig_Function_Method($this, 'findOneMetaBy'),
-            'wp_find_user_metas_by' => new \Twig_Function_Method($this, 'findUserMetasBy'),
-            'wp_find_one_user_meta_by' => new \Twig_Function_Method($this, 'findOneUserMetaBy'),
-            'wp_find_post_metas_by' => new \Twig_Function_Method($this, 'findPostMetasBy'),
-            'wp_find_one_post_meta_by' => new \Twig_Function_Method($this, 'findOnePostMetaBy'),
-            'wp_find_terms_by_post' => new \Twig_Function_Method($this, 'findTermsByPost'),
-            'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
-            'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost'),
-            'wp_find_post_format_by_post' => new \Twig_Function_Method($this, 'findPostFormatByPost'),
-            'wp_find_comments_by_post' => new \Twig_Function_Method($this, 'findCommentsByPost'),
+            new \Twig_SimpleFunction('wp_switch_blog', [$this, 'switchBlog']),
+            new \Twig_SimpleFunction('wp_find_attachments_by_post', [$this, 'findAttachmentsByPost']),
+            new \Twig_SimpleFunction('wp_find_one_attachment_by_id', [$this, 'findOneAttachmentById']),
+            new \Twig_SimpleFunction('wp_find_featured_image_by_post', [$this, 'findFeaturedImageByPost']),
+            new \Twig_SimpleFunction('wp_find_post_thumbnail', [$this, 'findFeaturedImageByPost']),
+            new \Twig_SimpleFunction('wp_find_one_option_by_name', [$this, 'findOneOptionByName']),
+            new \Twig_SimpleFunction('wp_find_one_post_by_id', [$this, 'findOnePostById']),
+            new \Twig_SimpleFunction('wp_find_one_post_by_slug', [$this, 'findOnePostBySlug']),
+            new \Twig_SimpleFunction('wp_find_all_metas_by_post', [$this, 'findAllMetasByPost']),
+            new \Twig_SimpleFunction('wp_find_all_metas_by_user', [$this, 'findAllMetasByUser']),
+            new \Twig_SimpleFunction('wp_find_metas_by', [$this, 'findMetasBy']),
+            new \Twig_SimpleFunction('wp_find_one_meta_by', [$this, 'findOneMetaBy']),
+            new \Twig_SimpleFunction('wp_find_user_metas_by', [$this, 'findUserMetasBy']),
+            new \Twig_SimpleFunction('wp_find_one_user_meta_by', [$this, 'findOneUserMetaBy']),
+            new \Twig_SimpleFunction('wp_find_post_metas_by', [$this, 'findPostMetasBy']),
+            new \Twig_SimpleFunction('wp_find_one_post_meta_by', [$this, 'findOnePostMetaBy']),
+            new \Twig_SimpleFunction('wp_find_terms_by_post', [$this, 'findTermsByPost']),
+            new \Twig_SimpleFunction('wp_find_categories_by_post', [$this, 'findCategoriesByPost']),
+            new \Twig_SimpleFunction('wp_find_tags_by_post', [$this, 'findTagsByPost']),
+            new \Twig_SimpleFunction('wp_find_post_format_by_post', [$this, 'findPostFormatByPost']),
+            new \Twig_SimpleFunction('wp_find_comments_by_post', [$this, 'findCommentsByPost']),
         );
     }
 
@@ -150,17 +82,18 @@ class WordpressExtension extends \Twig_Extension
 
     public function findAttachmentsByPost(Post $post)
     {
-        return $this->attachmentManager->findAttachmentsByPost($post);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentsByPost($post);
     }
 
     public function findOneAttachmentById($id)
     {
-        return $this->attachmentManager->findOneAttachmentById($id);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentById($id);
     }
 
     public function findFeaturedImageByPost(Post $post)
     {
-        return $this->attachmentManager->findFeaturedImageByPost($post);
+        // TODO: Implement this
+        return null;
     }
 
     public function findOneOptionByName($name)
