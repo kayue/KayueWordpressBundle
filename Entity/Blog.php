@@ -3,12 +3,12 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Annotation as Kayue;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 
 /**
  * @ORM\Table(name="blogs")
  * @ORM\Entity
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
 class Blog
 {

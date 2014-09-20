@@ -6,7 +6,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 use Doctrine\Common\Annotations\AnnotationReader;
-use Kayue\WordpressBundle\Annotation\WPTable;
+use Kayue\WordpressBundle\Annotation\WordpressTable;
 
 class TablePrefixSubscriber implements EventSubscriber
 {
@@ -30,10 +30,10 @@ class TablePrefixSubscriber implements EventSubscriber
         $reader = new AnnotationReader();
         $classAnnotations = $reader->getClassAnnotations($classMetadata->getReflectionClass());
 
-        // Search for WPTable annotation
+        // Search for WordpressTable annotation
         $found = false;
         foreach ($classAnnotations as $classAnnotation) {
-            if ($classAnnotation instanceof WPTable) {
+            if ($classAnnotation instanceof WordpressTable) {
                 $found = true;
                 break;
             }

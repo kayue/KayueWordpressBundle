@@ -4,7 +4,7 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Annotation as Kayue;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 use Serializable;
 use Symfony\Component\Validator\Constraints as Constraints;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -20,7 +20,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @UniqueEntity({"fields": "nicename", "message": "Sorry, that nicename is already used."})
  * @UniqueEntity({"fields": "displayName", "message": "Sorry, that display name has already been taken."})
  * @ORM\HasLifecycleCallbacks
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
 class User implements UserInterface, Serializable
 {

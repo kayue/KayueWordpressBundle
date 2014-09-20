@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
-use Kayue\WordpressBundle\Annotation as Kayue;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  * @ORM\Entity(repositoryClass="Kayue\WordpressBundle\Repository\CommentRepository")
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
 class Comment
 {

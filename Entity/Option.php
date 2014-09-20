@@ -3,15 +3,13 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Annotation as Kayue;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
- * Kayue\WordpressBundle\Entity\Option
- *
  * @ORM\Table(name="options")
  * @ORM\Entity
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
 class Option
 {
