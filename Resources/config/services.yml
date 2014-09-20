@@ -55,46 +55,6 @@ services:
     kayue_wordpress.security.encoder.phpass:
         class: %kayue_wordpress.security.encoder.phpass.class%
 
-    kayue_wordpress.blog.manager:
-        class: Kayue\WordpressBundle\Model\BlogManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.comment.manager:
-        class: Kayue\WordpressBundle\Model\CommentManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.option.manager:
-        class: Kayue\WordpressBundle\Model\OptionManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.term.manager:
-        class: Kayue\WordpressBundle\Model\TermManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.attachment.manager:
-        class: Kayue\WordpressBundle\Model\AttachmentManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.post.manager:
-        class: Kayue\WordpressBundle\Model\PostManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.post_meta.manager:
-        class: Kayue\WordpressBundle\Model\PostMetaManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.user_meta.manager:
-        class: Kayue\WordpressBundle\Model\UserMetaManager
-        arguments:
-            - @service_container
-
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
@@ -102,10 +62,3 @@ services:
             - @kayue_wordpress.shortcode_chain
         tags:
             - { name: twig.extension }
-
-    kayue_wordpress.event_listener.switch_blog:
-        class: Kayue\WordpressBundle\EventListener\SwitchBlogListener
-        arguments:
-            - @service_container
-        tags:
-            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }

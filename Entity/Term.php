@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
 /**
  * @ORM\Table(name="terms")
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Kayue\WordpressBundle\Repository\TermRepository")
  * @Kayue\WPTable
  */
 class Term

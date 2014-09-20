@@ -143,16 +143,17 @@ This bundle comes with the following Twig extensions.
 #### Functions
 
 * `wp_switch_blog` - equivalent to WordPress's `switch_to_blog()` method.
+* `wp_find_option_by` - equivalent to WordPress's `get_option()` method.
+
+* `wp_find_post_by` - Get post by ID or slug.
+* `wp_find_post_metas_by($post, $key)` - equivalent to WordPress's `get_post_meta()` method.
+* `wp_find_post_metas_by({'post': $post, 'key': $key})` - Same as above, accept array as argument.
+* `wp_find_comments_by_post` - return all approved comments in a post.
 * `wp_find_attachments_by_post`
-* `wp_find_one_attachment_by_id`
-* `wp_find_featured_image_by_post` - equivalent to WordPress's `get_the_post_thumbnail` method.
+* `wp_find_attachment_by_id`
 * `wp_find_post_thumbnail` - alias of `wp_find_featured_image_by_post`
-* `wp_find_one_option_by_name` - equivalent to WordPress's `get_option()` method.
-* `wp_find_one_post_by_id`
-* `wp_find_one_post_by_slug`
-* `wp_find_all_metas_by_post` - equivalent to WordPress's `get_post_meta()` method.
-* `wp_find_one_meta_by` - equivalent to WordPress's `get_post_meta()` method.
-* `wp_find_metas_by` - equivalent to WordPress's `get_post_meta()` method.
+* `wp_find_featured_image_by_post` - equivalent to WordPress's `get_the_post_thumbnail` method.
+
 * `wp_find_terms_by_post`
 * `wp_find_categories_by_post` - equivalent to WordPress's `get_categories()` method.
 * `wp_find_tags_by_post` - equivalent to WordPress's `get_tags()` method.

@@ -5,17 +5,8 @@ namespace Kayue\WordpressBundle\Repository;
 use Doctrine\ORM\EntityRepository;
 use Kayue\WordpressBundle\Entity\Post;
 
-class PostRepository extends EntityRepository
+class PostRepository extends AbstractRepository
 {
-    public function getQueryBuilder()
-    {
-        return $this->getEntityManager()
-            ->createQueryBuilder()
-            ->select('p')
-            ->from('Kayue\WordpressBundle\Entity\Post', 'p')
-        ;
-    }
-
     public function findAttachmentsByPost(Post $post)
     {
         return $this->getQueryBuilder()
@@ -37,4 +28,9 @@ class PostRepository extends EntityRepository
             ->getResult()
         ;
     }
-} 
+
+    public function getAlias()
+    {
+        return 'p';
+    }
+}

@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  * @ORM\Table(name="comments")
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ * @ORM\Entity(repositoryClass="Kayue\WordpressBundle\Repository\CommentRepository")
  * @Kayue\WPTable
  */
 class Comment

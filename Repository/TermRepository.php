@@ -1,10 +1,13 @@
 <?php
 
-namespace Kayue\WordpressBundle\Model;
+namespace Kayue\WordpressBundle\Repository;
 
-class TermManager implements TermManagerInterface
+use Kayue\WordpressBundle\Entity\Post;
+use Kayue\WordpressBundle\Entity\Taxonomy;
+
+class TermRepository extends AbstractRepository
 {
-    public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
+    public function findByPost(Post $post, $taxonomy = null)
     {
         $result = array();
         $taxonmies = $post->getTaxonomies();
@@ -15,6 +18,10 @@ class TermManager implements TermManagerInterface
                 $result[] = $tax->getTerm();
             }
         } else {
+            if (is_string($taxonomy)) {
+                $taxonomy = $this->getEntityManager()->getRepository('KayueWordpressBundle:Taxonomy')->findOneBy(['name' => $taxonomy]);
+            }
+
             foreach($taxonmies->filter(function(Taxonomy $tax) use ($taxonomy) {
                 return $tax->getName() === $taxonomy->getName();
             }) as $tax) {
@@ -24,5 +31,10 @@ class TermManager implements TermManagerInterface
         }
 
         return $result;
+    }
+
+    public function getAlias()
+    {
+        return 't';
     }
 }
