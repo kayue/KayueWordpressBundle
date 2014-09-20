@@ -2,7 +2,6 @@
 
 namespace Kayue\WordpressBundle\Repository;
 
-use Doctrine\ORM\EntityRepository;
 use Kayue\WordpressBundle\Entity\Post;
 
 class PostRepository extends AbstractRepository

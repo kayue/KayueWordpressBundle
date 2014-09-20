@@ -4,19 +4,16 @@ namespace Kayue\WordpressBundle\Twig\Extension;
 
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Entity\Post;
-use Kayue\WordpressBundle\Entity\Taxonomy;
 use Kayue\WordpressBundle\Entity\Term;
 use Kayue\WordpressBundle\Entity\User;
+use Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
+use Twig_SimpleFilter;
+use Twig_SimpleFunction;
 
 class WordpressExtension extends \Twig_Extension
 {
-    /**
-     * @var ShortcodeChain
-     */
-    protected $shortcodeChain;
-
     /**
      * @var ManagerRegistry
      */
@@ -27,11 +24,31 @@ class WordpressExtension extends \Twig_Extension
      */
     protected $manager;
 
-    public function __construct(ManagerRegistry $managerRegistry, ShortcodeChain $shortcodeChain)
+    /**
+     * @var ShortcodeChain
+     */
+    protected $shortcodeChain;
+
+    /**
+     * @var AttachmentHelper
+     */
+    protected $attachmentHelper;
+
+    /**
+     * @param ManagerRegistry $managerRegistry
+     * @param ShortcodeChain $shortcodeChain
+     * @param AttachmentHelper $attachmentHelper
+     */
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        ShortcodeChain $shortcodeChain,
+        AttachmentHelper $attachmentHelper
+    )
     {
         $this->managerRegistry = $managerRegistry;
         $this->manager = $managerRegistry->getManager();
         $this->shortcodeChain = $shortcodeChain;
+        $this->attachmentHelper = $attachmentHelper;
     }
 
     public function getName()
@@ -42,36 +59,37 @@ class WordpressExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('wpautop', [$this, 'wpautop']),
-            new \Twig_SimpleFilter('wptexturize', [$this, 'wptexturize']),
-            new \Twig_SimpleFilter('doShortcode', [$this, 'doShortcode']),
+            new Twig_SimpleFilter('wpautop', [$this, 'wpautop']),
+            new Twig_SimpleFilter('wptexturize', [$this, 'wptexturize']),
+            new Twig_SimpleFilter('doShortcode', [$this, 'doShortcode']),
         );
     }
 
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('wp_switch_blog', [$this, 'switchBlog']),
-            new \Twig_SimpleFunction('wp_find_option_by', [$this, 'findOneOptionBy']),
+            new Twig_SimpleFunction('wp_switch_blog', [$this, 'switchBlog']),
+            new Twig_SimpleFunction('wp_find_option_by', [$this, 'findOneOptionBy']),
 
             // Post related functions
-            new \Twig_SimpleFunction('wp_find_post_by', [$this, 'findOnePostBy']),
-            new \Twig_SimpleFunction('wp_find_post_metas_by', [$this, 'findPostMetasBy']),
-            new \Twig_SimpleFunction('wp_find_comments_by_post', [$this, 'findCommentsByPost']),
-            new \Twig_SimpleFunction('wp_find_attachments_by_post', [$this, 'findAttachmentsByPost']),
-            new \Twig_SimpleFunction('wp_find_attachment_by_id', [$this, 'findOneAttachmentById']),
-            new \Twig_SimpleFunction('wp_find_post_thumbnail', [$this, 'findFeaturedImageByPost']),
-            new \Twig_SimpleFunction('wp_find_featured_image_by_post', [$this, 'findFeaturedImageByPost']),
-            new \Twig_SimpleFunction('wp_get_post_format', [$this, 'getPostFormatByPost']),
+            new Twig_SimpleFunction('wp_find_post_by', [$this, 'findOnePostBy']),
+            new Twig_SimpleFunction('wp_find_post_metas_by', [$this, 'findPostMetasBy']),
+            new Twig_SimpleFunction('wp_find_comments_by_post', [$this, 'findCommentsByPost']),
+            new Twig_SimpleFunction('wp_find_attachments', [$this, 'findAttachmentsByPost']),
+            new Twig_SimpleFunction('wp_find_attachment_by_id', [$this, 'findOneAttachmentById']),
+            new Twig_SimpleFunction('wp_find_thumbnail', [$this, 'findThumbnail']),
+            new Twig_SimpleFunction('wp_find_featured_image', [$this, 'findThumbnail']),
+            new Twig_SimpleFunction('wp_get_attachment_url', [$this, 'getAttachmentUrl']),
+            new Twig_SimpleFunction('wp_get_post_format', [$this, 'getPostFormatByPost']),
 
             // Terms related functions
-            new \Twig_SimpleFunction('wp_find_terms_by_post', [$this, 'findTermsByPost']),
-            new \Twig_SimpleFunction('wp_find_categories_by_post', [$this, 'findCategoriesByPost']),
-            new \Twig_SimpleFunction('wp_find_tags_by_post', [$this, 'findTagsByPost']),
+            new Twig_SimpleFunction('wp_find_terms_by_post', [$this, 'findTermsByPost']),
+            new Twig_SimpleFunction('wp_find_categories_by_post', [$this, 'findCategoriesByPost']),
+            new Twig_SimpleFunction('wp_find_tags_by_post', [$this, 'findTagsByPost']),
 
             // User related functions
-            new \Twig_SimpleFunction('wp_find_user_meta_by', [$this, 'findOneUserMetaBy']),
-            new \Twig_SimpleFunction('wp_find_user_metas_by', [$this, 'findUserMetasBy']),
+            new Twig_SimpleFunction('wp_find_user_meta_by', [$this, 'findOneUserMetaBy']),
+            new Twig_SimpleFunction('wp_find_user_metas_by', [$this, 'findUserMetasBy']),
         );
     }
 
@@ -143,10 +161,14 @@ class WordpressExtension extends \Twig_Extension
         return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentById($id);
     }
 
-    public function findFeaturedImageByPost(Post $post)
+    public function findThumbnail(Post $post)
     {
-        // TODO: Implement this
-        return null;
+        return $this->attachmentHelper->findThumbnail($post);
+    }
+
+    public function getAttachmentUrl($post)
+    {
+        return $this->attachmentHelper->getAttachmentUrl($post);
     }
 
     public function getPostFormatByPost(Post $post)
