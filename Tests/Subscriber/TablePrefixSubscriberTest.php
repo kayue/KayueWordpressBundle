@@ -10,7 +10,7 @@ class TablePrefixSubscriberTest extends \PHPUnit_Framework_TestCase
 {
     protected function setUp()
     {
-        AnnotationRegistry::registerFile(__DIR__ . '/../../Annotation/WPTable.php');
+        AnnotationRegistry::registerFile(__DIR__ . '/../../Annotation/WordpressTable.php');
     }
 
     public function testLoadClassMetadataWithWordpressBundleEntity()
