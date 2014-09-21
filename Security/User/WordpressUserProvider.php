@@ -60,7 +60,11 @@ class WordpressUserProvider implements UserProviderInterface
      */
     public function refreshUser(UserInterface $user)
     {
-        return $user;
+        return $this->managerRegistry
+            ->getManager()
+            ->getRepository('KayueWordpressBundle:User')
+            ->findOneBy(['username' => $user->getUsername()])
+        ;
     }
 
     /**
