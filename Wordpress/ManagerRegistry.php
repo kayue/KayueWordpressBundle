@@ -35,7 +35,7 @@ class ManagerRegistry
     }
 
     /**
-     * @param int $blogId
+     * @param  int                    $blogId
      * @return WordpressEntityManager
      */
     public function getManager($blogId = null)
@@ -70,10 +70,10 @@ class ManagerRegistry
     /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
-     * @param  string $cacheName
+     * @param string $cacheName
      *
      * @param $blogId
-     * @throws \InvalidArgumentException In case of unknown driver type.
+     * @throws \InvalidArgumentException    In case of unknown driver type.
      * @return \Doctrine\Common\Cache\Cache
      */
     protected function getCacheImpl($cacheName, $blogId)
@@ -156,4 +156,4 @@ class ManagerRegistry
 
         return $cache;
     }
-} 
+}

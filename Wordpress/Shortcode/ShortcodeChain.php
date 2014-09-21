@@ -31,7 +31,7 @@ class ShortcodeChain
      */
     public function process($content)
     {
-        if(empty($this->shortcodes)) {
+        if (empty($this->shortcodes)) {
             return $content;
         }
 

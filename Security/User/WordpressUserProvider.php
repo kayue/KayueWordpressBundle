@@ -15,7 +15,7 @@ class WordpressUserProvider implements UserProviderInterface
      */
     protected $managerRegistry;
 
-    function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
     }
@@ -78,4 +78,4 @@ class WordpressUserProvider implements UserProviderInterface
     {
         return $class === 'Kayue\WordpressBundle\Entity\User';
     }
-} 
+}

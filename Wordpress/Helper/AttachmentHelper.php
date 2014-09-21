@@ -12,7 +12,7 @@ class AttachmentHelper
      */
     protected $managerRegistry;
 
-    function __construct(ManagerRegistry $managerRegistry)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
     }
@@ -58,4 +58,4 @@ class AttachmentHelper
 
         return null;
     }
-} 
+}

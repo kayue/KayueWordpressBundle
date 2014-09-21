@@ -47,7 +47,6 @@ class CommentMeta
      */
     protected $comment;
 
-
     /**
      * Get id
      *

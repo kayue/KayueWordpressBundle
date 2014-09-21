@@ -12,8 +12,8 @@ class TermRepository extends AbstractRepository
         $result = array();
         $taxonmies = $post->getTaxonomies();
 
-        if($taxonomy === null) {
-            foreach($taxonmies as $tax) {
+        if ($taxonomy === null) {
+            foreach ($taxonmies as $tax) {
                 /** @var $tax Taxonomy */
                 $result[] = $tax->getTerm();
             }
@@ -22,7 +22,7 @@ class TermRepository extends AbstractRepository
                 $taxonomy = $this->getEntityManager()->getRepository('KayueWordpressBundle:Taxonomy')->findOneBy(['name' => $taxonomy]);
             }
 
-            foreach($taxonmies->filter(function(Taxonomy $tax) use ($taxonomy) {
+            foreach ($taxonmies->filter(function (Taxonomy $tax) use ($taxonomy) {
                 return $tax->getName() === $taxonomy->getName();
             }) as $tax) {
                 /** @var $tax Taxonomy */

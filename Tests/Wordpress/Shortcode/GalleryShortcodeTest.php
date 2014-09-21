@@ -1,11 +1,8 @@
 <?php
 
-
 namespace Kayue\WordpressBundle\Tests\Wordpress\Shortcode;
 
-
 use Kayue\WordpressBundle\Wordpress\Shortcode\GalleryShortcode;
-use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
 
 class GalleryShortcodeTest extends \PHPUnit_Framework_TestCase
 {

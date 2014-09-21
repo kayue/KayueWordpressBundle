@@ -121,7 +121,7 @@ class WordpressListener implements ListenerInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        if($token !== null && true === $token->getUser() instanceof User) {
+        if ($token !== null && true === $token->getUser() instanceof User) {
             if (null !== $this->logger) {
                 $this->logger->debug('Write WordPress cookie');
             }

@@ -14,4 +14,4 @@ abstract class AbstractRepository extends EntityRepository implements Repository
             ->from($this->getEntityName(), $this->getAlias())
         ;
     }
-} 
+}

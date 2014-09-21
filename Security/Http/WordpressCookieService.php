@@ -49,8 +49,8 @@ class WordpressCookieService
      * @param Request $request
      *
      * @throws RuntimeException
-     * @return null           Return null if failed to retrieve token.
-     * @return WordpressToken Return WordpressToken if success.
+     * @return null             Return null if failed to retrieve token.
+     * @return WordpressToken   Return WordpressToken if success.
      */
     public function autoLogin(Request $request)
     {

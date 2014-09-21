@@ -149,7 +149,6 @@ class Comment
         $this->metas = new ArrayCollection();
     }
 
-
     public function __toString()
     {
         return $this->getContent();

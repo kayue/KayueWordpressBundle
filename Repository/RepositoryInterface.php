@@ -4,6 +4,6 @@ namespace Kayue\WordpressBundle\Repository;
 
 interface RepositoryInterface
 {
-    function getQueryBuilder();
-    function getAlias();
-} 
+    public function getQueryBuilder();
+    public function getAlias();
+}

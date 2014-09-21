@@ -807,7 +807,7 @@ class Post
     {
         return $this->taxonomies;
     }
-    
+
     /**
      * @ORM\PrePersist
      */

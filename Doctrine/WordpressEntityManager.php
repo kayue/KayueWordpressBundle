@@ -29,8 +29,8 @@ class WordpressEntityManager extends EntityManager
     /**
      * Factory method to create EntityManager instances.
      *
-     * @param mixed $conn An array with the connection parameters or an existing
-     *      Connection instance.
+     * @param  mixed                  $conn         An array with the connection parameters or an existing
+     *                                              Connection instance.
      * @param  Configuration          $config       The Configuration instance to use.
      * @param  EventManager           $eventManager The EventManager instance to use.
      * @return WordpressEntityManager The created EntityManager.

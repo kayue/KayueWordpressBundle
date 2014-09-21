@@ -35,8 +35,8 @@ class WordpressExtension extends \Twig_Extension
     protected $attachmentHelper;
 
     /**
-     * @param ManagerRegistry $managerRegistry
-     * @param ShortcodeChain $shortcodeChain
+     * @param ManagerRegistry  $managerRegistry
+     * @param ShortcodeChain   $shortcodeChain
      * @param AttachmentHelper $attachmentHelper
      */
     public function __construct(
@@ -176,7 +176,7 @@ class WordpressExtension extends \Twig_Extension
         /** @var $term Term[] */
         $term = $this->findTermsByPost($post, 'post_format');
 
-        if(!empty($term)) {
+        if (!empty($term)) {
             return str_replace('post-format-', '', $term[0]->getSlug());
         }
 
@@ -300,7 +300,7 @@ class WordpressExtension extends \Twig_Extension
         $pee = preg_replace('!<p>\s*(</?' . $allblocks . '[^>]*>)!', "$1", $pee);
         $pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee);
         if ($br) {
-            $pee = preg_replace_callback('/<(script|style).*?<\/\\1>/s', function($matches) {
+            $pee = preg_replace_callback('/<(script|style).*?<\/\\1>/s', function ($matches) {
                 // newline preservation help function for wpautop
                 return str_replace("\n", "<WPPreserveNewline />", $matches[0]);
             }, $pee);
@@ -442,11 +442,11 @@ class WordpressExtension extends \Twig_Extension
      * @access private
      * @since 2.9.0
      *
-     * @param  string $text Text to check. First character is assumed to be $opening
-     * @param  array $stack Array used as stack of opened tag elements
+     * @param  string $text              Text to check. First character is assumed to be $opening
+     * @param  array  $stack             Array used as stack of opened tag elements
      * @param  string $disabled_elements Tags to match against formatted as regexp sub-expression
-     * @param  string $opening Tag closing  character
-     * @param string $closing
+     * @param  string $opening           Tag closing  character
+     * @param  string $closing
      * @return object
      */
     public function wptexturizePushpopElement($text, &$stack, $disabled_elements, $opening = '<', $closing = '>')
