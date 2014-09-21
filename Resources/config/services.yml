@@ -60,6 +60,11 @@ services:
     kayue_wordpress.security.encoder.phpass:
         class: %kayue_wordpress.security.encoder.phpass.class%
 
+    kayue_wordpress.security.user_provider:
+        class: Kayue\WordpressBundle\Security\User\WordpressUserProvider
+        arguments:
+            - @kayue_wordpress
+
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:

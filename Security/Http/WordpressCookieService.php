@@ -5,6 +5,7 @@ namespace Kayue\WordpressBundle\Security\Http;
 use Kayue\WordpressBundle\Security\Authentication\Token\WordpressToken;
 use Kayue\WordpressBundle\Wordpress\ConfigurationManager;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -47,13 +48,34 @@ class WordpressCookieService
     /**
      * @param Request $request
      *
+     * @throws RuntimeException
      * @return null           Return null if failed to retrieve token.
      * @return WordpressToken Return WordpressToken if success.
      */
     public function autoLogin(Request $request)
     {
-        if (null === $cookie = $request->cookies->get($this->configuration->getLoggedInCookieName())) {
-             return null;
+        $loggedInCookieName = $this->configuration->getLoggedInCookieName();
+
+        // Debug information
+        if (null === $cookie = $request->cookies->get($loggedInCookieName)) {
+            if (null !== $this->logger) {
+                foreach ($request->cookies->keys() as $key) {
+                    if (strpos($key, 'wordpress_logged_in_') === 0) {
+                        $this->logger->debug(sprintf(
+                            'WordPress cookie "%s" detected but does not match with the bundle\'s configuration "%s". Please
+                             double check your site url settings.',
+                            $key,
+                            $loggedInCookieName
+                        ));
+
+                        return null;
+                    }
+                }
+
+                $this->logger->debug('No WordPress cookie detected.');
+            }
+
+            return null;
         }
 
         if (null !== $this->logger) {
@@ -66,7 +88,7 @@ class WordpressCookieService
             $user = $this->processAutoLoginCookie($cookieParts, $request);
 
             if (!$user instanceof UserInterface) {
-                throw new \RuntimeException('processAutoLoginCookie() must return a UserInterface implementation.');
+                throw new RuntimeException('processAutoLoginCookie() must return a UserInterface implementation.');
             }
 
             if (null !== $this->logger) {
@@ -96,17 +118,24 @@ class WordpressCookieService
      * @param array   $cookieParts
      * @param Request $request
      *
-     * @throws \RuntimeException
-     * @throws \Symfony\Component\Security\Core\Exception\AuthenticationException
+     * @throws RuntimeException
+     * @throws AuthenticationException
      * @return TokenInterface
      */
     protected function processAutoLoginCookie(array $cookieParts, Request $request)
     {
-        if (count($cookieParts) !== 3) {
-            throw new AuthenticationException('The cookie is invalid.');
-        }
+        $count = count($cookieParts);
 
-        list($username, $expiration, $hmac) = $cookieParts;
+        switch ($count) {
+            case 3:
+                list($username, $expiration, $hmac) = $cookieParts;
+                break;
+            case 4:
+                list($username, $expiration, $token, $hmac) = $cookieParts;
+                break;
+            default:
+                throw new AuthenticationException('Invalid WordPress cookie.');
+        }
 
         try {
             $user = $this->userProvider->loadUserByUsername($username);
@@ -118,27 +147,29 @@ class WordpressCookieService
             throw $ex;
         }
 
-        if (!$user instanceof UserInterface) {
-            throw new \RuntimeException(sprintf('The UserProviderInterface implementation must return an instance of UserInterface, but returned "%s".', get_class($user)));
-        }
-
-        if ($hmac !== $this->generateHmac($username, $expiration, $user->getPassword())) {
-            throw new AuthenticationException('The WordPress cookie\'s hash is invalid.');
-        }
-
         if ($expiration < time()) {
             throw new AuthenticationException('The WordPress cookie has expired.');
+        }
+
+        if (!$user instanceof UserInterface) {
+            throw new RuntimeException(sprintf('The UserProviderInterface implementation must return an instance of UserInterface, but returned "%s".', get_class($user)));
+        }
+
+        if (isset($token)) {
+            // WordPress 4
+            if ($hmac !== $this->generateHmacWithToken($username, $expiration, $token, $user->getPassword())) {
+                throw new AuthenticationException('The WordPress cookie\'s hash is invalid. Your logged in key and salt settings could be wrong.');
+            }
+        } else {
+            // WordPress 3
+            if ($hmac !== $this->generateHmac($username, $expiration, $user->getPassword())) {
+                throw new AuthenticationException('The WordPress cookie\'s hash is invalid. Your logged in key and salt settings could be wrong.');
+            }
         }
 
         return $user;
     }
 
-    /**
-     * @param $username
-     * @param $expires
-     * @param $password
-     * @return string
-     */
     protected function generateHmac($username, $expires, $password)
     {
         $passwordFrag = substr($password, 8, 4);
@@ -149,6 +180,20 @@ class WordpressCookieService
         // from wp_hash()
         $key = hash_hmac('md5', $username.$passwordFrag.'|'.$expires, $salt);
         $hash = hash_hmac('md5', $username.'|'.$expires, $key);
+
+        return $hash;
+    }
+
+    protected function generateHmacWithToken($username, $expires, $token, $password)
+    {
+        $passwordFrag = substr($password, 8, 4);
+
+        // from wp_salt()
+        $salt = $this->configuration->getLoggedInKey() . $this->configuration->getLoggedInSalt();
+
+        // from wp_hash()
+        $key = hash_hmac('md5', $username.'|'.$passwordFrag.'|'.$expires.'|'.$token, $salt);
+        $hash = hash_hmac('sha256', $username.'|'.$expires.'|'.$token, $key);
 
         return $hash;
     }

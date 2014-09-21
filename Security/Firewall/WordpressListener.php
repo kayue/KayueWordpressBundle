@@ -2,12 +2,11 @@
 
 namespace Kayue\WordpressBundle\Security\Firewall;
 
-use Kayue\WordpressBundle\Model\UserInterface as WordpressUserInterface;
+use Kayue\WordpressBundle\Entity\User;
 use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -122,7 +121,7 @@ class WordpressListener implements ListenerInterface
         $request = $event->getRequest();
         $response = $event->getResponse();
 
-        if($token !== null && true === $token->getUser() instanceof WordpressUserInterface) {
+        if($token !== null && true === $token->getUser() instanceof User) {
             if (null !== $this->logger) {
                 $this->logger->debug('Write WordPress cookie');
             }
