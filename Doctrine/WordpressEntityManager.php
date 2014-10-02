@@ -36,6 +36,6 @@ class WordpressEntityManager extends \Doctrine\ORM\EntityManager
      */
     public static function create($conn, Configuration $config, EventManager $eventManager = null)
     {
-        return new WordpressEntityManager($conn, $config, $conn->getEventManager());
+        return new static($conn, $config, $conn->getEventManager());
     }
 }
