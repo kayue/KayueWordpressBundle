@@ -7,6 +7,7 @@ use \Memcache;
 use \Memcached;
 use Doctrine\DBAL\Driver\Connection;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 
 class ManagerRegistry
@@ -45,8 +46,10 @@ class ManagerRegistry
         }
 
         if (!isset($this->entityManagers[$blogId])) {
-            // Use default entity manager's configuration
-            $em = WordpressEntityManager::create($this->connection, clone $this->defaultEntityManager->getConfiguration());
+            $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
+            $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
+
+            $em = WordpressEntityManager::create($this->connection, $config);
 
             $em->setBlogId($this->currentBlogId);
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $this->currentBlogId));
