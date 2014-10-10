@@ -209,23 +209,31 @@ class WordpressCookieService
      */
     public function loginSuccess(Request $request, Response $response, TokenInterface $token)
     {
-        $user       = $token->getUser();
+        if (false === $request->cookies->has($this->configuration->getLoggedInCookieName())) {
+            $response->headers->setCookie($this->getLoggedInCookie($token->getUser()));
+        }
+    }
+
+    /**
+     * Create and return WordPress logged in cookie.
+     *
+     * @param UserInterface $user
+     * @return Cookie
+     */
+    public function getLoggedInCookie(UserInterface $user)
+    {
         $username   = $user->getUsername();
         $password   = $user->getPassword();
         $expiration = time() + $this->options['lifetime'];
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
-        if (false === $request->cookies->has($this->configuration->getLoggedInCookieName())) {
-            $response->headers->setCookie(
-                new Cookie(
-                    $this->configuration->getLoggedInCookieName(),
-                    $this->encodeCookie(array($username, $expiration, $hmac)),
-                    time() + $this->options['lifetime'],
-                    $this->configuration->getCookiePath(),
-                    $this->configuration->getCookieDomain()
-                )
-            );
-        }
+        return new Cookie(
+            $this->configuration->getLoggedInCookieName(),
+            $this->encodeCookie(array($username, $expiration, $hmac)),
+            time() + $this->options['lifetime'],
+            $this->configuration->getCookiePath(),
+            $this->configuration->getCookieDomain()
+        );
     }
 
     /**
