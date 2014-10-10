@@ -139,10 +139,26 @@ class WordpressCookieService
      */
     public function loginSuccess(Request $request, Response $response, TokenInterface $token)
     {
-        if (false === $request->cookies->has($this->cookieManager->getLoggedInCookieName())) {
-            $response->headers->setCookie(
-                $this->cookieManager->createLoggedInCookie($token->getUser(), $this->options['lifetime'])
-            );
+        if ($this->configuration->getVersion() === 4) {
+            /**
+             * @see https://github.com/WordPress/WordPress/blob/4.0/wp-includes/pluggable.php#L879-L883
+             */
+            // TODO: Create session token
+            
+            $user       = $token->getUser();
+            $username   = $user->getUsername();
+            $password   = $user->getPassword();
+            $expiration = time() + $this->options['lifetime'];
+            $hmac       = $this->generateHmac($username, $expiration, $password);
+            
+            $sessionToken = $this->sessionTokenManager->create($expiration);
+            $encodedCookie = $this->encodeCookie(array($username, $expiration, $sessionToken, $hmac));
+        } else {
+            if (false === $request->cookies->has($this->cookieManager->getLoggedInCookieName())) {
+                $response->headers->setCookie(
+                    $this->cookieManager->createLoggedInCookie($token->getUser(), $this->options['lifetime'])
+                );
+            }
         }
     }
 
