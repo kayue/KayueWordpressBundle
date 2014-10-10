@@ -3,7 +3,8 @@ imports:
     - { resource: services/doctrine.yml }
 
 parameters:
-    kayue_wordpress.configuration.manager.class: Kayue\WordpressBundle\Wordpress\ConfigurationManager
+    kayue_wordpress.manager.configuration.class: Kayue\WordpressBundle\Wordpress\ConfigurationManager
+    kayue_wordpress.manager.authentication_cookie.class: Kayue\WordpressBundle\Wordpress\AuthenticationCookieManager
     kayue_wordpress.security.authentication.provider.class: Kayue\WordpressBundle\Security\Authentication\Provider\WordpressProvider
     kayue_wordpress.security.authentication.listener.class: Kayue\WordpressBundle\Security\Firewall\WordpressListener
     kayue_wordpress.security.logout.handler.cookie_clearing.class: Kayue\WordpressBundle\Security\Http\Logout\WordpressCookieClearingLogoutHandler
@@ -24,14 +25,19 @@ services:
         arguments:
             - @kayue_wordpress
 
-    kayue_wordpress.configuration.manager:
-        class: %kayue_wordpress.configuration.manager.class%
+    kayue_wordpress.manager.configuration:
+        class: %kayue_wordpress.manager.configuration.class%
         arguments:
             - %kayue_wordpress.site_url%
             - %kayue_wordpress.cookie_path%
             - %kayue_wordpress.cookie_domain%
             - %kayue_wordpress.logged_in_key%
             - %kayue_wordpress.logged_in_salt%
+
+    kayue_wordpress.manager.authentication_cookie:
+        class: %kayue_wordpress.manager.authentication_cookie.class%
+        arguments:
+            - @kayue_wordpress.manager.configuration
 
     kayue_wordpress.security.authentication.provider:
         class: %kayue_wordpress.security.authentication.provider.class%
@@ -52,7 +58,7 @@ services:
         class: %kayue_wordpress.security.logout.handler.cookie_clearing.class%
         parent: security.logout.handler.cookie_clearing
         arguments:
-            - @kayue_wordpress.configuration.manager
+            - @kayue_wordpress.manager.configuration
 
     kayue_wordpress.security.cookie.service:
         class: %kayue_wordpress.security.cookie.service.class%
