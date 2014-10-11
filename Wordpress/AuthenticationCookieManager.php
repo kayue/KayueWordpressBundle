@@ -80,19 +80,20 @@ class AuthenticationCookieManager
      * Create WordPress logged in cookie
      *
      * @param UserInterface $user
+     * @param int $lifetime
      * @return Cookie
      */
-    public function createLoggedInCookie(UserInterface $user)
+    public function createLoggedInCookie(UserInterface $user, $lifetime = 31536000)
     {
         $username   = $user->getUsername();
         $password   = $user->getPassword();
-        $expiration = time() + $this->options['lifetime'];
+        $expiration = time() + $lifetime;
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
         return new Cookie(
             $this->getLoggedInCookieName(),
             $this->encodeCookie(array($username, $expiration, $hmac)),
-            time() + $this->options['lifetime'],
+            $expiration,
             $this->configuration->getCookiePath(),
             $this->configuration->getCookieDomain()
         );
@@ -109,7 +110,6 @@ class AuthenticationCookieManager
         $key = hash_hmac('md5', $username.$passwordFrag.'|'.$expires, $salt);
         $hash = hash_hmac('md5', $username.'|'.$expires, $key);
 
-        var_dump($hash);
         return $hash;
     }
 

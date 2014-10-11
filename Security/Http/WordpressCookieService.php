@@ -140,7 +140,9 @@ class WordpressCookieService
     public function loginSuccess(Request $request, Response $response, TokenInterface $token)
     {
         if (false === $request->cookies->has($this->cookieManager->getLoggedInCookieName())) {
-            $response->headers->setCookie($this->cookieManager->createLoggedInCookie($token->getUser()));
+            $response->headers->setCookie(
+                $this->cookieManager->createLoggedInCookie($token->getUser(), $this->options['lifetime'])
+            );
         }
     }
 
