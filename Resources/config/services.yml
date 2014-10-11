@@ -48,6 +48,7 @@ services:
         arguments:
             - @security.context
             - @kayue_wordpress.security.cookie.service
+            - @kayue_wordpress.manager.authentication_cookie
             - @security.authentication.manager
             - @logger
             - @event_dispatcher
@@ -58,7 +59,7 @@ services:
         class: %kayue_wordpress.security.logout.handler.cookie_clearing.class%
         parent: security.logout.handler.cookie_clearing
         arguments:
-            - @kayue_wordpress.manager.configuration
+            - @kayue_wordpress.manager.authentication_cookie
 
     kayue_wordpress.security.cookie.service:
         class: %kayue_wordpress.security.cookie.service.class%

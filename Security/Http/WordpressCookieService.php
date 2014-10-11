@@ -6,7 +6,6 @@ use Kayue\WordpressBundle\Security\Authentication\Token\WordpressToken;
 use Kayue\WordpressBundle\Wordpress\AuthenticationCookieManager;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -23,7 +22,7 @@ class WordpressCookieService
      *
      * @var string
      */
-    const COOKIE_ATTR_NAME = '_wordpress_logged_in_cookie';
+    const CLEAR_AUTH_COOKIE_ATTR = '_wordpress_clear_auth_cookie';
 
     /**
      * Cookie delimiter.
@@ -153,18 +152,9 @@ class WordpressCookieService
     public function cancelCookie(Request $request)
     {
         if (null !== $this->logger) {
-            $this->logger->debug(sprintf('Clearing WordPress cookie "%s"', $this->cookieManager->getLoggedInCookieName()));
+            $this->logger->debug('Clearing WordPress cookies.');
         }
 
-        // TODO: Clear WordPress backend cookie as well
-        $request->attributes->set(self::COOKIE_ATTR_NAME,
-            new Cookie(
-                $this->cookieManager->getLoggedInCookieName(),
-                null,
-                1,
-                $this->cookieManager->getCookiePath(),
-                $this->cookieManager->getCookieDomain()
-            )
-        );
+        $request->attributes->set(self::CLEAR_AUTH_COOKIE_ATTR, true);
     }
 }

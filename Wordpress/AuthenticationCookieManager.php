@@ -5,6 +5,7 @@ namespace Kayue\WordpressBundle\Wordpress;
 use Exception;
 use RuntimeException;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -31,7 +32,7 @@ class AuthenticationCookieManager
      * @throws RuntimeException
      * @throws AuthenticationException
      */
-    public function validateCookie(UserProviderInterface $userProvider, Cookie $cookie)
+    public function validateCookie(UserProviderInterface $userProvider, $cookie)
     {
         $cookieParts = $this->decodeCookie($cookie);
 
@@ -65,11 +66,10 @@ class AuthenticationCookieManager
             throw new RuntimeException(sprintf('The UserProviderInterface implementation must return an instance of UserInterface, but returned "%s".', get_class($user)));
         }
 
-        if ($token && $hmac !== $this->generateHmacWithToken($username, $expiration, $token, $user->getPassword())) {
-            // WordPress 4
-            throw new AuthenticationException('The WordPress cookie\'s hash is invalid. Your logged in key and salt settings could be wrong.');
-        } elseif ($hmac !== $this->generateHmac($username, $expiration, $user->getPassword())) {
-            // WordPress 3
+        if (
+            ($token && $hmac !== $this->generateHmacWithToken($username, $expiration, $token, $user->getPassword())) ||
+            (!$token && $hmac !== $this->generateHmac($username, $expiration, $user->getPassword()))
+        ) {
             throw new AuthenticationException('The WordPress cookie\'s hash is invalid. Your logged in key and salt settings could be wrong.');
         }
 
@@ -90,7 +90,7 @@ class AuthenticationCookieManager
         $hmac       = $this->generateHmac($username, $expiration, $password);
 
         return new Cookie(
-            $this->configuration->getLoggedInCookieName(),
+            $this->getLoggedInCookieName(),
             $this->encodeCookie(array($username, $expiration, $hmac)),
             time() + $this->options['lifetime'],
             $this->configuration->getCookiePath(),
@@ -109,6 +109,7 @@ class AuthenticationCookieManager
         $key = hash_hmac('md5', $username.$passwordFrag.'|'.$expires, $salt);
         $hash = hash_hmac('md5', $username.'|'.$expires, $key);
 
+        var_dump($hash);
         return $hash;
     }
 
@@ -126,23 +127,24 @@ class AuthenticationCookieManager
         return $hash;
     }
 
-    /**
-     * Decodes the raw cookie value
-     *
-     * @param string $rawCookie
-     * @return array
-     */
+    public function clearCookies(Response $response)
+    {
+        $cookies = array(
+            $this->getAuthenticationCookieName(),
+            $this->getLoggedInCookieName(),
+            'wordpress_test_cookie',
+        );
+
+        foreach ($cookies as $name) {
+            $response->headers->clearCookie($name, $this->getCookiePath(), $this->getCookieDomain());
+        }
+    }
+
     public function decodeCookie($rawCookie)
     {
         return explode(self::COOKIE_DELIMITER, $rawCookie);
     }
 
-    /**
-     * Encodes the cookie parts
-     *
-     * @param array $cookieParts
-     * @return string
-     */
     public function encodeCookie(array $cookieParts)
     {
         return implode(self::COOKIE_DELIMITER, $cookieParts);
@@ -150,15 +152,20 @@ class AuthenticationCookieManager
 
     public function getLoggedInCookieName()
     {
-        return $this->configuration->getLoggedInCookieName();
+        return 'wordpress_logged_in_'.md5($this->configuration->getSiteUrl());
     }
 
-    public function getCookiePath()
+    public function getAuthenticationCookieName()
+    {
+        return 'wordpress_'.md5($this->configuration->getSiteUrl());
+    }
+
+    protected function getCookiePath()
     {
         return $this->configuration->getCookiePath();
     }
 
-    public function getCookieDomain()
+    protected function getCookieDomain()
     {
         return $this->configuration->getCookieDomain();
     }

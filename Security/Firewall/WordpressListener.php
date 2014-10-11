@@ -4,6 +4,7 @@ namespace Kayue\WordpressBundle\Security\Firewall;
 
 use Kayue\WordpressBundle\Entity\User;
 use Kayue\WordpressBundle\Security\Http\WordpressCookieService;
+use Kayue\WordpressBundle\Wordpress\AuthenticationCookieManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,25 +22,35 @@ use Symfony\Component\Security\Http\SecurityEvents;
 
 class WordpressListener implements ListenerInterface
 {
-    private $securityContext;
-    private $cookieService;
-    private $authenticationManager;
-    private $logger;
-    private $dispatcher;
+    protected $securityContext;
+    protected $cookieService;
+    protected $cookieManager;
+    protected $authenticationManager;
+    protected $logger;
+    protected $dispatcher;
 
     /**
      * Constructor
      *
-     * @param SecurityContextInterface       $securityContext
-     * @param WordpressCookieService         $cookieService
+     * @param SecurityContextInterface $securityContext
+     * @param WordpressCookieService $cookieService
+     * @param AuthenticationCookieManager $cookieManager
      * @param AuthenticationManagerInterface $authenticationManager
-     * @param LoggerInterface                $logger
-     * @param EventDispatcherInterface       $dispatcher
+     * @param LoggerInterface $logger
+     * @param EventDispatcherInterface $dispatcher
      */
-    public function __construct(SecurityContextInterface $securityContext, WordpressCookieService $cookieService, AuthenticationManagerInterface $authenticationManager, LoggerInterface $logger = null, EventDispatcherInterface $dispatcher = null)
+    public function __construct(
+        SecurityContextInterface $securityContext,
+        WordpressCookieService $cookieService,
+        AuthenticationCookieManager $cookieManager,
+        AuthenticationManagerInterface $authenticationManager,
+        LoggerInterface $logger = null,
+        EventDispatcherInterface $dispatcher = null
+    )
     {
         $this->securityContext = $securityContext;
         $this->cookieService = $cookieService;
+        $this->cookieManager = $cookieManager;
         $this->authenticationManager = $authenticationManager;
         $this->logger = $logger;
         $this->dispatcher = $dispatcher;
@@ -130,8 +141,8 @@ class WordpressListener implements ListenerInterface
         }
 
         // Add WordPress cookie to respond.
-        if ($request->attributes->has(WordpressCookieService::COOKIE_ATTR_NAME)) {
-            $response->headers->setCookie($request->attributes->get(WordpressCookieService::COOKIE_ATTR_NAME));
+        if ($request->attributes->has(WordpressCookieService::CLEAR_AUTH_COOKIE_ATTR)) {
+            $this->cookieManager->clearCookies($response);
         }
     }
 }
