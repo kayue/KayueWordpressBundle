@@ -39,4 +39,13 @@ class WordpressEntityManager extends EntityManager
     {
         return new WordpressEntityManager($conn, $config, $conn->getEventManager());
     }
+
+    public function getRepository($entityName)
+    {
+        if (strpos($entityName, 'KayueWordpressBundle:') !== 0) {
+            $entityName = 'KayueWordpressBundle:'.$entityName;
+        }
+
+        return parent::getRepository($entityName);
+    }
 }
