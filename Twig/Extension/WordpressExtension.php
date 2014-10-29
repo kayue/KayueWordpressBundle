@@ -59,9 +59,9 @@ class WordpressExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new Twig_SimpleFilter('wpautop', [$this, 'wpautop']),
-            new Twig_SimpleFilter('wptexturize', [$this, 'wptexturize']),
-            new Twig_SimpleFilter('doShortcode', [$this, 'doShortcode']),
+            new Twig_SimpleFilter('wp_autop', [$this, 'wpautop']),
+            new Twig_SimpleFilter('wp_texturize', [$this, 'wptexturize']),
+            new Twig_SimpleFilter('wp_shortcode', [$this, 'doShortcode']),
         );
     }
 
