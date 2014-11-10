@@ -48,9 +48,8 @@ class ManagerRegistry
         if (!isset($this->entityManagers[$blogId])) {
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
             $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
-            $config->setProxyDir(
-                $this->defaultEntityManager->getConfiguration()->getProxyDir()
-            );
+            $config->setAutoGenerateProxyClasses(true);
+            $config->setProxyDir($this->defaultEntityManager->getConfiguration()->getProxyDir());
 
             $em = WordpressEntityManager::create($this->connection, $config);
 
