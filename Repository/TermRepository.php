@@ -22,6 +22,10 @@ class TermRepository extends AbstractRepository
                 $taxonomy = $this->getEntityManager()->getRepository('KayueWordpressBundle:Taxonomy')->findOneBy(['name' => $taxonomy]);
             }
 
+            if (!$taxonomy) {
+                return [];
+            }
+
             foreach ($taxonmies->filter(function (Taxonomy $tax) use ($taxonomy) {
                 return $tax->getName() === $taxonomy->getName();
             }) as $tax) {
