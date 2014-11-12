@@ -46,10 +46,11 @@ class ManagerRegistry
         }
 
         if (!isset($this->entityManagers[$blogId])) {
+            $defaultConfig = $this->defaultEntityManager->getConfiguration();
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
             $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
             $config->setAutoGenerateProxyClasses(true);
-            $config->setProxyDir($this->defaultEntityManager->getConfiguration()->getProxyDir());
+            $config->setProxyDir($defaultConfig->getProxyDir());
 
             $em = WordpressEntityManager::create($this->connection, $config);
 
@@ -57,6 +58,10 @@ class ManagerRegistry
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $this->currentBlogId));
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $this->currentBlogId));
             $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache', $this->currentBlogId));
+
+            if (null !== $fieldFunction = $defaultConfig->getCustomStringFunction('field')) {
+                $em->getConfiguration()->addCustomStringFunction('field', $fieldFunction);
+            }
 
             $this->entityManagers[$this->currentBlogId] = $em;
         }
