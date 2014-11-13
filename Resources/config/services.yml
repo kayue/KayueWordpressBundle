@@ -17,6 +17,7 @@ services:
         arguments:
             - @kayue_wordpress.dbal.connection
             - @doctrine.orm.entity_manager
+            - @event_dispatcher
             - %kernel.root_dir%
             - %kernel.environment%
 

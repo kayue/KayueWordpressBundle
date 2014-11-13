@@ -2,13 +2,16 @@
 
 namespace Kayue\WordpressBundle\Wordpress;
 
-use \Redis;
-use \Memcache;
-use \Memcached;
+use Redis;
+use Memcache;
+use Memcached;
 use Doctrine\DBAL\Driver\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
+use Kayue\WordpressBundle\WordpressEvents;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ManagerRegistry
 {
@@ -22,21 +25,34 @@ class ManagerRegistry
      */
     protected $defaultEntityManager;
 
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
     protected $rootDir;
     protected $environment;
     protected $currentBlogId = 1;
     protected $entityManagers = [];
 
-    public function __construct(Connection $connection, EntityManager $defaultEntityManager, $rootDir, $environment)
+    public function __construct(
+        Connection $connection,
+        EntityManager $defaultEntityManager,
+        EventDispatcherInterface $eventDispatcher,
+        $rootDir,
+        $environment
+    )
     {
         $this->connection = $connection;
         $this->defaultEntityManager = $defaultEntityManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->rootDir = $rootDir;
         $this->environment = $environment;
     }
 
     /**
-     * @param  int                    $blogId
+     * @param int $blogId
+     *
      * @return WordpressEntityManager
      */
     public function getManager($blogId = null)
@@ -46,22 +62,19 @@ class ManagerRegistry
         }
 
         if (!isset($this->entityManagers[$blogId])) {
-            $defaultConfig = $this->defaultEntityManager->getConfiguration();
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
             $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
             $config->setAutoGenerateProxyClasses(true);
-            $config->setProxyDir($defaultConfig->getProxyDir());
+            $config->setProxyDir($this->defaultEntityManager->getConfiguration()->getProxyDir());
 
             $em = WordpressEntityManager::create($this->connection, $config);
+
+            $this->eventDispatcher->dispatch(WordpressEvents::CREATE_ENTITY_MANAGER, new GenericEvent($em));
 
             $em->setBlogId($this->currentBlogId);
             $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $this->currentBlogId));
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $this->currentBlogId));
             $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache', $this->currentBlogId));
-
-            if (null !== $fieldFunction = $defaultConfig->getCustomStringFunction('field')) {
-                $em->getConfiguration()->addCustomStringFunction('field', $fieldFunction);
-            }
 
             $this->entityManagers[$this->currentBlogId] = $em;
         }
