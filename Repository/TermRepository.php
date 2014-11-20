@@ -4,37 +4,30 @@ namespace Kayue\WordpressBundle\Repository;
 
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Taxonomy;
+use Doctrine\ORM\AbstractQuery;
 
 class TermRepository extends AbstractRepository
 {
-    public function findByPost(Post $post, $taxonomy = null)
+    public function findByPost(Post $post, $taxonomy = null, $hydrationMode = AbstractQuery::HYDRATE_ARRAY)
     {
-        $result = array();
-        $taxonmies = $post->getTaxonomies();
+        $queryBuilder = $this->getQueryBuilder()
+            ->join('t.taxonomy', 'taxonomy')
+            ->join('taxonomy.posts', 'post')
+            ->andWhere('post.id = :postId')
+            ->setParameter('postId', $post->getId())
+        ;
 
-        if ($taxonomy === null) {
-            foreach ($taxonmies as $tax) {
-                /** @var $tax Taxonomy */
-                $result[] = $tax->getTerm();
-            }
-        } else {
-            if (is_string($taxonomy)) {
-                $taxonomy = $this->getEntityManager()->getRepository('KayueWordpressBundle:Taxonomy')->findOneBy(['name' => $taxonomy]);
-            }
-
-            if (!$taxonomy) {
-                return [];
-            }
-
-            foreach ($taxonmies->filter(function (Taxonomy $tax) use ($taxonomy) {
-                return $tax->getName() === $taxonomy->getName();
-            }) as $tax) {
-                /** @var $tax Taxonomy */
-                $result[] = $tax->getTerm();
-            }
+        if (null !== $taxonomy) {
+            $queryBuilder
+                ->andWhere('taxonomy.name = :taxonomyName')
+                ->setParameter('taxonomyName', is_string($taxonomy) ? $taxonomy : $taxonomy->getName())
+            ;
         }
 
-        return $result;
+        return $queryBuilder
+            ->getQuery()
+            ->getResult($hydrationMode)
+        ;
     }
 
     public function getAlias()
