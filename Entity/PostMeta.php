@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Constraints;
  *
  * @ORM\Table(name="postmeta")
  * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Kayue\WordpressBundle\Repository\PostMetaRepository")
  * @Wordpress\WordpressTable
  */
 class PostMeta

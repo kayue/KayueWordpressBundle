@@ -136,14 +136,13 @@ class WordpressExtension extends \Twig_Extension
 
     public function findPostMetasBy($criteria)
     {
+        $repository = $this->manager->getRepository('KayueWordpressBundle:PostMeta');
+
         if (func_get_arg(0) instanceof Post && is_string(func_get_arg(1))) {
-            $criteria = [
-                'post' => func_get_arg(0),
-                'key'  => func_get_arg(1),
-            ];
+            return $repository->getMetasByPost(func_get_arg(0), func_get_arg(1));
         }
 
-        return $this->manager->getRepository('KayueWordpressBundle:PostMeta')->findBy($criteria);
+        return $repository->findBy($criteria);
     }
 
     public function findCommentsByPost(Post $post)
