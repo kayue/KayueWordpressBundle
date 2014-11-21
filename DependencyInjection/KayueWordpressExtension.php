@@ -28,5 +28,7 @@ class KayueWordpressExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $container->setAlias('kayue_wordpress.dbal.connection', sprintf('doctrine.dbal.%s_connection', $config['connection']));
     }
 }

@@ -3,7 +3,8 @@ imports:
     - { resource: services/doctrine.yml }
 
 parameters:
-    kayue_wordpress.configuration.manager.class: Kayue\WordpressBundle\Wordpress\ConfigurationManager
+    kayue_wordpress.manager.configuration.class: Kayue\WordpressBundle\Wordpress\ConfigurationManager
+    kayue_wordpress.manager.authentication_cookie.class: Kayue\WordpressBundle\Wordpress\AuthenticationCookieManager
     kayue_wordpress.security.authentication.provider.class: Kayue\WordpressBundle\Security\Authentication\Provider\WordpressProvider
     kayue_wordpress.security.authentication.listener.class: Kayue\WordpressBundle\Security\Firewall\WordpressListener
     kayue_wordpress.security.logout.handler.cookie_clearing.class: Kayue\WordpressBundle\Security\Http\Logout\WordpressCookieClearingLogoutHandler
@@ -11,14 +12,33 @@ parameters:
     kayue_wordpress.security.encoder.phpass.class: Kayue\WordpressBundle\Security\Encoder\PhpassPasswordEncoder
 
 services:
-    kayue_wordpress.configuration.manager:
-        class: %kayue_wordpress.configuration.manager.class%
+    kayue_wordpress:
+        class: Kayue\WordpressBundle\Wordpress\ManagerRegistry
+        arguments:
+            - @kayue_wordpress.dbal.connection
+            - @doctrine.orm.entity_manager
+            - @event_dispatcher
+            - %kernel.root_dir%
+            - %kernel.environment%
+
+    kayue_wordpress.helper.attachment:
+        class: Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper
+        arguments:
+            - @kayue_wordpress
+
+    kayue_wordpress.manager.configuration:
+        class: %kayue_wordpress.manager.configuration.class%
         arguments:
             - %kayue_wordpress.site_url%
             - %kayue_wordpress.cookie_path%
             - %kayue_wordpress.cookie_domain%
             - %kayue_wordpress.logged_in_key%
             - %kayue_wordpress.logged_in_salt%
+
+    kayue_wordpress.manager.authentication_cookie:
+        class: %kayue_wordpress.manager.authentication_cookie.class%
+        arguments:
+            - @kayue_wordpress.manager.configuration
 
     kayue_wordpress.security.authentication.provider:
         class: %kayue_wordpress.security.authentication.provider.class%
@@ -29,6 +49,7 @@ services:
         arguments:
             - @security.context
             - @kayue_wordpress.security.cookie.service
+            - @kayue_wordpress.manager.authentication_cookie
             - @security.authentication.manager
             - @logger
             - @event_dispatcher
@@ -39,7 +60,7 @@ services:
         class: %kayue_wordpress.security.logout.handler.cookie_clearing.class%
         parent: security.logout.handler.cookie_clearing
         arguments:
-            - @kayue_wordpress.configuration.manager
+            - @kayue_wordpress.manager.authentication_cookie
 
     kayue_wordpress.security.cookie.service:
         class: %kayue_wordpress.security.cookie.service.class%
@@ -47,56 +68,16 @@ services:
     kayue_wordpress.security.encoder.phpass:
         class: %kayue_wordpress.security.encoder.phpass.class%
 
-    kayue_wordpress.blog.manager:
-        class: Kayue\WordpressBundle\Model\BlogManager
+    kayue_wordpress.security.user_provider:
+        class: Kayue\WordpressBundle\Security\User\WordpressUserProvider
         arguments:
-            - @service_container
-
-    kayue_wordpress.comment.manager:
-        class: Kayue\WordpressBundle\Model\CommentManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.option.manager:
-        class: Kayue\WordpressBundle\Model\OptionManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.term.manager:
-        class: Kayue\WordpressBundle\Model\TermManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.attachment.manager:
-        class: Kayue\WordpressBundle\Model\AttachmentManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.post.manager:
-        class: Kayue\WordpressBundle\Model\PostManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.post_meta.manager:
-        class: Kayue\WordpressBundle\Model\PostMetaManager
-        arguments:
-            - @service_container
-
-    kayue_wordpress.user_meta.manager:
-        class: Kayue\WordpressBundle\Model\UserMetaManager
-        arguments:
-            - @service_container
+            - @kayue_wordpress
 
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
-            - @service_container
+            - @kayue_wordpress
+            - @kayue_wordpress.shortcode_chain
+            - @kayue_wordpress.helper.attachment
         tags:
             - { name: twig.extension }
-
-    kayue_wordpress.event_listener.switch_blog:
-        class: Kayue\WordpressBundle\EventListener\SwitchBlogListener
-        arguments:
-            - @service_container
-        tags:
-            - { name: kernel.event_listener, event: wordpress.blog.switch_blog, method: onSwitchBlog }

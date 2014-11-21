@@ -2,18 +2,23 @@
 
 namespace Kayue\WordpressBundle\Security\Http\Logout;
 
-use Kayue\WordpressBundle\Wordpress\ConfigurationManager;
-use Symfony\Component\Security\Http\Logout\CookieClearingLogoutHandler;
+use Kayue\WordpressBundle\Wordpress\AuthenticationCookieManager;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Http\Logout\LogoutHandlerInterface;
 
-class WordpressCookieClearingLogoutHandler extends CookieClearingLogoutHandler
+class WordpressCookieClearingLogoutHandler implements LogoutHandlerInterface
 {
-    public function __construct(ConfigurationManager $configuration)
+    protected $cookieManager;
+
+    public function __construct(AuthenticationCookieManager $cookieManager)
     {
-        parent::__construct(array(
-            $configuration->getLoggedInCookieName() => array(
-                'path'   => $configuration->getCookiePath(),
-                'domain' => $configuration->getCookieDomain(),
-            )
-        ));
+        $this->cookieManager = $cookieManager;
+    }
+
+    public function logout(Request $request, Response $response, TokenInterface $token)
+    {
+        $this->cookieManager->clearCookies($response);
     }
 }

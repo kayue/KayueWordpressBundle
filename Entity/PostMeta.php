@@ -3,18 +3,17 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Annotation as Kayue;
-use Kayue\WordpressBundle\Model\PostMeta as ModelPostMeta;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
  * PostMeta
  *
  * @ORM\Table(name="postmeta")
- * @ORM\Entity
- * @Kayue\WPTable
+ * @ORM\Entity(repositoryClass="Kayue\WordpressBundle\Repository\PostMetaRepository")
+ * @Wordpress\WordpressTable
  */
-class PostMeta extends ModelPostMeta
+class PostMeta
 {
     /**
      * {@inheritdoc}
@@ -49,4 +48,74 @@ class PostMeta extends ModelPostMeta
      * })
      */
     protected $post;
+
+    /**
+     * Get post meta ID
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set key
+     *
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * Get key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set post
+     *
+     * @param Post $post
+     */
+    public function setPost(Post $post)
+    {
+        $this->post = $post;
+    }
+
+    /**
+     * Get post
+     *
+     * @return Post
+     */
+    public function getPost()
+    {
+        return $this->post;
+    }
 }

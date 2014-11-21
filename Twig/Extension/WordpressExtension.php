@@ -2,92 +2,53 @@
 
 namespace Kayue\WordpressBundle\Twig\Extension;
 
-use Doctrine\ORM\EntityManager;
+use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Kayue\WordpressBundle\Entity\Post;
-use Kayue\WordpressBundle\Entity\Taxonomy;
+use Kayue\WordpressBundle\Entity\Term;
 use Kayue\WordpressBundle\Entity\User;
-use Kayue\WordpressBundle\Model\AttachmentManager;
-use Kayue\WordpressBundle\Model\BlogManager;
-use Kayue\WordpressBundle\Model\CommentManager;
-use Kayue\WordpressBundle\Model\OptionManager;
-use Kayue\WordpressBundle\Model\PostManager;
-use Kayue\WordpressBundle\Model\PostMetaManager;
-use Kayue\WordpressBundle\Model\TermManager;
-use Kayue\WordpressBundle\Model\UserMetaManager;
-use Kayue\WordpressBundle\Wordpress\Extra\ExtraTransformerRegistry;
+use Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper;
+use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Twig_SimpleFilter;
+use Twig_SimpleFunction;
 
 class WordpressExtension extends \Twig_Extension
 {
     /**
-     * @var ContainerInterface
+     * @var ManagerRegistry
      */
-    protected $container;
+    protected $managerRegistry;
 
     /**
-     * @var BlogManager
+     * @var WordpressEntityManager
      */
-    protected $blogManager;
-
-    /**
-     * @var AttachmentManager
-     */
-    protected $attachmentManager;
-
-    /**
-     * @var OptionManager
-     */
-    protected $optionManager;
-
-    /**
-     * @var PostManager
-     */
-    protected $postManager;
-
-    /**
-     * @var PostMetaManager
-     */
-    protected $postMetaManager;
-
-    /**
-     * @var TermManager
-     */
-    protected $termManager;
-
-    /**
-     * @var UserMetaManager
-     */
-    protected $userMetaManager;
-
-    /**
-     * @var CommentManager
-     */
-    protected $commentManager;
+    protected $manager;
 
     /**
      * @var ShortcodeChain
      */
     protected $shortcodeChain;
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
-        $this->blogManager = $this->container->get('kayue_wordpress.blog.manager');
-        $this->shortcodeChain = $this->container->get('kayue_wordpress.shortcode_chain');
-        $this->reloadManagers();
-    }
+    /**
+     * @var AttachmentHelper
+     */
+    protected $attachmentHelper;
 
-    public function reloadManagers()
+    /**
+     * @param ManagerRegistry  $managerRegistry
+     * @param ShortcodeChain   $shortcodeChain
+     * @param AttachmentHelper $attachmentHelper
+     */
+    public function __construct(
+        ManagerRegistry $managerRegistry,
+        ShortcodeChain $shortcodeChain,
+        AttachmentHelper $attachmentHelper
+    )
     {
-        $this->optionManager = $this->container->get('kayue_wordpress.option.manager');
-        $this->postManager = $this->container->get('kayue_wordpress.post.manager');
-        $this->postMetaManager = $this->container->get('kayue_wordpress.post_meta.manager');
-        $this->attachmentManager = $this->container->get('kayue_wordpress.attachment.manager');
-        $this->termManager = $this->container->get('kayue_wordpress.term.manager');
-        $this->userMetaManager = $this->container->get('kayue_wordpress.user_meta.manager');
-        $this->commentManager = $this->container->get('kayue_wordpress.comment.manager');
+        $this->managerRegistry = $managerRegistry;
+        $this->manager = $managerRegistry->getManager();
+        $this->shortcodeChain = $shortcodeChain;
+        $this->attachmentHelper = $attachmentHelper;
     }
 
     public function getName()
@@ -98,174 +59,174 @@ class WordpressExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            'wp_autop'     => new \Twig_Filter_Method($this, 'wpautop'),
-            'wp_texturize' => new \Twig_Filter_Method($this, 'wptexturize'),
-            'wp_shortcode' => new \Twig_Filter_Method($this, 'doShortcode'),
+            new Twig_SimpleFilter('wp_autop', [$this, 'wpautop']),
+            new Twig_SimpleFilter('wp_texturize', [$this, 'wptexturize']),
+            new Twig_SimpleFilter('wp_shortcode', [$this, 'doShortcode']),
         );
     }
 
     public function getFunctions()
     {
         return array(
-            'wp_switch_blog' => new \Twig_Function_Method($this, 'switchBlog'),
-            'wp_find_attachments_by_post' => new \Twig_Function_Method($this, 'findAttachmentsByPost'),
-            'wp_find_one_attachment_by_id' => new \Twig_Function_Method($this, 'findOneAttachmentById'),
-            'wp_find_featured_image_by_post' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
-            'wp_find_post_thumbnail' => new \Twig_Function_Method($this, 'findFeaturedImageByPost'),
-            'wp_find_one_option_by_name' => new \Twig_Function_Method($this, 'findOneOptionByName'),
-            'wp_find_one_post_by_id' => new \Twig_Function_Method($this, 'findOnePostById'),
-            'wp_find_one_post_by_slug' => new \Twig_Function_Method($this, 'findOnePostBySlug'),
-            'wp_find_all_metas_by_post' => new \Twig_Function_Method($this, 'findAllMetasByPost'),
-            'wp_find_all_metas_by_user' => new \Twig_Function_Method($this, 'findAllMetasByUser'),
-            'wp_find_metas_by' => new \Twig_Function_Method($this, 'findMetasBy'),
-            'wp_find_one_meta_by' => new \Twig_Function_Method($this, 'findOneMetaBy'),
-            'wp_find_user_metas_by' => new \Twig_Function_Method($this, 'findUserMetasBy'),
-            'wp_find_one_user_meta_by' => new \Twig_Function_Method($this, 'findOneUserMetaBy'),
-            'wp_find_post_metas_by' => new \Twig_Function_Method($this, 'findPostMetasBy'),
-            'wp_find_one_post_meta_by' => new \Twig_Function_Method($this, 'findOnePostMetaBy'),
-            'wp_find_terms_by_post' => new \Twig_Function_Method($this, 'findTermsByPost'),
-            'wp_find_categories_by_post' => new \Twig_Function_Method($this, 'findCategoriesByPost'),
-            'wp_find_tags_by_post' => new \Twig_Function_Method($this, 'findTagsByPost'),
-            'wp_find_post_format_by_post' => new \Twig_Function_Method($this, 'findPostFormatByPost'),
-            'wp_find_comments_by_post' => new \Twig_Function_Method($this, 'findCommentsByPost'),
+            new Twig_SimpleFunction('wp_switch_blog', [$this, 'switchBlog']),
+            new Twig_SimpleFunction('wp_find_option_by', [$this, 'findOneOptionBy']),
+
+            // Post related functions
+            new Twig_SimpleFunction('wp_find_post_by', [$this, 'findOnePostBy']),
+            new Twig_SimpleFunction('wp_find_post_metas_by', [$this, 'findPostMetasBy']),
+            new Twig_SimpleFunction('wp_find_comments_by_post', [$this, 'findCommentsByPost']),
+            new Twig_SimpleFunction('wp_find_attachments', [$this, 'findAttachmentsByPost']),
+            new Twig_SimpleFunction('wp_find_attachment_by_id', [$this, 'findOneAttachmentById']),
+            new Twig_SimpleFunction('wp_find_thumbnail', [$this, 'findThumbnail']),
+            new Twig_SimpleFunction('wp_find_featured_image', [$this, 'findThumbnail']),
+            new Twig_SimpleFunction('wp_get_attachment_url', [$this, 'getAttachmentUrl']),
+            new Twig_SimpleFunction('wp_get_post_format', [$this, 'getPostFormatByPost']),
+
+            // Terms related functions
+            new Twig_SimpleFunction('wp_find_terms_by_post', [$this, 'findTermsByPost']),
+            new Twig_SimpleFunction('wp_find_categories_by_post', [$this, 'findCategoriesByPost']),
+            new Twig_SimpleFunction('wp_find_tags_by_post', [$this, 'findTagsByPost']),
+
+            // User related functions
+            new Twig_SimpleFunction('wp_find_user_meta_by', [$this, 'findOneUserMetaBy']),
+            new Twig_SimpleFunction('wp_find_user_metas_by', [$this, 'findUserMetasBy']),
         );
     }
 
     public function switchBlog($id)
     {
-        $this->blogManager->setCurrentBlogId($id);
+        $this->managerRegistry->setCurrentBlogId($id);
+        $this->manager = $this->managerRegistry->getManager();
     }
 
-    public function findAttachmentsByPost(Post $post)
+    public function findOneOptionBy($criteria)
     {
-        return $this->attachmentManager->findAttachmentsByPost($post);
-    }
-
-    public function findOneAttachmentById($id)
-    {
-        return $this->attachmentManager->findOneAttachmentById($id);
-    }
-
-    public function findFeaturedImageByPost(Post $post)
-    {
-        return $this->attachmentManager->findFeaturedImageByPost($post);
-    }
-
-    public function findOneOptionByName($id)
-    {
-        return $this->optionManager->findOneOptionByName($id);
-    }
-
-    public function findOnePostById($id)
-    {
-        return $this->postManager->findOnePostById($id);
-    }
-
-    public function findOnePostBySlug($slug)
-    {
-        return $this->postManager->findOnePostBySlug($slug);
-    }
-
-    public function findAllMetasByPost(Post $post)
-    {
-        return $this->postMetaManager->findAllMetasByPost($post);
-    }
-
-    public function findAllMetasByUser(User $user)
-    {
-        return $this->userMetaManager->findAllMetasByUser($user);
-    }
-
-    public function findMetasBy(array $criteria)
-    {
-        if (array_key_exists('post', $criteria) && array_key_exists('user', $criteria)) {
-            throw new \Exception('It is ambiguous to find metas with both user and post key. Please remove one of them.');
+        if (is_string($criteria)) {
+            $criteria = [
+                'name' => $criteria
+            ];
         }
 
-        if (array_key_exists('post', $criteria)) {
-            return $this->postMetaManager->findMetasBy($criteria);
-        } else if (array_key_exists('user', $criteria)) {
-            return $this->userMetaManager->findMetasBy($criteria);
-        } else {
-            throw new \Exception('It is ambiguous to find metas without giving either post key or user key.
-                    Please use wp_find_one_user_meta_by or wp_find_one_post_meta_by for this case.');
+        return $this->manager->getRepository('KayueWordpressBundle:Option')->findOneBy($criteria);
+    }
+
+    /**
+     * Post related functions
+     */
+
+    public function findOnePostBy($criteria)
+    {
+        if (is_int($criteria)) {
+            $criteria = [
+                'id' => $criteria
+            ];
+        } elseif (is_string($criteria)) {
+            $criteria = [
+                'slug' => $criteria
+            ];
         }
+
+        $criteria = array_merge($criteria, [
+            'type' => 'post',
+            'status' => 'publish',
+        ]);
+
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findOneBy($criteria);
     }
 
-    public function findOneMetaBy(array $criteria)
+    public function findPostMetasBy($criteria)
     {
-        if (array_key_exists('post', $criteria) && array_key_exists('user', $criteria)) {
-            throw new \Exception('It is ambiguous to find metas with both user and post key. Please remove one of them.');
+        $repository = $this->manager->getRepository('KayueWordpressBundle:PostMeta');
+
+        if (func_get_arg(0) instanceof Post && is_string(func_get_arg(1))) {
+            return $repository->getMetasByPost(func_get_arg(0), func_get_arg(1));
         }
 
-        if (array_key_exists('post', $criteria)) {
-            return $this->postMetaManager->findOneMetaBy($criteria);
-        } else if (array_key_exists('user', $criteria)) {
-            return $this->userMetaManager->findOneMetaBy($criteria);
-        } else {
-            throw new \Exception('It is ambiguous to find metas without giving either post key or user key.
-                    Please use wp_find_one_user_meta_by or wp_find_one_post_meta_by for this case.');
-        }
-    }
-
-    public function findUserMetasBy(array $criteria)
-    {
-        return $this->userMetaManager->findMetasBy($criteria);
-    }
-
-    public function findOneUserMetaBy(array $criteria)
-    {
-        return $this->userMetaManager->findOneMetaBy($criteria);
-    }
-
-    public function findPostMetasBy(array $criteria)
-    {
-        return $this->postMetaManager->findMetasBy($criteria);
-    }
-
-    public function findOnePostMetaBy(array $criteria)
-    {
-        return $this->postMetaManager->findOneMetaBy($criteria);
-    }
-
-    public function findTermsByPost(Post $post, Taxonomy $taxonomy = null)
-    {
-        return $this->termManager->findTermsByPost($post, $taxonomy);
+        return $repository->findBy($criteria);
     }
 
     public function findCommentsByPost(Post $post)
     {
-        return $this->commentManager->findCommentsByPost($post);
+        return $this->manager->getRepository('KayueWordpressBundle:Comment')->findApproved($post);
     }
 
-    public function findCategoriesByPost(Post $post)
+    public function findAttachmentsByPost(Post $post)
     {
-        $taxonomy = new Taxonomy();
-        $taxonomy->setName('category');
-        return $this->findTermsByPost($post, $taxonomy);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentsByPost($post);
     }
 
-    public function findPostFormatByPost(Post $post)
+    public function findOneAttachmentById($id)
     {
-        $taxonomy = new Taxonomy();
-        $taxonomy->setName('post_format');
-        /** @var $term \Kayue\WordpressBundle\Model\Term[] */
-        $term = $this->findTermsByPost($post, $taxonomy);
+        return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentById($id);
+    }
 
-        if(!empty($term)) {
+    public function findThumbnail(Post $post)
+    {
+        return $this->attachmentHelper->findThumbnail($post);
+    }
+
+    public function getAttachmentUrl($post)
+    {
+        return $this->attachmentHelper->getAttachmentUrl($post);
+    }
+
+    public function getPostFormatByPost(Post $post)
+    {
+        /** @var $term Term[] */
+        $term = $this->findTermsByPost($post, 'post_format');
+
+        if (!empty($term)) {
             return str_replace('post-format-', '', $term[0]->getSlug());
         }
 
         return 'standard';
     }
 
-    public function findTagsByPost(Post $post)
+    /**
+     * Term related functions
+     */
+
+    public function findTermsByPost(Post $post, $taxonomy = null)
     {
-        $taxonomy = new Taxonomy();
-        $taxonomy->setName('post_tag');
-        return $this->findTermsByPost($post, $taxonomy);
+        return $this->manager->getRepository('KayueWordpressBundle:Term')->findByPost($post, $taxonomy);
     }
 
+    public function findCategoriesByPost(Post $post)
+    {
+        return $this->findTermsByPost($post, 'category');
+    }
+
+    public function findTagsByPost(Post $post)
+    {
+        return $this->findTermsByPost($post, 'post_tag');
+    }
+
+    /**
+     * User related functions
+     */
+
+    public function findOneUserMetaBy($criteria)
+    {
+        if (func_get_arg(0) instanceof User && is_string(func_get_arg(1))) {
+            $criteria = [
+                'user' => func_get_arg(0),
+                'key'  => func_get_arg(1),
+            ];
+        }
+
+        return $this->manager->getRepository('KayueWordpressBundle:UserMeta')->findOneBy($criteria);
+    }
+
+    public function findUserMetasBy($criteria)
+    {
+        if ($criteria instanceof User) {
+            $criteria = [
+                'user' => $criteria
+            ];
+        }
+
+        return $this->manager->getRepository('KayueWordpressBundle:UserMeta')->findBy($criteria);
+    }
 
     /**
      * Replaces double line-breaks with paragraph elements.
@@ -338,7 +299,7 @@ class WordpressExtension extends \Twig_Extension
         $pee = preg_replace('!<p>\s*(</?' . $allblocks . '[^>]*>)!', "$1", $pee);
         $pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*</p>!', "$1", $pee);
         if ($br) {
-            $pee = preg_replace_callback('/<(script|style).*?<\/\\1>/s', function($matches) {
+            $pee = preg_replace_callback('/<(script|style).*?<\/\\1>/s', function ($matches) {
                 // newline preservation help function for wpautop
                 return str_replace("\n", "<WPPreserveNewline />", $matches[0]);
             }, $pee);
@@ -483,8 +444,8 @@ class WordpressExtension extends \Twig_Extension
      * @param  string $text              Text to check. First character is assumed to be $opening
      * @param  array  $stack             Array used as stack of opened tag elements
      * @param  string $disabled_elements Tags to match against formatted as regexp sub-expression
-     * @param  string $opening           Tag opening character, assumed to be 1 character long
      * @param  string $opening           Tag closing  character
+     * @param  string $closing
      * @return object
      */
     public function wptexturizePushpopElement($text, &$stack, $disabled_elements, $opening = '<', $closing = '>')

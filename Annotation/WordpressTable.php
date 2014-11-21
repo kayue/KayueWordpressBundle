@@ -8,6 +8,6 @@ use Doctrine\ORM\Mapping\Annotation;
  * @Annotation
  * @Target("CLASS")
  */
-final class WPTable implements Annotation
+final class WordpressTable implements Annotation
 {
 }

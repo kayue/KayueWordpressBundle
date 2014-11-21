@@ -2,7 +2,6 @@
 
 namespace Kayue\WordpressBundle\DependencyInjection;
 
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -22,13 +21,13 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('kayue_wordpress');
 
         $rootNode->children()
-            ->scalarNode('site_url')->isRequired()->cannotBeEmpty()->end()
-            ->scalarNode('logged_in_key')->isRequired()->cannotBeEmpty()->end()
-            ->scalarNode('logged_in_salt')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('site_url')->defaultValue(null)->end()
+            ->scalarNode('logged_in_key')->defaultValue(null)->end()
+            ->scalarNode('logged_in_salt')->defaultValue(null)->end()
             ->scalarNode('cookie_path')->defaultValue('/')->end()
             ->scalarNode('cookie_domain')->defaultValue(null)->end()
             ->scalarNode('table_prefix')->defaultValue('wp_')->end()
-            ->scalarNode('entity_manager')->defaultValue('default')->end()
+            ->scalarNode('connection')->defaultValue('default')->end()
         ->end();
 
         return $treeBuilder;

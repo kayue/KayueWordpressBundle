@@ -3,18 +3,15 @@
 namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Annotation as Kayue;
-use Kayue\WordpressBundle\Model\Option as ModelOption;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
- * Kayue\WordpressBundle\Entity\Option
- *
  * @ORM\Table(name="options")
  * @ORM\Entity
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
-class Option extends ModelOption
+class Option
 {
     /**
      * @var int $id
@@ -47,4 +44,74 @@ class Option extends ModelOption
      * @Constraints\NotBlank()
      */
     protected $autoload = 'yes';
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set autoload
+     *
+     * @param string $autoload Yes or no
+     */
+    public function setAutoload($autoload)
+    {
+        $this->autoload = $autoload;
+    }
+
+    /**
+     * Get autoload
+     *
+     * @return string
+     */
+    public function getAutoload()
+    {
+        return $this->autoload;
+    }
 }

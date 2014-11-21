@@ -3,7 +3,6 @@
 namespace Kayue\WordpressBundle\Wordpress\Shortcode;
 
 use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\Templating\EngineInterface;
 
 class GalleryShortcode implements ShortcodeInterface
 {
@@ -18,9 +17,9 @@ class GalleryShortcode implements ShortcodeInterface
     }
 
     /**
-     * @param array $attr Attributes of the shortcode
-     * @param string $content Content of the shortcode if it is composed of open tag and end tag
-     * @return string         A simple string containing html that will replace the shortcode
+     * @param  array  $attr    Attributes of the shortcode
+     * @param  string $content Content of the shortcode if it is composed of open tag and end tag
+     * @return string A simple string containing html that will replace the shortcode
      */
     public function process(array $attr, $content = null)
     {
@@ -45,7 +44,7 @@ class GalleryShortcode implements ShortcodeInterface
 
     /**
      * @param  \Kayue\WordpressBundle\Entity\Post[] $images
-     * @param array $attr
+     * @param  array                                $attr
      * @return string
      */
     private function createTemplateWith(array $images, array $attr)

@@ -22,7 +22,7 @@ class WordpressProviderTest extends \PHPUnit_Framework_TestCase
     public function testAuthenticateWithWordpressToken()
     {
         $userCheckerMock = $this->getUserCheckerMock();
-        $userMock = $this->getMock('Kayue\WordpressBundle\Model\User');
+        $userMock = $this->getMock('Kayue\WordpressBundle\Entity\User');
         $userMock->expects($this->any())->method('getRoles')->will($this->returnValue(array('WP_SUBSCRIBER')));
         $tokenMock = $this->getMock(
             'Kayue\WordpressBundle\Security\Authentication\Token\WordpressToken',

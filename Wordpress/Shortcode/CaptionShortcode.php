@@ -30,20 +30,21 @@ class CaptionShortcode implements ShortcodeInterface
             return $content;
 
         if ( $id ) $id = 'id="' . $id . '" ';
-
         return '<div ' . $id . 'class="wp-caption ' . $align . '" style="width: ' . (10 + (int) $width) . 'px">'
         . $content . '<p class="wp-caption-text">' . $caption . '</p></div>';
     }
 
-    private function shortcodeAtts($pairs, $atts) {
-        $atts = (array)$atts;
+    private function shortcodeAtts($pairs, $atts)
+    {
+        $atts = (array) $atts;
         $out = array();
-        foreach($pairs as $name => $default) {
+        foreach ($pairs as $name => $default) {
             if ( array_key_exists($name, $atts) )
                 $out[$name] = $atts[$name];
             else
                 $out[$name] = $default;
         }
+
         return $out;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Kayue\WordpressBundle\DependencyInjection\Security\Factory;
 
-use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -66,7 +65,7 @@ class WordpressFactory extends AbstractFactory
 
         /** @var $cookieService Definition */
         $cookieService = $container->setDefinition($cookieServiceId, new DefinitionDecorator($templateId));
-        $cookieService->addArgument(new Reference('kayue_wordpress.configuration.manager'));
+        $cookieService->addArgument(new Reference('kayue_wordpress.manager.authentication_cookie'));
         $cookieService->addArgument(new Reference($userProviderId));
         $cookieService->addArgument($this->options);
         $cookieService->addArgument(new Reference('logger'));

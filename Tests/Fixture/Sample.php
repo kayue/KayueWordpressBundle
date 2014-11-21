@@ -2,10 +2,10 @@
 
 namespace Kayue\WordpressBundle\Tests\Fixture;
 
-use Kayue\WordpressBundle\Annotation as Kayue;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 
 /**
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
 class Sample
 {

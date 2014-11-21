@@ -13,6 +13,9 @@
         "symfony/symfony": ">=2.1",
         "doctrine/orm": "~2.2,>=2.2.3"
     },
+    "require-dev": {
+        "phpspec/phpspec": "~2.0"
+    },
     "autoload": {
         "psr-0": {
             "Kayue\\WordpressBundle": ""

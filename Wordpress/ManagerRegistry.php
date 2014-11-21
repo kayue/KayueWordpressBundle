@@ -1,112 +1,107 @@
 <?php
 
-namespace Kayue\WordpressBundle\Model;
+namespace Kayue\WordpressBundle\Wordpress;
 
-use \Redis;
-use \Memcache;
-use \Memcached;
-use Doctrine\DBAL\DBALException;
+use Redis;
+use Memcache;
+use Memcached;
+use Doctrine\DBAL\Driver\Connection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Setup;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
-use Kayue\WordpressBundle\Event\SwitchBlogEvent;
 use Kayue\WordpressBundle\WordpressEvents;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
-class BlogManager extends AbstractManager implements BlogManagerInterface
+class ManagerRegistry
 {
     /**
-     * @var array
+     * @var Connection
      */
-    protected $blogs = array();
+    protected $connection;
 
     /**
-     * @var int
+     * @var EntityManager
      */
+    protected $defaultEntityManager;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    protected $rootDir;
+    protected $environment;
     protected $currentBlogId = 1;
+    protected $entityManagers = [];
 
-    /**
-     * @param Container $container
-     */
-    public function __construct(Container $container)
+    public function __construct(
+        Connection $connection,
+        EntityManager $defaultEntityManager,
+        EventDispatcherInterface $eventDispatcher,
+        $rootDir,
+        $environment
+    )
     {
-        parent::__construct($container);
+        $this->connection = $connection;
+        $this->defaultEntityManager = $defaultEntityManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->rootDir = $rootDir;
+        $this->environment = $environment;
     }
 
     /**
-     * @param  integer                    $id
-     * @throws \Doctrine\ORM\ORMException
-     * @return Blog
+     * @param int $blogId
+     *
+     * @return WordpressEntityManager
      */
-    public function findBlogById($id)
+    public function getManager($blogId = null)
     {
-        $config = $this->getEntityManagerConfiguration();
-
-        if (!isset($this->blogs[$id])) {
-            $em = $this->getEntityManager();
-
-            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $id));
-            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $id));
-            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache', $id));
-
-            try {
-                if (null === $em->getRepository('KayueWordpressBundle:Blog')->findOneBy(array('id'=>$id))) {
-                    throw new \Doctrine\ORM\ORMException(sprintf('Blog %d was not found.', $id));
-                }
-            } catch(DBALException $e) {
-                if($id > 1) {
-                    throw new \Exception('Multisite is not installed on your WordPress.');
-                }
-            }
-
-            $em->setBlogId($id);
-
-            $blog = new Blog();
-            $blog->setId($id);
-            $blog->setEntityManager($em);
-
-            $this->blogs[$id] = $blog;
+        if ($blogId !== null && $blogId !== $this->currentBlogId) {
+            $this->currentBlogId = $blogId;
         }
 
-        return $this->blogs[$id];
+        if (!isset($this->entityManagers[$blogId])) {
+            $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
+            $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
+            $config->setAutoGenerateProxyClasses(true);
+            $config->setProxyDir($this->defaultEntityManager->getConfiguration()->getProxyDir());
+
+            $em = WordpressEntityManager::create($this->connection, $config);
+
+            $this->eventDispatcher->dispatch(WordpressEvents::CREATE_ENTITY_MANAGER, new GenericEvent($em));
+
+            $em->setBlogId($this->currentBlogId);
+            $em->getMetadataFactory()->setCacheDriver($this->getCacheImpl('metadata_cache', $this->currentBlogId));
+            $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $this->currentBlogId));
+            $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache', $this->currentBlogId));
+
+            $this->entityManagers[$this->currentBlogId] = $em;
+        }
+
+        return $this->entityManagers[$this->currentBlogId];
     }
 
-    public function getCurrentBlog()
+    /**
+     * @param $blogId
+     */
+    public function setCurrentBlogId($blogId)
     {
-        return $this->findBlogById($this->getCurrentBlogId());
-    }
-
-    public function getCurrentBlogId()
-    {
-        return $this->currentBlogId;
-    }
-
-    public function setCurrentBlogId($currentBlogId)
-    {
-        $this->currentBlogId = $currentBlogId;
-
-        $event = new SwitchBlogEvent($this->getCurrentBlog());
-        $dispatcher = $this->container->get('event_dispatcher');
-        $dispatcher->dispatch(WordpressEvents::SWITCH_BLOG, $event);
-    }
-
-    private function getEntityManagerConfiguration()
-    {
-        return $this->getEntityManager()->getConfiguration();
+        $this->currentBlogId = $blogId;
     }
 
     /**
      * Loads a configured object manager metadata, query or result cache driver.
      *
-     * @param  string           $cacheName
+     * @param string $cacheName
      *
+     * @param $blogId
+     * @throws \InvalidArgumentException    In case of unknown driver type.
      * @return \Doctrine\Common\Cache\Cache
-     *
-     * @throws \InvalidArgumentException In case of unknown driver type.
      */
     protected function getCacheImpl($cacheName, $blogId)
     {
-        $config = $this->getEntityManagerConfiguration();
+        $config = $this->defaultEntityManager->getConfiguration();
 
         switch ($cacheName) {
             case 'metadata_cache':
@@ -123,7 +118,7 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
                         Supported cache names are: "metadata_cache", "query_cache" and "result_cache"', $cacheName));
         }
 
-        $namespace = 'sf2_kayue_wordpress_bundle_blog_'.$blogId.'_'.md5($this->container->getParameter('kernel.root_dir').$this->container->getParameter('kernel.environment'));
+        $namespace = 'sf2_kayue_wordpress_bundle_blog_'.$blogId.'_'.md5($this->rootDir.$this->environment);
 
         $className = get_class($baseCache);
 
@@ -184,5 +179,4 @@ class BlogManager extends AbstractManager implements BlogManagerInterface
 
         return $cache;
     }
-
 }

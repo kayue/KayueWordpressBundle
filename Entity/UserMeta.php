@@ -2,9 +2,10 @@
 
 namespace Kayue\WordpressBundle\Entity;
 
+use Doctrine\ORM\EntityNotFoundException;
 use Doctrine\ORM\Mapping as ORM;
-use Kayue\WordpressBundle\Annotation as Kayue;
-use Kayue\WordpressBundle\Model\UserMeta as ModelUserMeta;
+use Doctrine\ORM\Proxy\Proxy;
+use Kayue\WordpressBundle\Annotation as Wordpress;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -12,9 +13,9 @@ use Symfony\Component\Validator\Constraints as Constraints;
  *
  * @ORM\Table(name="usermeta")
  * @ORM\Entity
- * @Kayue\WPTable
+ * @Wordpress\WordpressTable
  */
-class UserMeta extends ModelUserMeta
+class UserMeta
 {
     /**
      * {@inheritdoc}
@@ -51,17 +52,77 @@ class UserMeta extends ModelUserMeta
     protected $user;
 
     /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set key
+     *
+     * @param string $key
+     */
+    public function setKey($key)
+    {
+        $this->key = $key;
+    }
+
+    /**
+     * Get key
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set value
+     *
+     * @param string $value
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+    }
+
+    /**
+     * Get value
+     *
+     * @return string
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    /**
+     * Set user
+     *
+     * @param User $user
+     */
+    public function setUser(User $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
      * Get user
      *
-     * @return \Kayue\WordpressBundle\Model\UserInterface|null
+     * @return User|null
      */
     public function getUser()
     {
-        if ($this->user instanceof \Doctrine\ORM\Proxy\Proxy) {
+        if ($this->user instanceof Proxy) {
             try {
                 // prevent lazy loading the user entity because it might not exist
                 $this->user->__load();
-            } catch (\Doctrine\ORM\EntityNotFoundException $e) {
+            } catch (EntityNotFoundException $e) {
                 // return null if user does not exist
                 $this->user = null;
             }

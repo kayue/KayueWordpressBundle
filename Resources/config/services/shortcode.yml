@@ -12,9 +12,3 @@ services:
         class: %kayue_wordpress.shortcode.caption.class%
         tags:
             - { name: kayue_wordpress.shortcode }
-
-    kayue_wordpress.shortcode.gallery:
-        class: %kayue_wordpress.shortcode.gallery.class%
-        arguments: [@service_container]
-        tags:
-            - { name: kayue_wordpress.shortcode }

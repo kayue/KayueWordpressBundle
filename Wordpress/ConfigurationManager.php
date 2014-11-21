@@ -43,9 +43,4 @@ class ConfigurationManager
     {
         return $this->siteUrl;
     }
-
-    public function getLoggedInCookieName()
-    {
-        return 'wordpress_logged_in_'.md5($this->getSiteUrl());
-    }
 }
