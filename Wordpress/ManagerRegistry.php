@@ -61,7 +61,7 @@ class ManagerRegistry
             $this->currentBlogId = $blogId;
         }
 
-        if (!isset($this->entityManagers[$blogId])) {
+        if (!isset($this->entityManagers[$this->currentBlogId])) {
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
             $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
             $config->setAutoGenerateProxyClasses(true);
