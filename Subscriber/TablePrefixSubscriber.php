@@ -5,16 +5,24 @@ namespace Kayue\WordpressBundle\Subscriber;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
+use Doctrine\Common\Annotations\Reader;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Kayue\WordpressBundle\Annotation\WordpressTable;
 
 class TablePrefixSubscriber implements EventSubscriber
 {
-    protected $prefix = '';
+    protected $prefix;
+    protected $annotatonReader;
 
-    public function __construct($prefix)
+    public function __construct($prefix, Reader $annotatonReader = null)
     {
         $this->prefix = (string) $prefix;
+
+        if (null === $annotatonReader) {
+            $annotatonReader = new AnnotationReader();
+        }
+
+        $this->annotatonReader = $annotatonReader;
     }
 
     public function getSubscribedEvents()
@@ -27,8 +35,7 @@ class TablePrefixSubscriber implements EventSubscriber
         $classMetadata = $args->getClassMetadata();
 
         // Get class annotations
-        $reader = new AnnotationReader();
-        $classAnnotations = $reader->getClassAnnotations($classMetadata->getReflectionClass());
+        $classAnnotations = $this->annotatonReader->getClassAnnotations($classMetadata->getReflectionClass());
 
         // Search for WordpressTable annotation
         $found = false;
@@ -48,14 +55,14 @@ class TablePrefixSubscriber implements EventSubscriber
         $prefix = $this->getPrefix($classMetadata->name, $args->getEntityManager());
 
         $classMetadata->setPrimaryTable(array(
-            'name' => $prefix . $classMetadata->getTableName()
+            'name' => $prefix.$classMetadata->getTableName(),
         ));
 
         // set table prefix to associated entity
         // TODO: make sure prefix won't apply to user table
         foreach ($classMetadata->associationMappings as &$mapping) {
             if (isset($mapping['joinTable']) && !empty($mapping['joinTable'])) {
-                $mapping['joinTable']['name'] = $prefix . $mapping['joinTable']['name'];
+                $mapping['joinTable']['name'] = $prefix.$mapping['joinTable']['name'];
             }
         }
     }
@@ -82,7 +89,7 @@ class TablePrefixSubscriber implements EventSubscriber
 
             // append blog ID to prefix
             if ($blogId > 1) {
-                $prefix = $prefix . $blogId . '_';
+                $prefix = $prefix.$blogId.'_';
             }
         }
 
