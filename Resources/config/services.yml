@@ -34,6 +34,7 @@ services:
             - %kayue_wordpress.cookie_domain%
             - %kayue_wordpress.logged_in_key%
             - %kayue_wordpress.logged_in_salt%
+            - %kayue_wordpress.version%
 
     kayue_wordpress.manager.authentication_cookie:
         class: %kayue_wordpress.manager.authentication_cookie.class%

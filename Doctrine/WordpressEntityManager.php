@@ -37,7 +37,7 @@ class WordpressEntityManager extends EntityManager
      */
     public static function create($conn, Configuration $config, EventManager $eventManager = null)
     {
-        return new WordpressEntityManager($conn, $config, $conn->getEventManager());
+        return new static($conn, $config, $conn->getEventManager());
     }
 
     public function getRepository($entityName)

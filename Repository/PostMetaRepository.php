@@ -3,12 +3,11 @@
 namespace Kayue\WordpressBundle\Repository;
 
 use Kayue\WordpressBundle\Entity\Post;
-use Kayue\WordpressBundle\Entity\PostMeta;
 use Doctrine\ORM\AbstractQuery;
 
 class PostMetaRepository extends AbstractRepository
 {
-    public function getMetasByPost(Post $post, $key, $hydrationMode = AbstractQuery::HYDRATE_ARRAY)
+    public function getMetasByPost(Post $post, $key, $hydrationMode = AbstractQuery::HYDRATE_SIMPLEOBJECT)
     {
         return $this->getQueryBuilder()
             ->join('pm.post', 'post')
@@ -21,7 +20,7 @@ class PostMetaRepository extends AbstractRepository
         ;
     }
 
-    public function getMetaByPost(Post $post, $key, $hydrationMode = AbstractQuery::HYDRATE_ARRAY)
+    public function getMetaByPost(Post $post, $key, $hydrationMode = AbstractQuery::HYDRATE_SIMPLEOBJECT)
     {
         return $this->getQueryBuilder()
             ->join('pm.post', 'post')
@@ -31,7 +30,7 @@ class PostMetaRepository extends AbstractRepository
             ->setParameter('postId', $post->getId())
             ->setParameter('key', $key)
             ->getQuery()
-            ->getSingleResult($hydrationMode)
+            ->getOneOrNullResult($hydrationMode)
         ;
     }
 

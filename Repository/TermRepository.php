@@ -8,7 +8,7 @@ use Doctrine\ORM\AbstractQuery;
 
 class TermRepository extends AbstractRepository
 {
-    public function findByPost(Post $post, $taxonomy = null, $hydrationMode = AbstractQuery::HYDRATE_ARRAY)
+    public function findByPost(Post $post, $taxonomy = null, $hydrationMode = AbstractQuery::HYDRATE_SIMPLEOBJECT)
     {
         $queryBuilder = $this->getQueryBuilder()
             ->join('t.taxonomy', 'taxonomy')
