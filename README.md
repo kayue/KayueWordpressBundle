@@ -84,7 +84,7 @@ kayue_wordpress:
     table_prefix:   'wp_'
 
     # Doctrine connection to use. Default is 'default'.
-    connection: 'default'
+    entity_manager: 'default'
     
     # The following configuration only needed only when you use WordPress authentication. 
     
