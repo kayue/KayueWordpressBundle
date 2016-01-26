@@ -22,7 +22,7 @@ class PostRepository extends AbstractRepository
         return $this->getQueryBuilder()
             ->where('p.type = :type AND p.id = :id')
             ->setParameter('type', 'attachment')
-            ->setParameter('post', $id)
+            ->setParameter('id', $id)
             ->getQuery()
             ->getResult()
         ;
