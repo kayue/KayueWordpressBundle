@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Wordpress;
 
+use Doctrine\Common\Persistence\ManagerRegistry as ManagerRegistryInterface;
 use Redis;
 use Memcache;
 use Memcached;
@@ -13,7 +14,7 @@ use Kayue\WordpressBundle\WordpressEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class ManagerRegistry
+class ManagerRegistry implements ManagerRegistryInterface
 {
     /**
      * @var Connection
@@ -178,5 +179,60 @@ class ManagerRegistry
         $cache->setNamespace($namespace);
 
         return $cache;
+    }
+
+    public function getDefaultConnectionName()
+    {
+        // TODO: Implement getDefaultConnectionName() method.
+    }
+
+    public function getConnection($name = null)
+    {
+        return $this->connection;
+    }
+
+    public function getConnections()
+    {
+        return [$this->connection];
+    }
+
+    public function getConnectionNames()
+    {
+        // TODO: Implement getConnectionNames() method.
+    }
+
+    public function getDefaultManagerName()
+    {
+        // TODO: Implement getDefaultManagerName() method.
+    }
+
+    public function getManagers()
+    {
+        // TODO: Implement getManagers() method.
+    }
+
+    public function resetManager($name = null)
+    {
+        // TODO: Implement resetManager() method.
+    }
+
+    public function getAliasNamespace($alias)
+    {
+        // TODO: Implement getAliasNamespace() method.
+    }
+
+    public function getManagerNames()
+    {
+        // TODO: Implement getManagerNames() method.
+    }
+
+    public function getRepository($persistentObject, $persistentManagerName = null)
+    {
+        // TODO: Implement getRepository() method.
+    }
+
+    public function getManagerForClass($class)
+    {
+        // TODO: Implement getManagerForClass() method.
     }
 }
