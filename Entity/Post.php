@@ -4,9 +4,11 @@ namespace Kayue\WordpressBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityNotFoundException;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Proxy\Proxy;
 use Kayue\WordpressBundle\Annotation as Wordpress;
+use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Symfony\Component\Validator\Constraints as Constraints;
 
 /**
@@ -228,6 +230,8 @@ class Post
      * )
      */
     protected $taxonomies;
+
+    protected $blogId;
 
     public function __construct()
     {
@@ -806,6 +810,24 @@ class Post
     public function getTaxonomies()
     {
         return $this->taxonomies;
+    }
+
+    /**
+     * @return integer
+     */
+    public function getBlogId()
+    {
+        return $this->blogId;
+    }
+
+    /**
+     * @ORM\PostLoad
+     */
+    public function onPostLoad(LifecycleEventArgs $eventArgs)
+    {
+        if ($eventArgs->getEntityManager() instanceof WordpressEntityManager) {
+            $this->blogId = $eventArgs->getEntityManager()->getBlogId();
+        }
     }
 
     /**
