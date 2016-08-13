@@ -19,10 +19,11 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Symfony\Component\Security\Http\Firewall\ListenerInterface;
 use Symfony\Component\Security\Http\SecurityEvents;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class WordpressListener implements ListenerInterface
 {
-    protected $securityContext;
+    protected $tokenStorage;
     protected $cookieService;
     protected $cookieManager;
     protected $authenticationManager;
@@ -32,7 +33,7 @@ class WordpressListener implements ListenerInterface
     /**
      * Constructor
      *
-     * @param SecurityContextInterface $securityContext
+     * @param TokenStorageInterface $tokenStorage
      * @param WordpressCookieService $cookieService
      * @param AuthenticationCookieManager $cookieManager
      * @param AuthenticationManagerInterface $authenticationManager
@@ -40,7 +41,7 @@ class WordpressListener implements ListenerInterface
      * @param EventDispatcherInterface $dispatcher
      */
     public function __construct(
-        SecurityContextInterface $securityContext,
+        TokenStorageInterface $tokenStorage,
         WordpressCookieService $cookieService,
         AuthenticationCookieManager $cookieManager,
         AuthenticationManagerInterface $authenticationManager,
@@ -48,7 +49,7 @@ class WordpressListener implements ListenerInterface
         EventDispatcherInterface $dispatcher = null
     )
     {
-        $this->securityContext = $securityContext;
+        $this->tokenStorage = $tokenStorage;
         $this->cookieService = $cookieService;
         $this->cookieManager = $cookieManager;
         $this->authenticationManager = $authenticationManager;
@@ -70,7 +71,7 @@ class WordpressListener implements ListenerInterface
         }
 
         // WordPress firewall will clear all previous token.
-        $this->securityContext->setToken(null);
+        $this->tokenStorage->setToken(null);
 
         $request = $event->getRequest();
 
@@ -100,7 +101,7 @@ class WordpressListener implements ListenerInterface
             $this->logger->info(sprintf('WordPress user "%s" has been authenticated successfully', $token->getUsername()));
         }
 
-        $this->securityContext->setToken($token);
+        $this->tokenStorage->setToken($token);
 
         if (null !== $this->dispatcher) {
             $loginEvent = new InteractiveLoginEvent($request, $token);
@@ -114,7 +115,7 @@ class WordpressListener implements ListenerInterface
             $this->logger->info(sprintf('WordPress authentication failed: %s', $e->getMessage()));
         }
 
-        $this->securityContext->setToken(null);
+        $this->tokenStorage->setToken(null);
     }
 
     /**
@@ -128,7 +129,7 @@ class WordpressListener implements ListenerInterface
             return;
         }
 
-        $token = $this->securityContext->getToken();
+        $token = $this->tokenStorage->getToken();
         $request = $event->getRequest();
         $response = $event->getResponse();
 

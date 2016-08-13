@@ -15,16 +15,16 @@ services:
     kayue_wordpress:
         class: Kayue\WordpressBundle\Wordpress\ManagerRegistry
         arguments:
-            - @kayue_wordpress.dbal.connection
-            - @doctrine.orm.entity_manager
-            - @event_dispatcher
+            - "@kayue_wordpress.dbal.connection"
+            - "@doctrine.orm.entity_manager"
+            - "@event_dispatcher"
             - %kernel.root_dir%
             - %kernel.environment%
 
     kayue_wordpress.helper.attachment:
         class: Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper
         arguments:
-            - @kayue_wordpress
+            - "@kayue_wordpress"
 
     kayue_wordpress.manager.configuration:
         class: %kayue_wordpress.manager.configuration.class%
@@ -38,7 +38,7 @@ services:
     kayue_wordpress.manager.authentication_cookie:
         class: %kayue_wordpress.manager.authentication_cookie.class%
         arguments:
-            - @kayue_wordpress.manager.configuration
+            - "@kayue_wordpress.manager.configuration"
 
     kayue_wordpress.security.authentication.provider:
         class: %kayue_wordpress.security.authentication.provider.class%
@@ -47,12 +47,12 @@ services:
     kayue_wordpress.security.authentication.listener:
         class: %kayue_wordpress.security.authentication.listener.class%
         arguments:
-            - @security.context
-            - @kayue_wordpress.security.cookie.service
-            - @kayue_wordpress.manager.authentication_cookie
-            - @security.authentication.manager
-            - @logger
-            - @event_dispatcher
+            - "@security.token_storage"
+            - "@kayue_wordpress.security.cookie.service"
+            - "@kayue_wordpress.manager.authentication_cookie"
+            - "@security.authentication.manager"
+            - "@logger"
+            - "@event_dispatcher"
         tags:
             - {name: monolog.logger, channel: security}
 
@@ -60,7 +60,7 @@ services:
         class: %kayue_wordpress.security.logout.handler.cookie_clearing.class%
         parent: security.logout.handler.cookie_clearing
         arguments:
-            - @kayue_wordpress.manager.authentication_cookie
+            - "@kayue_wordpress.manager.authentication_cookie"
 
     kayue_wordpress.security.cookie.service:
         class: %kayue_wordpress.security.cookie.service.class%
@@ -71,13 +71,13 @@ services:
     kayue_wordpress.security.user_provider:
         class: Kayue\WordpressBundle\Security\User\WordpressUserProvider
         arguments:
-            - @kayue_wordpress
+            - "@kayue_wordpress"
 
     kayue_wordpress.twig.wordpress:
         class: Kayue\WordpressBundle\Twig\Extension\WordpressExtension
         arguments:
-            - @kayue_wordpress
-            - @kayue_wordpress.shortcode_chain
-            - @kayue_wordpress.helper.attachment
+            - "@kayue_wordpress"
+            - "@kayue_wordpress.shortcode_chain"
+            - "@kayue_wordpress.helper.attachment"
         tags:
             - { name: twig.extension }
