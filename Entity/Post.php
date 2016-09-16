@@ -757,6 +757,37 @@ class Post
     }
 
     /**
+     * Get metas identified by key
+     *
+     * @param $key
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMetasByKey($key){
+        return $this->getMetas()->filter(function(PostMeta $postMeta) use ($key){
+            return $postMeta->getKey() == $key;
+        });
+    }
+
+    /**
+     * Get a single meta identified by key or null
+     *
+     * @param $key
+     *
+     * @return PostMeta|null
+     */
+    public function getMetaByKey($key){
+        /** @var PostMeta $meta */
+        foreach($this->getMetas() as $meta){
+            if($meta->getKey() == $key){
+                return $meta;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Add comment
      *
      * @param Comment $comment
@@ -806,6 +837,17 @@ class Post
     public function getTaxonomies()
     {
         return $this->taxonomies;
+    }
+
+    /**
+     * @param $name
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getTaxonomiesByName($name){
+        return $this->getTaxonomies()->filter(function(Taxonomy $taxonomy) use ($name){
+            return $taxonomy->getName() == $name;
+        });
     }
 
     /**

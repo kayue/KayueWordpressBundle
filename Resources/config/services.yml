@@ -16,7 +16,7 @@ services:
         class: Kayue\WordpressBundle\Wordpress\ManagerRegistry
         arguments:
             - "@kayue_wordpress.dbal.connection"
-            - "@doctrine.orm.entity_manager"
+            - "@doctrine.orm.wordpress_entity_manager"
             - "@event_dispatcher"
             - %kernel.root_dir%
             - %kernel.environment%
