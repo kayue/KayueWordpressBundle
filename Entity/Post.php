@@ -299,7 +299,6 @@ class Post
     public function setContent($content)
     {
         $this->content = $content;
-        $this->excerpt = $this->trimContent($content);
     }
 
     /**
@@ -318,7 +317,7 @@ class Post
             return $content;
         }
 
-        $content = substr($content, 0, $length);
+        $content = mb_substr($content, 0, $length);
         $pos = strrpos($content, " ");
 
         if ($pos > 0) {
@@ -375,7 +374,11 @@ class Post
      */
     public function getExcerpt()
     {
-        return $this->excerpt;
+        if (!empty($this->excerpt)) {
+            return $this->excerpt;
+        }
+        
+        return $this->trimContent($this->getContent());
     }
 
     /**
