@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Wordpress;
 
+use Doctrine\Common\Persistence\ManagerRegistry as BaseManagerRegistry;
 use Redis;
 use Memcache;
 use Memcached;
@@ -13,7 +14,7 @@ use Kayue\WordpressBundle\WordpressEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class ManagerRegistry
+class ManagerRegistry implements BaseManagerRegistry
 {
     /**
      * @var Connection
@@ -178,5 +179,60 @@ class ManagerRegistry
         $cache->setNamespace($namespace);
 
         return $cache;
+    }
+
+    public function getDefaultManagerName()
+    {
+        throw new \Exception('getDefaultManagerName() method not implemented.');
+    }
+
+    public function getManagers()
+    {
+        throw new \Exception('getManagers() method not implemented.');
+    }
+
+    public function resetManager($name = null)
+    {
+        throw new \Exception('resetManager() method not implemented.');
+    }
+
+    public function getAliasNamespace($alias)
+    {
+        throw new \Exception('getAliasNamespace() method not implemented.');
+    }
+
+    public function getManagerNames()
+    {
+        throw new \Exception('getManagerNames() method not implemented.');
+    }
+
+    public function getRepository($persistentObject, $persistentManagerName = null)
+    {
+        throw new \Exception('getRepository() method not implemented.');
+    }
+
+    public function getManagerForClass($class)
+    {
+        throw new \Exception('getManagerForClass() method not implemented.');
+    }
+
+    public function getDefaultConnectionName()
+    {
+        throw new \Exception('getDefaultConnectionName() method not implemented.');
+    }
+
+    public function getConnection($name = null)
+    {
+        throw new \Exception('getConnection() method not implemented.');
+    }
+
+    public function getConnections()
+    {
+        throw new \Exception('getConnections() method not implemented.');
+    }
+
+    public function getConnectionNames()
+    {
+        throw new \Exception('getConnectionNames() method not implemented.');
     }
 }
