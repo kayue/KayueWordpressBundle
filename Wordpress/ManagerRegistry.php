@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Wordpress;
 
+use BadMethodCallException;
 use Doctrine\Common\Persistence\ManagerRegistry as ManagerRegistryInterface;
 use Redis;
 use Memcache;
@@ -34,7 +35,7 @@ class ManagerRegistry implements ManagerRegistryInterface
     protected $rootDir;
     protected $environment;
     protected $currentBlogId = 1;
-    protected $entityManagers = [];
+    protected $managers = [];
 
     public function __construct(
         Connection $connection,
@@ -62,7 +63,7 @@ class ManagerRegistry implements ManagerRegistryInterface
             $this->currentBlogId = $blogId;
         }
 
-        if (!isset($this->entityManagers[$this->currentBlogId])) {
+        if (!isset($this->managers[$this->currentBlogId])) {
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
             $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
             $config->setAutoGenerateProxyClasses(true);
@@ -77,10 +78,10 @@ class ManagerRegistry implements ManagerRegistryInterface
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheImpl('query_cache', $this->currentBlogId));
             $em->getConfiguration()->setResultCacheImpl($this->getCacheImpl('result_cache', $this->currentBlogId));
 
-            $this->entityManagers[$this->currentBlogId] = $em;
+            $this->managers[$this->currentBlogId] = $em;
         }
 
-        return $this->entityManagers[$this->currentBlogId];
+        return $this->managers[$this->currentBlogId];
     }
 
     /**
@@ -183,7 +184,7 @@ class ManagerRegistry implements ManagerRegistryInterface
 
     public function getDefaultConnectionName()
     {
-        // TODO: Implement getDefaultConnectionName() method.
+        throw new BadMethodCallException();
     }
 
     public function getConnection($name = null)
@@ -198,41 +199,41 @@ class ManagerRegistry implements ManagerRegistryInterface
 
     public function getConnectionNames()
     {
-        // TODO: Implement getConnectionNames() method.
+        throw new BadMethodCallException();
     }
 
     public function getDefaultManagerName()
     {
-        // TODO: Implement getDefaultManagerName() method.
+        throw new BadMethodCallException();
     }
 
     public function getManagers()
     {
-        // TODO: Implement getManagers() method.
+        throw new BadMethodCallException();
     }
 
     public function resetManager($name = null)
     {
-        // TODO: Implement resetManager() method.
+        throw new BadMethodCallException();
     }
 
     public function getAliasNamespace($alias)
     {
-        // TODO: Implement getAliasNamespace() method.
+        throw new BadMethodCallException();
     }
 
     public function getManagerNames()
     {
-        // TODO: Implement getManagerNames() method.
+        throw new BadMethodCallException();
     }
 
     public function getRepository($persistentObject, $persistentManagerName = null)
     {
-        // TODO: Implement getRepository() method.
+        throw new BadMethodCallException();
     }
 
     public function getManagerForClass($class)
     {
-        // TODO: Implement getManagerForClass() method.
+        throw new BadMethodCallException();
     }
 }
