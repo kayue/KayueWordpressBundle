@@ -9,14 +9,23 @@ class ConfigurationManager
     protected $cookieDomain;
     protected $loggedInKey;
     protected $loggedInSalt;
+    protected $version;
 
-    public function __construct($siteUrl, $cookiePath = '/', $cookieDomain = null, $loggedInKey, $loggedInSalt)
+    public function __construct(
+        $siteUrl,
+        $cookiePath = '/',
+        $cookieDomain = null,
+        $loggedInKey,
+        $loggedInSalt,
+        $version = 3
+    )
     {
         $this->siteUrl = $siteUrl;
         $this->cookiePath = $cookiePath;
         $this->cookieDomain = $cookieDomain;
         $this->loggedInKey = $loggedInKey;
         $this->loggedInSalt = $loggedInSalt;
+        $this->version = $version;
     }
 
     public function getCookieDomain()
@@ -42,5 +51,10 @@ class ConfigurationManager
     public function getSiteUrl()
     {
         return $this->siteUrl;
+    }
+
+    public function getVersion()
+    {
+        return $this->version;
     }
 }

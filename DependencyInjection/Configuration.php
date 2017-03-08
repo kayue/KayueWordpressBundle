@@ -22,6 +22,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode->children()
             ->scalarNode('site_url')->defaultValue(null)->end()
+            ->scalarNode('version')->defaultValue('3')->end()
             ->scalarNode('logged_in_key')->defaultValue(null)->end()
             ->scalarNode('logged_in_salt')->defaultValue(null)->end()
             ->scalarNode('cookie_path')->defaultValue('/')->end()
