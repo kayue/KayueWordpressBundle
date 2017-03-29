@@ -3,8 +3,8 @@ parameters:
 
 services:
     kayue_wordpress.table_prefix.subscriber:
-        class: %kayue_wordpress.table_prefix.subscriber.class%
+        class: '%kayue_wordpress.table_prefix.subscriber.class%'
         arguments:
-            - %kayue_wordpress.table_prefix%
+            - '%kayue_wordpress.table_prefix%'
         tags:
             - { name: doctrine.event_subscriber }

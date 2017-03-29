@@ -6,9 +6,9 @@ parameters:
 
 services:
     kayue_wordpress.shortcode_chain:
-        class: %kayue_wordpress.shortcode_chain.class%
+        class: '%kayue_wordpress.shortcode_chain.class%'
 
     kayue_wordpress.shortcode.caption:
-        class: %kayue_wordpress.shortcode.caption.class%
+        class: '%kayue_wordpress.shortcode.caption.class%'
         tags:
             - { name: kayue_wordpress.shortcode }
