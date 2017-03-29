@@ -47,7 +47,7 @@ services:
     kayue_wordpress.security.authentication.listener:
         class: %kayue_wordpress.security.authentication.listener.class%
         arguments:
-            - '@security.context'
+            - '@security.authorization_checker'
             - '@kayue_wordpress.security.cookie.service'
             - '@kayue_wordpress.manager.authentication_cookie'
             - '@security.authentication.manager'
