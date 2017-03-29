@@ -18,8 +18,8 @@ services:
             - '@kayue_wordpress.dbal.connection'
             - '@doctrine.orm.entity_manager'
             - '@event_dispatcher'
-            - %kernel.root_dir%
-            - %kernel.environment%
+            - '%kernel.root_dir%'
+            - '%kernel.environment%'
 
     kayue_wordpress.helper.attachment:
         class: Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper
@@ -27,25 +27,25 @@ services:
             - '@kayue_wordpress'
 
     kayue_wordpress.manager.configuration:
-        class: %kayue_wordpress.manager.configuration.class%
+        class: '%kayue_wordpress.manager.configuration.class%'
         arguments:
-            - %kayue_wordpress.site_url%
-            - %kayue_wordpress.cookie_path%
-            - %kayue_wordpress.cookie_domain%
-            - %kayue_wordpress.logged_in_key%
-            - %kayue_wordpress.logged_in_salt%
+            - '%kayue_wordpress.site_url%'
+            - '%kayue_wordpress.cookie_path%'
+            - '%kayue_wordpress.cookie_domain%'
+            - '%kayue_wordpress.logged_in_key%'
+            - '%kayue_wordpress.logged_in_salt%'
 
     kayue_wordpress.manager.authentication_cookie:
-        class: %kayue_wordpress.manager.authentication_cookie.class%
+        class: '%kayue_wordpress.manager.authentication_cookie.class%'
         arguments:
             - '@kayue_wordpress.manager.configuration'
 
     kayue_wordpress.security.authentication.provider:
-        class: %kayue_wordpress.security.authentication.provider.class%
+        class: '%kayue_wordpress.security.authentication.provider.class%'
         public: false
 
     kayue_wordpress.security.authentication.listener:
-        class: %kayue_wordpress.security.authentication.listener.class%
+        class: '%kayue_wordpress.security.authentication.listener.class%'
         arguments:
             - '@security.authorization_checker'
             - '@kayue_wordpress.security.cookie.service'
@@ -57,16 +57,16 @@ services:
             - {name: monolog.logger, channel: security}
 
     kayue_wordpress.security.logout.handler.cookie_clearing:
-        class: %kayue_wordpress.security.logout.handler.cookie_clearing.class%
+        class: '%kayue_wordpress.security.logout.handler.cookie_clearing.class%'
         parent: security.logout.handler.cookie_clearing
         arguments:
             - '@kayue_wordpress.manager.authentication_cookie'
 
     kayue_wordpress.security.cookie.service:
-        class: %kayue_wordpress.security.cookie.service.class%
+        class: '%kayue_wordpress.security.cookie.service.class%'
 
     kayue_wordpress.security.encoder.phpass:
-        class: %kayue_wordpress.security.encoder.phpass.class%
+        class: '%kayue_wordpress.security.encoder.phpass.class%'
 
     kayue_wordpress.security.user_provider:
         class: Kayue\WordpressBundle\Security\User\WordpressUserProvider
