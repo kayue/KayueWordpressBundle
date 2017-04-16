@@ -7,6 +7,7 @@ use Kayue\WordpressBundle\DependencyInjection\Compiler\ShortcodeCompilerPass;
 use Kayue\WordpressBundle\DependencyInjection\Compiler\PreventDoctrineMetadataCompilerPass;
 use Kayue\WordpressBundle\DependencyInjection\Security\Factory\WordpressFactory;
 use Kayue\WordpressBundle\Types\WordpressIdType;
+use Symfony\Component\Console\Application;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Kayue\WordpressBundle\Types\WordpressMetaType;
@@ -37,5 +38,16 @@ class KayueWordpressBundle extends Bundle
         // Shortcode
         $container->addCompilerPass(new ShortcodeCompilerPass());
         $container->addCompilerPass(new PreventDoctrineMetadataCompilerPass());
+    }
+
+    public function registerCommands(Application $application)
+    {
+        // override the default doctrine:fixtures:load command if it is registered
+        if ($application->has('doctrine:fixtures:load')) {
+            $class = $this->getNamespace().'\FixturesCommand\LoadDataFixturesDoctrineCommand';
+            $application->add(new $class);
+        }
+
+        parent::registerCommands($application);
     }
 }
