@@ -19,7 +19,7 @@ class WordpressIdType extends BigIntType
 
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        if ($value === 0) {
+        if ((int) $value === 0) {
             return null;
         }
 
