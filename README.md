@@ -24,20 +24,8 @@ I started that bundle two years ago and the original repository grew somewhat ch
 
 #### Composer
 
-Add the bundle to `composer.json`
-
-```json
-{
-    "require": {
-        "kayue/kayue-wordpress-bundle": "1.2@dev"
-    }
-}
 ```
-
-Update Composer dependency:
-
-```
-composer update kayue/kayue-wordpress-bundle
+composer require kayue/kayue-wordpress-bundle
 ```
 
 #### Register the bundle
