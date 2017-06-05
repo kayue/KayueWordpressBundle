@@ -99,6 +99,12 @@ class WordpressExtension extends \Twig_Extension
         $this->manager = $this->managerRegistry->getManager();
     }
 
+    public function restoreBlog()
+    {
+        $this->managerRegistry->restorePreviousBlog();
+        $this->manager = $this->managerRegistry->getManager();
+    }
+
     public function findOneOptionBy($criteria)
     {
         if (is_string($criteria)) {

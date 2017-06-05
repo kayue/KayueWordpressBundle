@@ -35,6 +35,7 @@ class ManagerRegistry implements ManagerRegistryInterface
     protected $rootDir;
     protected $environment;
     protected $currentBlogId = 1;
+    protected $previousBlogId = 1;
     protected $managers = [];
 
     public function __construct(
@@ -60,7 +61,7 @@ class ManagerRegistry implements ManagerRegistryInterface
     public function getManager($blogId = null)
     {
         if ($blogId !== null && $blogId !== $this->currentBlogId) {
-            $this->currentBlogId = $blogId;
+            $this->setCurrentBlogId($blogId);
         }
 
         if (!isset($this->managers[$this->currentBlogId])) {
@@ -85,11 +86,26 @@ class ManagerRegistry implements ManagerRegistryInterface
     }
 
     /**
+     * Switches the active blog until the user calls the restorePreviousBlog() method.
+     *
      * @param $blogId
      */
     public function setCurrentBlogId($blogId)
     {
+        if ($this->currentBlogId === $blogId) {
+            return;
+        }
+
+        $this->previousBlogId = $this->currentBlogId;
         $this->currentBlogId = $blogId;
+    }
+
+    /**
+     * Switches active blog back after user calls the setCurrentBlogId() method.
+     */
+    public function restorePreviousBlog()
+    {
+        $this->setCurrentBlogId($this->previousBlogId);
     }
 
     /**
