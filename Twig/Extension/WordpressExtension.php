@@ -20,11 +20,6 @@ class WordpressExtension extends \Twig_Extension
     protected $managerRegistry;
 
     /**
-     * @var WordpressEntityManager
-     */
-    protected $manager;
-
-    /**
      * @var ShortcodeChain
      */
     protected $shortcodeChain;
@@ -46,7 +41,6 @@ class WordpressExtension extends \Twig_Extension
     )
     {
         $this->managerRegistry = $managerRegistry;
-        $this->manager = $managerRegistry->getManager();
         $this->shortcodeChain = $shortcodeChain;
         $this->attachmentHelper = $attachmentHelper;
     }
@@ -54,6 +48,15 @@ class WordpressExtension extends \Twig_Extension
     public function getName()
     {
         return "wordpress";
+    }
+
+
+    /**
+     * @return WordpressEntityManager
+     */
+    protected function getManager()
+    {
+        return $this->managerRegistry->getManager();
     }
 
     public function getFilters()
@@ -113,7 +116,7 @@ class WordpressExtension extends \Twig_Extension
             ];
         }
 
-        return $this->manager->getRepository('KayueWordpressBundle:Option')->findOneBy($criteria);
+        return $this->getManager()->getRepository('KayueWordpressBundle:Option')->findOneBy($criteria);
     }
 
     /**
@@ -137,12 +140,12 @@ class WordpressExtension extends \Twig_Extension
             'status' => 'publish',
         ]);
 
-        return $this->manager->getRepository('KayueWordpressBundle:Post')->findOneBy($criteria);
+        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy($criteria);
     }
 
     public function findPostMetasBy($criteria)
     {
-        $repository = $this->manager->getRepository('KayueWordpressBundle:PostMeta');
+        $repository = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta');
 
         if (func_get_arg(0) instanceof Post && is_string(func_get_arg(1))) {
             return $repository->getMetasByPost(func_get_arg(0), func_get_arg(1));
@@ -153,17 +156,17 @@ class WordpressExtension extends \Twig_Extension
 
     public function findCommentsByPost(Post $post)
     {
-        return $this->manager->getRepository('KayueWordpressBundle:Comment')->findApproved($post);
+        return $this->getManager()->getRepository('KayueWordpressBundle:Comment')->findApproved($post);
     }
 
     public function findAttachmentsByPost(Post $post)
     {
-        return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentsByPost($post);
+        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findAttachmentsByPost($post);
     }
 
     public function findOneAttachmentById($id)
     {
-        return $this->manager->getRepository('KayueWordpressBundle:Post')->findAttachmentById($id);
+        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findAttachmentById($id);
     }
 
     public function findThumbnail(Post $post)
@@ -194,7 +197,7 @@ class WordpressExtension extends \Twig_Extension
 
     public function findTermsByPost(Post $post, $taxonomy = null)
     {
-        return $this->manager->getRepository('KayueWordpressBundle:Term')->findByPost($post, $taxonomy);
+        return $this->getManager()->getRepository('KayueWordpressBundle:Term')->findByPost($post, $taxonomy);
     }
 
     public function findCategoriesByPost(Post $post)
@@ -220,7 +223,7 @@ class WordpressExtension extends \Twig_Extension
             ];
         }
 
-        return $this->manager->getRepository('KayueWordpressBundle:UserMeta')->findOneBy($criteria);
+        return $this->getManager()->getRepository('KayueWordpressBundle:UserMeta')->findOneBy($criteria);
     }
 
     public function findUserMetasBy($criteria)
@@ -231,7 +234,7 @@ class WordpressExtension extends \Twig_Extension
             ];
         }
 
-        return $this->manager->getRepository('KayueWordpressBundle:UserMeta')->findBy($criteria);
+        return $this->getManager()->getRepository('KayueWordpressBundle:UserMeta')->findBy($criteria);
     }
 
     /**
