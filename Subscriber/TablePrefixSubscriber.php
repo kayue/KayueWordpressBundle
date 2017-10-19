@@ -34,6 +34,10 @@ class TablePrefixSubscriber implements EventSubscriber
     {
         $classMetadata = $args->getClassMetadata();
 
+        if (!$classMetadata->getReflectionClass()) {
+            return;
+        }
+
         // Get class annotations
         $classAnnotations = $this->annotatonReader->getClassAnnotations($classMetadata->getReflectionClass());
 
