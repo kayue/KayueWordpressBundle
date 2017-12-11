@@ -17,19 +17,19 @@ class AttachmentHelper
         $this->managerRegistry = $managerRegistry;
     }
 
-    protected function getManager($blogId = null)
+    protected function getManager()
     {
-        return $this->managerRegistry->getManager($blogId);
+        return $this->managerRegistry->getManager();
     }
 
     public function findThumbnail(Post $post)
     {
-        $blogId = null;
+        $originBlogId = $this->getManager()->getBlogId();
         if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
-            $blogId = $post->getBlogId();
+            $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
-        $id = $this->getManager($blogId)->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+        $id = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_thumbnail_id',
         ]);
@@ -38,23 +38,33 @@ class AttachmentHelper
             return null;
         }
 
-        return $this->getManager($blogId)->getRepository('KayueWordpressBundle:Post')->findOneBy([
+        $thumbnail = $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy([
             'id' => $id->getValue(),
             'type' => 'attachment',
         ]);
+
+        if ($originBlogId !== $this->getManager()->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($originBlogId);
+        }
+
+        return $thumbnail;
     }
 
     public function getAttachmentUrl(Post $post, $size = 'post-thumbnail')
     {
-        $blogId = null;
+        $originBlogId = $this->getManager()->getBlogId();
         if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
-            $blogId = $post->getBlogId();
+            $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
         $metadata = $this->getManager($blogId)->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_wp_attachment_metadata',
         ]);
+
+        if ($originBlogId !== $this->getManager()->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($originBlogId);
+        }
 
         if (!$metadata) {
             return null;
