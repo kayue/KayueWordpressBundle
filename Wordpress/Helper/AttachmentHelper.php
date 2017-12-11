@@ -24,8 +24,9 @@ class AttachmentHelper
 
     public function findThumbnail(Post $post)
     {
+        // Switch to correct blog
         $originBlogId = $this->getManager()->getBlogId();
-        if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
+        if ($originBlogId !== $post->getBlogId()) {
             $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
@@ -43,17 +44,17 @@ class AttachmentHelper
             'type' => 'attachment',
         ]);
 
-        if ($originBlogId !== $this->getManager()->getBlogId()) {
-            $this->managerRegistry->setCurrentBlogId($originBlogId);
-        }
+        // Reset blog ID
+        $this->managerRegistry->setCurrentBlogId($originBlogId);
 
         return $thumbnail;
     }
 
     public function getAttachmentUrl(Post $post, $size = 'post-thumbnail')
     {
+        // Switch to correct blog
         $originBlogId = $this->getManager()->getBlogId();
-        if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
+        if ($originBlogId !== $post->getBlogId()) {
             $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
@@ -62,9 +63,8 @@ class AttachmentHelper
             'key' => '_wp_attachment_metadata',
         ]);
 
-        if ($originBlogId !== $this->getManager()->getBlogId()) {
-            $this->managerRegistry->setCurrentBlogId($originBlogId);
-        }
+        // Reset blog ID
+        $this->managerRegistry->setCurrentBlogId($originBlogId);
 
         if (!$metadata) {
             return null;
