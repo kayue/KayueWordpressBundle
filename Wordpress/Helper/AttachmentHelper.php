@@ -24,6 +24,11 @@ class AttachmentHelper
 
     public function findThumbnail(Post $post)
     {
+        $originBlogId = $this->getManager()->getBlogId();
+        if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($post->getBlogId());
+        }
+
         $id = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_thumbnail_id',
@@ -33,18 +38,33 @@ class AttachmentHelper
             return null;
         }
 
-        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy([
+        $thumbnail = $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy([
             'id' => $id->getValue(),
             'type' => 'attachment',
         ]);
+
+        if ($originBlogId !== $this->getManager()->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($originBlogId);
+        }
+
+        return $thumbnail;
     }
 
     public function getAttachmentUrl(Post $post, $size = 'post-thumbnail')
     {
+        $originBlogId = $this->getManager()->getBlogId();
+        if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($post->getBlogId());
+        }
+
         $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_wp_attachment_metadata',
         ]);
+
+        if ($originBlogId !== $this->getManager()->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($originBlogId);
+        }
 
         if (!$metadata) {
             return null;
