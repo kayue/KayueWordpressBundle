@@ -57,7 +57,7 @@ class AttachmentHelper
             $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
-        $metadata = $this->getManager($blogId)->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+        $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_wp_attachment_metadata',
         ]);
