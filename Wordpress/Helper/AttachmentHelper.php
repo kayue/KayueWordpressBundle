@@ -17,18 +17,19 @@ class AttachmentHelper
         $this->managerRegistry = $managerRegistry;
     }
 
-    protected function getManager()
+    protected function getManager($blogId = null)
     {
-        return $this->managerRegistry->getManager();
+        return $this->managerRegistry->getManager($blogId);
     }
 
     public function findThumbnail(Post $post)
     {
+        $blogId = null;
         if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
-            $this->getManager()->setBlogId($post->getBlogId());
+            $blogId = $post->getBlogId();
         }
 
-        $id = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+        $id = $this->getManager($blogId)->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_thumbnail_id',
         ]);
@@ -37,7 +38,7 @@ class AttachmentHelper
             return null;
         }
 
-        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy([
+        return $this->getManager($blogId)->getRepository('KayueWordpressBundle:Post')->findOneBy([
             'id' => $id->getValue(),
             'type' => 'attachment',
         ]);
@@ -45,11 +46,12 @@ class AttachmentHelper
 
     public function getAttachmentUrl(Post $post, $size = 'post-thumbnail')
     {
+        $blogId = null;
         if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
-            $this->getManager()->setBlogId($post->getBlogId());
+            $blogId = $post->getBlogId();
         }
 
-        $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+        $metadata = $this->getManager($blogId)->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_wp_attachment_metadata',
         ]);
