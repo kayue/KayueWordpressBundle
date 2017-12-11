@@ -24,6 +24,10 @@ class AttachmentHelper
 
     public function findThumbnail(Post $post)
     {
+        if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
+            $this->getManager()->setBlogId($post->getBlogId());
+        }
+
         $id = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_thumbnail_id',
@@ -41,6 +45,10 @@ class AttachmentHelper
 
     public function getAttachmentUrl(Post $post, $size = 'post-thumbnail')
     {
+        if ($this->getManager()->getBlogId() !== $post->getBlogId()) {
+            $this->getManager()->setBlogId($post->getBlogId());
+        }
+
         $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
             'post' => $post,
             'key' => '_wp_attachment_metadata',
