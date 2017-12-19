@@ -142,6 +142,7 @@ class ManagerRegistry implements ManagerRegistryInterface
 
         switch ($className) {
             case 'Doctrine\Common\Cache\ApcCache':
+            case 'Doctrine\Common\Cache\ApcuCache':
             case 'Doctrine\Common\Cache\ArrayCache':
             case 'Doctrine\Common\Cache\XcacheCache':
             case 'Doctrine\Common\Cache\WinCacheCache':
