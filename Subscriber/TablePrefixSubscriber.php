@@ -65,8 +65,8 @@ class TablePrefixSubscriber implements EventSubscriber
         // set table prefix to associated entity
         // TODO: make sure prefix won't apply to user table
         foreach ($classMetadata->associationMappings as &$mapping) {
-            if (isset($mapping['joinTable']) && !empty($mapping['joinTable'])) {
-                $mapping['joinTable']['name'] = $prefix.$mapping['joinTable']['name'];
+            if (isset($mapping['joinTable']) && !empty($mapping['joinTable']) && strpos($mapping['joinTable']['name'], $prefix) !== 0) {
+                $mapping['joinTable']['name'] = $prefix . $mapping['joinTable']['name'];
             }
         }
     }
