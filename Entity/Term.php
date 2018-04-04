@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Kayue\WordpressBundle\Annotation as Wordpress;
 use Symfony\Component\Validator\Constraints as Constraints;
@@ -51,6 +52,18 @@ class Term
      * @ORM\OneToOne(targetEntity="Taxonomy", mappedBy="term")
      */
     protected $taxonomy;
+
+    /**
+     * {@inheritdoc}
+     *
+     * @ORM\OneToMany(targetEntity="Kayue\WordpressBundle\Entity\TermMeta", mappedBy="term", cascade={"persist"})
+     */
+    protected $metas;
+
+    public function __construct()
+    {
+        $this->metas = new ArrayCollection();
+    }
 
     /**
      * Get id
@@ -140,5 +153,26 @@ class Term
     public function getTaxonomy()
     {
         return $this->taxonomy;
+    }
+
+    /**
+     * Add metas
+     *
+     * @param TermMeta $meta
+     */
+    public function addMeta(TermMeta $meta)
+    {
+        $meta->setTerm($this);
+        $this->metas[] = $meta;
+    }
+
+    /**
+     * Get metas
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMetas()
+    {
+        return $this->metas;
     }
 }
