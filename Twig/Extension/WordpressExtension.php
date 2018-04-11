@@ -174,9 +174,9 @@ class WordpressExtension extends \Twig_Extension
         return $this->attachmentHelper->findThumbnail($post);
     }
 
-    public function getAttachmentUrl($post)
+    public function getAttachmentUrl($post, $size = 'post-thumbnail')
     {
-        return $this->attachmentHelper->getAttachmentUrl($post);
+        return $this->attachmentHelper->getAttachmentUrl($post, $size);
     }
 
     public function getPostFormatByPost(Post $post)
