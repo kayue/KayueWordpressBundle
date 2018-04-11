@@ -83,6 +83,7 @@ class WordpressExtension extends \Twig_Extension
             new Twig_SimpleFunction('wp_find_thumbnail', [$this, 'findThumbnail']),
             new Twig_SimpleFunction('wp_find_featured_image', [$this, 'findThumbnail']),
             new Twig_SimpleFunction('wp_get_attachment_url', [$this, 'getAttachmentUrl']),
+            new Twig_SimpleFunction('wp_get_attachment_alt_text', [$this, 'getAttachmentAltText']),
             new Twig_SimpleFunction('wp_get_post_format', [$this, 'getPostFormatByPost']),
 
             // Terms related functions
@@ -177,6 +178,11 @@ class WordpressExtension extends \Twig_Extension
     public function getAttachmentUrl($post, $size = 'post-thumbnail')
     {
         return $this->attachmentHelper->getAttachmentUrl($post, $size);
+    }
+
+    public function getAttachmentAltText($post)
+    {
+        return $this->attachmentHelper->getAttachmentAltText($post);
     }
 
     public function getPostFormatByPost(Post $post)
