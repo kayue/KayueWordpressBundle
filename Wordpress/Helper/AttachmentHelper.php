@@ -78,4 +78,30 @@ class AttachmentHelper
 
         return null;
     }
+
+    public function getAttachmentAltText(Post $post)
+    {
+        // Switch to correct blog
+        $originBlogId = $this->getManager()->getBlogId();
+        if ($originBlogId !== $post->getBlogId()) {
+            $this->managerRegistry->setCurrentBlogId($post->getBlogId());
+        }
+
+        $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+            'post' => $post,
+            'key' => '_wp_attachment_image_alt',
+        ]);
+
+        // Reset blog ID
+        $this->managerRegistry->setCurrentBlogId($originBlogId);
+
+        if (!$metadata) {
+            return null;
+        }
+
+        $altText = $metadata->getValue();
+
+        return !is_null($altText) ? $altText : '';
+    }
+
 }
