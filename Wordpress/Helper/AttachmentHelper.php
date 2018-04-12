@@ -4,6 +4,7 @@ namespace Kayue\WordpressBundle\Wordpress\Helper;
 
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
+use Psr\Log\LoggerInterface;
 
 class AttachmentHelper
 {
@@ -12,9 +13,21 @@ class AttachmentHelper
      */
     protected $managerRegistry;
 
-    public function __construct(ManagerRegistry $managerRegistry)
+    /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * AttachmentHelper constructor.
+     *
+     * @param ManagerRegistry $managerRegistry
+     * @param LoggerInterface $logger
+     */
+    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger = null)
     {
         $this->managerRegistry = $managerRegistry;
+        $this->logger = $logger;
     }
 
     protected function getManager()
@@ -87,10 +100,22 @@ class AttachmentHelper
             $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
-        $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
-            'post' => $post,
-            'key' => '_wp_attachment_image_alt',
-        ]);
+        try {
+
+            $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+                'post' => $post,
+                'key' => '_wp_attachment_image_alt',
+            ]);
+
+        } catch (\Exception $exception) {
+
+            if (null !== $this->logger) {
+
+                $this->logger->error($exception->getMessage());
+            }
+
+            return '';
+        }
 
         // Reset blog ID
         $this->managerRegistry->setCurrentBlogId($originBlogId);
