@@ -25,6 +25,7 @@ services:
         class: Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper
         arguments:
             - '@kayue_wordpress'
+            - '@logger'
 
     kayue_wordpress.manager.configuration:
         class: '%kayue_wordpress.manager.configuration.class%'
