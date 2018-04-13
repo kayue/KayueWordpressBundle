@@ -4,7 +4,6 @@ namespace Kayue\WordpressBundle\Wordpress\Helper;
 
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
-use Psr\Log\LoggerInterface;
 
 class AttachmentHelper
 {
@@ -14,20 +13,13 @@ class AttachmentHelper
     protected $managerRegistry;
 
     /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-
-    /**
      * AttachmentHelper constructor.
      *
      * @param ManagerRegistry $managerRegistry
-     * @param LoggerInterface $logger
      */
-    public function __construct(ManagerRegistry $managerRegistry, LoggerInterface $logger = null)
+    public function __construct(ManagerRegistry $managerRegistry)
     {
         $this->managerRegistry = $managerRegistry;
-        $this->logger = $logger;
     }
 
     protected function getManager()
@@ -108,11 +100,6 @@ class AttachmentHelper
             ]);
 
         } catch (\Exception $exception) {
-
-            if (null !== $this->logger) {
-
-                $this->logger->error($exception->getMessage());
-            }
 
             return '';
         }
