@@ -30,5 +30,8 @@ class KayueWordpressExtension extends Extension
         $loader->load('services.yml');
 
         $container->setAlias('kayue_wordpress.dbal.connection', sprintf('doctrine.dbal.%s_connection', $config['connection']));
+        $container->setAlias('kayue_wordpress.orm.metadata_cache.pool', $config['orm']['metadata_cache_pool']);
+        $container->setAlias('kayue_wordpress.orm.result_cache.pool', $config['orm']['result_cache_pool']);
+        $container->setAlias('kayue_wordpress.orm.query_cache.pool', $config['orm']['query_cache_pool']);
     }
 }
