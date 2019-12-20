@@ -15,6 +15,7 @@ I started that bundle two years ago and the original repository grew somewhat ch
 * Twig extension (v1.1.0)
 * WordPress style shortcode (v1.1.0)
 * Major code update. (v2.0.0)
+* Support Symfony 4, new cache configuration (v4.0.0) 
 
 #### Todo
 
@@ -73,6 +74,12 @@ kayue_wordpress:
 
     # Doctrine connection to use. Default is 'default'.
     connection: 'default'
+
+    # Specify Symfony cache pool
+    orm:
+        metadata_cache_pool: cache.system
+        query_cache_pool: cache.app
+        result_cache_pool: cache.app
     
     # The following configuration only needed only when you use WordPress authentication. 
     

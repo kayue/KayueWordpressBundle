@@ -20,6 +20,9 @@ services:
             - '@event_dispatcher'
             - '%kernel.root_dir%'
             - '%kernel.environment%'
+            - '@kayue_wordpress.orm.metadata_cache.pool'
+            - '@kayue_wordpress.orm.result_cache.pool'
+            - '@kayue_wordpress.orm.query_cache.pool'
 
     kayue_wordpress.helper.attachment:
         class: Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper
