@@ -23,7 +23,7 @@ class WordpressIdType extends BigIntType
             return null;
         }
 
-        return $value;
+        return (int) $value;
     }
 
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
