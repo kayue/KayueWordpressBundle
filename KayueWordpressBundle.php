@@ -5,7 +5,6 @@ namespace Kayue\WordpressBundle;
 use Doctrine\DBAL\Types\Type;
 use Kayue\WordpressBundle\DependencyInjection\Compiler\ShortcodeCompilerPass;
 use Kayue\WordpressBundle\DependencyInjection\Compiler\PreventDoctrineMetadataCompilerPass;
-use Kayue\WordpressBundle\DependencyInjection\Security\Factory\WordpressFactory;
 use Kayue\WordpressBundle\Types\WordpressIdType;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -29,10 +28,6 @@ class KayueWordpressBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
-
-        // Security
-        $extension = $container->getExtension('security');
-        $extension->addSecurityListenerFactory(new WordpressFactory());
 
         // Shortcode
         $container->addCompilerPass(new ShortcodeCompilerPass());

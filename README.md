@@ -187,44 +187,6 @@ public function firstPostAction()
 }
 ```
 
-### WordPress Authentication
-
-This bundle allow you to create a WordPress login form in Symfony. All you have to do is to configure the WordPress firewall in your `security.yml`.
-
-The following example demonstrates how to turn AcmeDemoBundle's login form into a WordPress login form.
-
-```yaml
-security:
-    encoders:
-        # Add the WordPress password encoder
-        Kayue\WordpressBundle\Entity\User:
-            id: kayue_wordpress.security.encoder.phpass
-
-    providers:
-        # Add the WordPress user provider
-        wordpress:
-            entity: { class: Kayue\WordpressBundle\Entity\User, property: username }
-
-    firewalls:
-        login:
-            pattern:  ^/demo/secured/login$
-            security: false
-        secured_area:
-            pattern:    ^/demo/secured/
-            # Add the WordPress firewall. Allow you to read WordPress's login state in Symfony app.
-            kayue_wordpress: ~
-            # Optional. Symfony's default form login works for WordPress user too.
-            form_login:
-                 check_path: /demo/secured/login_check
-                 login_path: /demo/secured/login
-                 default_target_path: /demo/secured/hello/world
-            # Optional. Use this to logout.
-            logout:
-                path:   /demo/secured/logout
-                target: /demo/secured/login
-            # ...
-```
-
 ### Shortcode
 
 WordpressBundle support WordPress style shortcode. At the moment the bundle only come with the `[caption]` and `[gallery]` shortcode.
