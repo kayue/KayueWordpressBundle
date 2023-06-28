@@ -17,8 +17,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('kayue_wordpress');
+        $treeBuilder = new TreeBuilder('kayue_wordpress');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode->children()
             ->scalarNode('site_url')->defaultValue(null)->end()
