@@ -262,4 +262,9 @@ class PhpassPasswordEncoder implements PasswordEncoderInterface
 
         return $hash == $stored_hash;
     }
+
+    public function needsRehash($encoded)
+    {
+        return false;
+    }
 }
