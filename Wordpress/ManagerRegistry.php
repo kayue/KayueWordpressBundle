@@ -86,8 +86,6 @@ class ManagerRegistry implements ManagerRegistryInterface
 
             $em = WordpressEntityManager::create($this->connection, $config);
 
-            $this->eventDispatcher->dispatch(WordpressEvents::CREATE_ENTITY_MANAGER, new GenericEvent($em));
-
             $em->setBlogId($this->currentBlogId);
 
             $em->getMetadataFactory()->setCacheDriver($this->getCacheProvider($this->metadataCache, $this->currentBlogId));
