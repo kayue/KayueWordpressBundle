@@ -5,19 +5,14 @@ namespace Kayue\WordpressBundle\Wordpress;
 use BadMethodCallException;
 use Doctrine\Common\Persistence\ManagerRegistry as ManagerRegistryInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Redis;
-use Memcache;
-use Memcached;
 use Doctrine\DBAL\Driver\Connection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\Setup;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
-use Kayue\WordpressBundle\WordpressEvents;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ProxyAdapter;
 use Symfony\Component\Cache\DoctrineProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\GenericEvent;
 
 class ManagerRegistry implements ManagerRegistryInterface
 {
@@ -42,7 +37,6 @@ class ManagerRegistry implements ManagerRegistryInterface
     protected $previousBlogId = 1;
     protected $managers = [];
 
-    private $metaCache;
     private $queryCache;
     private $resultCache;
 
