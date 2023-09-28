@@ -9,8 +9,8 @@
     "license": "MIT",
 
     "require": {
-        "php": "^5.5.9|~7.0",
-        "symfony/framework-bundle": "^4.0|^5.0",
+        "php": ">=7.3",
+        "symfony/framework-bundle": "^5.1",
         "doctrine/orm": "~2.2,>=2.2.3"
     },
     "require-dev": {
