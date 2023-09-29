@@ -3,9 +3,12 @@
 namespace Kayue\WordpressBundle\Twig\Extension;
 
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
+use Kayue\WordpressBundle\Entity\Comment;
+use Kayue\WordpressBundle\Entity\Option;
 use Kayue\WordpressBundle\Entity\Post;
 use Kayue\WordpressBundle\Entity\Term;
 use Kayue\WordpressBundle\Entity\User;
+use Kayue\WordpressBundle\Entity\UserMeta;
 use Kayue\WordpressBundle\Wordpress\Helper\AttachmentHelper;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 use Kayue\WordpressBundle\Wordpress\Shortcode\ShortcodeChain;
@@ -38,8 +41,7 @@ class WordpressExtension extends \Twig_Extension
         ManagerRegistry $managerRegistry,
         ShortcodeChain $shortcodeChain,
         AttachmentHelper $attachmentHelper
-    )
-    {
+    ) {
         $this->managerRegistry = $managerRegistry;
         $this->shortcodeChain = $shortcodeChain;
         $this->attachmentHelper = $attachmentHelper;
@@ -117,7 +119,7 @@ class WordpressExtension extends \Twig_Extension
             ];
         }
 
-        return $this->getManager()->getRepository('KayueWordpressBundle:Option')->findOneBy($criteria);
+        return $this->getManager()->getRepository(Option::class)->findOneBy($criteria);
     }
 
     /**
@@ -141,12 +143,12 @@ class WordpressExtension extends \Twig_Extension
             'status' => 'publish',
         ]);
 
-        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy($criteria);
+        return $this->getManager()->getRepository(Post::class)->findOneBy($criteria);
     }
 
     public function findPostMetasBy($criteria)
     {
-        $repository = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta');
+        $repository = $this->getManager()->getRepository(PostMeta::class);
 
         if (func_get_arg(0) instanceof Post && is_string(func_get_arg(1))) {
             return $repository->getMetasByPost(func_get_arg(0), func_get_arg(1));
@@ -157,17 +159,17 @@ class WordpressExtension extends \Twig_Extension
 
     public function findCommentsByPost(Post $post)
     {
-        return $this->getManager()->getRepository('KayueWordpressBundle:Comment')->findApproved($post);
+        return $this->getManager()->getRepository(Comment::class)->findApproved($post);
     }
 
     public function findAttachmentsByPost(Post $post)
     {
-        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findAttachmentsByPost($post);
+        return $this->getManager()->getRepository(Post::class)->findAttachmentsByPost($post);
     }
 
     public function findOneAttachmentById($id)
     {
-        return $this->getManager()->getRepository('KayueWordpressBundle:Post')->findAttachmentById($id);
+        return $this->getManager()->getRepository(Post::class)->findAttachmentById($id);
     }
 
     public function findThumbnail(Post $post)
@@ -203,7 +205,7 @@ class WordpressExtension extends \Twig_Extension
 
     public function findTermsByPost(Post $post, $taxonomy = null)
     {
-        return $this->getManager()->getRepository('KayueWordpressBundle:Term')->findByPost($post, $taxonomy);
+        return $this->getManager()->getRepository(Term::class)->findByPost($post, $taxonomy);
     }
 
     public function findCategoriesByPost(Post $post)
@@ -229,7 +231,7 @@ class WordpressExtension extends \Twig_Extension
             ];
         }
 
-        return $this->getManager()->getRepository('KayueWordpressBundle:UserMeta')->findOneBy($criteria);
+        return $this->getManager()->getRepository(UserMeta::class)->findOneBy($criteria);
     }
 
     public function findUserMetasBy($criteria)
@@ -240,7 +242,7 @@ class WordpressExtension extends \Twig_Extension
             ];
         }
 
-        return $this->getManager()->getRepository('KayueWordpressBundle:UserMeta')->findBy($criteria);
+        return $this->getManager()->getRepository(UserMeta::class)->findBy($criteria);
     }
 
     /**
@@ -259,13 +261,13 @@ class WordpressExtension extends \Twig_Extension
     {
         $pre_tags = array();
 
-        if ( trim($pee) === '' )
+        if (trim($pee) === '')
             return '';
 
         $pee = $pee . "\n"; // just to make things a little easier, pad the end
 
-        if ( strpos($pee, '<pre') !== false ) {
-            $pee_parts = explode( '</pre>', $pee );
+        if (strpos($pee, '<pre') !== false) {
+            $pee_parts = explode('</pre>', $pee);
             $last_pee = array_pop($pee_parts);
             $pee = '';
             $i = 0;
@@ -280,9 +282,9 @@ class WordpressExtension extends \Twig_Extension
                 }
 
                 $name = "<pre wp-pre-tag-$i></pre>";
-                $pre_tags[$name] = substr( $pee_part, $start ) . '</pre>';
+                $pre_tags[$name] = substr($pee_part, $start) . '</pre>';
 
-                $pee .= substr( $pee_part, 0, $start ) . $name;
+                $pee .= substr($pee_part, 0, $start) . $name;
                 $i++;
             }
 
@@ -295,7 +297,7 @@ class WordpressExtension extends \Twig_Extension
         $pee = preg_replace('!(<' . $allblocks . '[^>]*>)!', "\n$1", $pee);
         $pee = preg_replace('!(</' . $allblocks . '>)!', "$1\n\n", $pee);
         $pee = str_replace(array("\r\n", "\r"), "\n", $pee); // cross-platform newlines
-        if ( strpos($pee, '<object') !== false ) {
+        if (strpos($pee, '<object') !== false) {
             $pee = preg_replace('|\s*<param([^>]*)>\s*|', "<param$1>", $pee); // no pee inside object/embed
             $pee = preg_replace('|\s*</embed>\s*|', '</embed>', $pee);
         }
@@ -303,7 +305,7 @@ class WordpressExtension extends \Twig_Extension
         // make paragraphs, including one at the end
         $pees = preg_split('/\n\s*\n/', $pee, -1, PREG_SPLIT_NO_EMPTY);
         $pee = '';
-        foreach ( $pees as $tinkle )
+        foreach ($pees as $tinkle)
             $pee .= '<p>' . trim($tinkle, "\n") . "</p>\n";
         $pee = preg_replace('|<p>\s*</p>|', '', $pee); // under certain strange conditions it could create a P of entirely whitespace
         $pee = preg_replace('!<p>([^<]+)</(div|address|form)>!', "<p>$1</p></$2>", $pee);
@@ -323,9 +325,9 @@ class WordpressExtension extends \Twig_Extension
         }
         $pee = preg_replace('!(</?' . $allblocks . '[^>]*>)\s*<br />!', "$1", $pee);
         $pee = preg_replace('!<br />(\s*</?(?:p|li|div|dl|dd|dt|th|pre|td|ul|ol)[^>]*>)!', '$1', $pee);
-        $pee = preg_replace( "|\n</p>$|", '</p>', $pee );
+        $pee = preg_replace("|\n</p>$|", '</p>', $pee);
 
-        if ( !empty($pre_tags) )
+        if (!empty($pre_tags))
             $pee = str_replace(array_keys($pre_tags), array_values($pre_tags), $pee);
 
         return $pee;
@@ -350,10 +352,10 @@ class WordpressExtension extends \Twig_Extension
     public function wptexturize($text)
     {
         static $static_characters, $static_replacements, $dynamic_characters, $dynamic_replacements,
-        $default_no_texturize_tags, $default_no_texturize_shortcodes;
+            $default_no_texturize_tags, $default_no_texturize_shortcodes;
 
         // No need to set up these static variables more than once
-        if ( ! isset( $static_characters ) ) {
+        if (!isset($static_characters)) {
             /* translators: opening curly double quote */
             $opening_quote = '&#8220;';
             /* translators: closing curly double quote */
@@ -382,39 +384,39 @@ class WordpressExtension extends \Twig_Extension
 
             // if a plugin has provided an autocorrect array, use it
             if ("'" != $apos) { // Only bother if we're doing a replacement.
-                $cockney = array( "'tain't", "'twere", "'twas", "'tis", "'twill", "'til", "'bout", "'nuff", "'round", "'cause" );
-                $cockneyreplace = array( $apos . "tain" . $apos . "t", $apos . "twere", $apos . "twas", $apos . "tis", $apos . "twill", $apos . "til", $apos . "bout", $apos . "nuff", $apos . "round", $apos . "cause" );
+                $cockney = array("'tain't", "'twere", "'twas", "'tis", "'twill", "'til", "'bout", "'nuff", "'round", "'cause");
+                $cockneyreplace = array($apos . "tain" . $apos . "t", $apos . "twere", $apos . "twas", $apos . "tis", $apos . "twill", $apos . "til", $apos . "bout", $apos . "nuff", $apos . "round", $apos . "cause");
             } else {
                 $cockney = $cockneyreplace = array();
             }
 
-            $static_characters = array_merge( array( '---', ' -- ', '--', ' - ', 'xn&#8211;', '...', '``', '\'\'', ' (tm)' ), $cockney );
-            $static_replacements = array_merge( array( $em_dash, ' ' . $em_dash . ' ', $en_dash, ' ' . $en_dash . ' ', 'xn--', '&#8230;', $opening_quote, $closing_quote, ' &#8482;' ), $cockneyreplace );
+            $static_characters = array_merge(array('---', ' -- ', '--', ' - ', 'xn&#8211;', '...', '``', '\'\'', ' (tm)'), $cockney);
+            $static_replacements = array_merge(array($em_dash, ' ' . $em_dash . ' ', $en_dash, ' ' . $en_dash . ' ', 'xn--', '&#8230;', $opening_quote, $closing_quote, ' &#8482;'), $cockneyreplace);
 
             $dynamic = array();
             if ("'" != $apos) {
-                $dynamic[ '/\'(\d\d(?:&#8217;|\')?s)/' ] = $apos . '$1'; // '99's
-                $dynamic[ '/\'(\d)/'                   ] = $apos . '$1'; // '99
+                $dynamic['/\'(\d\d(?:&#8217;|\')?s)/'] = $apos . '$1'; // '99's
+                $dynamic['/\'(\d)/'] = $apos . '$1'; // '99
             }
-            if ( "'" != $opening_single_quote )
-                $dynamic[ '/(\s|\A|[([{<]|")\'/'       ] = '$1' . $opening_single_quote; // opening single quote, even after (, {, <, [
-            if ( '"' != $double_prime )
-                $dynamic[ '/(\d)"/'                    ] = '$1' . $double_prime; // 9" (double prime)
-            if ( "'" != $prime )
-                $dynamic[ '/(\d)\'/'                   ] = '$1' . $prime; // 9' (prime)
-            if ( "'" != $apos )
-                $dynamic[ '/(\S)\'([^\'\s])/'          ] = '$1' . $apos . '$2'; // apostrophe in a word
-            if ( '"' != $opening_quote )
-                $dynamic[ '/(\s|\A|[([{<])"(?!\s)/'    ] = '$1' . $opening_quote . '$2'; // opening double quote, even after (, {, <, [
-            if ( '"' != $closing_quote )
-                $dynamic[ '/"(\s|\S|\Z)/'              ] = $closing_quote . '$1'; // closing double quote
-            if ( "'" != $closing_single_quote )
-                $dynamic[ '/\'([\s.]|\Z)/'             ] = $closing_single_quote . '$1'; // closing single quote
+            if ("'" != $opening_single_quote)
+                $dynamic['/(\s|\A|[([{<]|")\'/'] = '$1' . $opening_single_quote; // opening single quote, even after (, {, <, [
+            if ('"' != $double_prime)
+                $dynamic['/(\d)"/'] = '$1' . $double_prime; // 9" (double prime)
+            if ("'" != $prime)
+                $dynamic['/(\d)\'/'] = '$1' . $prime; // 9' (prime)
+            if ("'" != $apos)
+                $dynamic['/(\S)\'([^\'\s])/'] = '$1' . $apos . '$2'; // apostrophe in a word
+            if ('"' != $opening_quote)
+                $dynamic['/(\s|\A|[([{<])"(?!\s)/'] = '$1' . $opening_quote . '$2'; // opening double quote, even after (, {, <, [
+            if ('"' != $closing_quote)
+                $dynamic['/"(\s|\S|\Z)/'] = $closing_quote . '$1'; // closing double quote
+            if ("'" != $closing_single_quote)
+                $dynamic['/\'([\s.]|\Z)/'] = $closing_single_quote . '$1'; // closing single quote
 
-            $dynamic[ '/\b(\d+)x(\d+)\b/'              ] = '$1&#215;$2'; // 9x9 (times)
+            $dynamic['/\b(\d+)x(\d+)\b/'] = '$1&#215;$2'; // 9x9 (times)
 
-            $dynamic_characters = array_keys( $dynamic );
-            $dynamic_replacements = array_values( $dynamic );
+            $dynamic_characters = array_keys($dynamic);
+            $dynamic_replacements = array_values($dynamic);
         }
 
         // Transform into regexp sub-expression used in _wptexturize_pushpop_element
@@ -428,7 +430,7 @@ class WordpressExtension extends \Twig_Extension
         $textarr = preg_split('/(<.*>|\[.*\])/Us', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
 
         foreach ($textarr as &$curl) {
-            if ( empty( $curl ) )
+            if (empty($curl))
                 continue;
 
             // Only call _wptexturize_pushpop_element if first char is correct tag opening
@@ -437,7 +439,7 @@ class WordpressExtension extends \Twig_Extension
                 $this->wptexturizePushpopElement($curl, $no_texturize_tags_stack, $no_texturize_tags, '<', '>');
             } elseif ('[' === $first) {
                 $this->wptexturizePushpopElement($curl, $no_texturize_shortcodes_stack, $no_texturize_shortcodes, '[', ']');
-            } elseif ( empty($no_texturize_shortcodes_stack) && empty($no_texturize_tags_stack) ) {
+            } elseif (empty($no_texturize_shortcodes_stack) && empty($no_texturize_tags_stack)) {
                 // This is not a tag, nor is the texturization disabled static strings
                 $curl = str_replace($static_characters, $static_replacements, $curl);
                 // regular expressions
@@ -446,7 +448,7 @@ class WordpressExtension extends \Twig_Extension
             $curl = preg_replace('/&([^#])(?![a-zA-Z1-4]{1,8};)/', '&#038;$1', $curl);
         }
 
-        return implode( '', $textarr );
+        return implode('', $textarr);
     }
 
     /**

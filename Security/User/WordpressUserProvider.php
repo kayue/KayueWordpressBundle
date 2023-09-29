@@ -2,6 +2,7 @@
 
 namespace Kayue\WordpressBundle\Security\User;
 
+use Kayue\WordpressBundle\Entity\User;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
@@ -37,8 +38,9 @@ class WordpressUserProvider implements UserProviderInterface
      */
     public function loadUserByUsername($username)
     {
-        if (null === $user = $this->managerRegistry->getManager()->getRepository('KayueWordpressBundle:User')
-            ->findOneBy(['username' => $username])) {
+        if (null === $user = $this->managerRegistry->getManager()->getRepository(User::class)
+            ->findOneBy(['username' => $username])
+        ) {
             throw new UsernameNotFoundException();
         }
 
@@ -62,9 +64,8 @@ class WordpressUserProvider implements UserProviderInterface
     {
         return $this->managerRegistry
             ->getManager()
-            ->getRepository('KayueWordpressBundle:User')
-            ->findOneBy(['username' => $user->getUsername()])
-        ;
+            ->getRepository(User::class)
+            ->findOneBy(['username' => $user->getUsername()]);
     }
 
     /**

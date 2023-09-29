@@ -15,7 +15,7 @@ I started that bundle two years ago and the original repository grew somewhat ch
 * Twig extension (v1.1.0)
 * WordPress style shortcode (v1.1.0)
 * Major code update. (v2.0.0)
-* Support Symfony 4, new cache configuration (v4.0.0) 
+* Support Symfony 4, new cache configuration (v4.0.0)
 
 #### Todo
 
@@ -80,9 +80,9 @@ kayue_wordpress:
         metadata_cache_pool: cache.system
         query_cache_pool: cache.app
         result_cache_pool: cache.app
-    
-    # The following configuration only needed only when you use WordPress authentication. 
-    
+
+    # The following configuration only needed only when you use WordPress authentication.
+
     # Site URL must match *EXACTLY* with WordPress's setting. Can be found
     # on the Settings > General screen, there are field named "WordPress Address"
     site_url:       'http://localhost/wordpress'
@@ -106,7 +106,7 @@ An example to obtain post content, author, comments and categories:
 
 public function postAction($slug)
 {
-    $repo = $this->get('kayue_wordpress')->getManager()->getRepository('KayueWordpressBundle:Post');
+    $repo = $this->get('kayue_wordpress')->getManager()->getRepository(Post::class);
     $post = $repo->findOneBy(array(
         'slug'   => 'hello-world',
         'type'   => 'post',
@@ -177,13 +177,13 @@ public function firstPostAction()
     // Changing the current blog ID will affect Twig extensions too.
     $blogManager = $this->get('kayue_wordpress')->getManager();
     $blogManager->setCurrentBlogId(2);
-    $this->getRepository('KayueWordpressBundle:Post')->findOnePostById(1);
+    $this->getRepository(Post::class)->findOnePostById(1);
 
     // Method 2: Use entity manager if you don't want to switch the entire blog.
     // This won't change the current blog ID.
     $blogId = 3;
     $anotherBlog = $this->get('kayue_wordpress')->getManager($blogId);
-    $posts = $anotherBlog->getRepository('KayueWordpressBundle:Post')->findOneById(1);
+    $posts = $anotherBlog->getRepository(Post::class)->findOneById(1);
 }
 ```
 
