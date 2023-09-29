@@ -49,8 +49,7 @@ class ManagerRegistry implements ManagerRegistryInterface
         AdapterInterface $metadataCache,
         AdapterInterface $queryCache,
         AdapterInterface $resultCache
-    )
-    {
+    ) {
         $this->connection = $connection;
         $this->defaultEntityManager = $defaultEntityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -74,7 +73,7 @@ class ManagerRegistry implements ManagerRegistryInterface
 
         if (!isset($this->managers[$this->currentBlogId])) {
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
-            $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
+            // $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
             $config->setAutoGenerateProxyClasses(true);
             $config->setProxyDir($this->defaultEntityManager->getConfiguration()->getProxyDir());
 
@@ -82,7 +81,7 @@ class ManagerRegistry implements ManagerRegistryInterface
 
             $em->setBlogId($this->currentBlogId);
 
-            $em->getMetadataFactory()->setCacheDriver($this->getCacheProvider($this->metadataCache, $this->currentBlogId));
+            // $em->getMetadataFactory()->setCacheDriver($this->getCacheProvider($this->metadataCache, $this->currentBlogId));
             $em->getConfiguration()->setQueryCacheImpl($this->getCacheProvider($this->queryCache, $this->currentBlogId));
             $em->getConfiguration()->setResultCacheImpl($this->getCacheProvider($this->resultCache, $this->currentBlogId));
 

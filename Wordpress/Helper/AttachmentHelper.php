@@ -3,6 +3,7 @@
 namespace Kayue\WordpressBundle\Wordpress\Helper;
 
 use Kayue\WordpressBundle\Entity\Post;
+use Kayue\WordpressBundle\Entity\PostMeta;
 use Kayue\WordpressBundle\Wordpress\ManagerRegistry;
 
 class AttachmentHelper
@@ -35,7 +36,7 @@ class AttachmentHelper
             $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
-        $id = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+        $id = $this->getManager()->getRepository(PostMeta::class)->findOneBy([
             'post' => $post,
             'key' => '_thumbnail_id',
         ]);
@@ -44,7 +45,7 @@ class AttachmentHelper
             return null;
         }
 
-        $thumbnail = $this->getManager()->getRepository('KayueWordpressBundle:Post')->findOneBy([
+        $thumbnail = $this->getManager()->getRepository(Post::class)->findOneBy([
             'id' => $id->getValue(),
             'type' => 'attachment',
         ]);
@@ -63,7 +64,7 @@ class AttachmentHelper
             $this->managerRegistry->setCurrentBlogId($post->getBlogId());
         }
 
-        $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+        $metadata = $this->getManager()->getRepository(PostMeta::class)->findOneBy([
             'post' => $post,
             'key' => '_wp_attachment_metadata',
         ]);
@@ -94,11 +95,10 @@ class AttachmentHelper
 
         try {
 
-            $metadata = $this->getManager()->getRepository('KayueWordpressBundle:PostMeta')->findOneBy([
+            $metadata = $this->getManager()->getRepository(PostMeta::class)->findOneBy([
                 'post' => $post,
                 'key' => '_wp_attachment_image_alt',
             ]);
-
         } catch (\Exception $exception) {
 
             return '';
@@ -115,5 +115,4 @@ class AttachmentHelper
 
         return !is_null($altText) ? $altText : '';
     }
-
 }
