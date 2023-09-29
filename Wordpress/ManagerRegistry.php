@@ -3,6 +3,8 @@
 namespace Kayue\WordpressBundle\Wordpress;
 
 use BadMethodCallException;
+use Doctrine\Common\Cache\Psr6\CacheAdapter;
+use Doctrine\Common\Cache\Psr6\DoctrineProvider;
 use Doctrine\Persistence\ManagerRegistry as ManagerRegistryInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Doctrine\DBAL\Driver\Connection;
@@ -11,7 +13,6 @@ use Doctrine\ORM\Tools\Setup;
 use Kayue\WordpressBundle\Doctrine\WordpressEntityManager;
 use Symfony\Component\Cache\Adapter\AdapterInterface;
 use Symfony\Component\Cache\Adapter\ProxyAdapter;
-use Symfony\Component\Cache\DoctrineProvider;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ManagerRegistry implements ManagerRegistryInterface
@@ -73,7 +74,6 @@ class ManagerRegistry implements ManagerRegistryInterface
 
         if (!isset($this->managers[$this->currentBlogId])) {
             $config = Setup::createAnnotationMetadataConfiguration([], 'prod' !== $this->environment, null, null, false);
-            // $config->addEntityNamespace('KayueWordpressBundle', 'Kayue\WordpressBundle\Entity');
             $config->setAutoGenerateProxyClasses(true);
             $config->setProxyDir($this->defaultEntityManager->getConfiguration()->getProxyDir());
 
@@ -81,9 +81,9 @@ class ManagerRegistry implements ManagerRegistryInterface
 
             $em->setBlogId($this->currentBlogId);
 
-            // $em->getMetadataFactory()->setCacheDriver($this->getCacheProvider($this->metadataCache, $this->currentBlogId));
-            $em->getConfiguration()->setQueryCacheImpl($this->getCacheProvider($this->queryCache, $this->currentBlogId));
-            $em->getConfiguration()->setResultCacheImpl($this->getCacheProvider($this->resultCache, $this->currentBlogId));
+            $em->getConfiguration()->setMetadataCache($this->getCacheProvider($this->metadataCache, $this->currentBlogId));
+            $em->getConfiguration()->setQueryCache($this->getCacheProvider($this->queryCache, $this->currentBlogId));
+            $em->getConfiguration()->setResultCache($this->getCacheProvider($this->resultCache, $this->currentBlogId));
 
             $this->managers[$this->currentBlogId] = $em;
         }
@@ -116,11 +116,11 @@ class ManagerRegistry implements ManagerRegistryInterface
 
     protected function getCacheProvider(CacheItemPoolInterface $pool, $blogId)
     {
+        $cache = DoctrineProvider::wrap($pool);
         $namespace = sprintf('wordpress_blog_%s_', $blogId);
-        $proxyAdapter = new ProxyAdapter($pool, $namespace);
-        $doctrineCache = new DoctrineProvider($proxyAdapter);
+        $cache->setNamespace($namespace);
 
-        return $doctrineCache;
+        return CacheAdapter::wrap($cache);
     }
 
     public function getDefaultConnectionName()
